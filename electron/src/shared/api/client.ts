@@ -24,6 +24,7 @@ import {
 import { backendLifecycleStage, type BackendLifecycle } from '../utils/backendLifecycle.ts';
 import { scrubText } from '../utils/scrub.js';
 import { deploymentMode } from '../utils/deploymentMode.ts';
+import { basePathPrefix } from '../utils/publicBase.ts';
 import { DEFAULT_BACKEND_PORT } from '../app-config.ts';
 import {
   lastBackendContact,
@@ -75,7 +76,9 @@ export function _resolveApiBase(env: any, win: any): string {
   if (!win) return `http://127.0.0.1:${port}`;
   if (win.__TAURI__ || win.__TAURI_INTERNALS__) return `http://127.0.0.1:${port}`;
   if (env?.DEV) return `http://${win.location.hostname}:${port}`;
-  return win.location.origin;
+  // Same origin, under the build's base path (`''` for the default `/` base;
+  // `/prefix` for a subpath web build behind a prefix-stripping proxy).
+  return win.location.origin + basePathPrefix(env?.BASE_URL);
 }
 export const API = _resolveApiBase(viteEnv, typeof window !== 'undefined' ? window : undefined);
 

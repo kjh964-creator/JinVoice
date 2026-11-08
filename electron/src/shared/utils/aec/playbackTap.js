@@ -12,9 +12,11 @@
 // the player never silences playback.
 
 import { publishFarEnd } from './farEndBus';
+import { publicAssetUrl } from '../publicBase.ts';
 import { buildAntiAliasChain, resampleInterleavedFrame } from './micCapture';
 
-const WORKLET_URL = '/aec-worklet.js';
+// Served from electron/public; follows the build's base path (subpath web builds).
+const WORKLET_URL = publicAssetUrl('aec-worklet.js');
 
 // element → { ctx, src } so we never double-tap or double-source an element.
 const tapped = new WeakMap();

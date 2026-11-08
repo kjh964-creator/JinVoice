@@ -3,7 +3,10 @@
 // AudioWorklet that emits fixed-size Float32 frames; the caller converts,
 // tags, streams, or WAV-encodes them.
 
-const WORKLET_URL = '/aec-worklet.js';
+import { publicAssetUrl } from '../publicBase.ts';
+
+// Served from electron/public; follows the build's base path (subpath web builds).
+const WORKLET_URL = publicAssetUrl('aec-worklet.js');
 
 // Anti-alias filtering for the decimation below. resampleInterleavedFrame
 // picks samples by linear interpolation, which is not a low-pass: taking a

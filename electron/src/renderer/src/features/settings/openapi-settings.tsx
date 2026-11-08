@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { getBridge } from '@/components/bridge';
 import { useBackendStatus } from '@/hooks/use-backend-status';
 import { isBackendReachable } from '@shared/utils/backendStage';
-import { apiJson, apiPath, describeError } from '@/lib/api/client';
+import { absoluteApiBase, apiJson, apiPath, describeError } from '@/lib/api/client';
 import { SettingsActionError } from './settings-action-error';
 
 const ScalarApiReference = lazy(() => import('./scalar-api-reference'));
@@ -32,7 +32,8 @@ export function OpenApiSettings() {
   const { t } = useTranslation();
   const backend = useBackendStatus();
   const baseUrl = backend.baseUrl.replace(/\/+$/, '');
-  const displayedBaseUrl = baseUrl || window.location.origin;
+  const displayedBaseUrl =
+    baseUrl || (__WEB_DEPLOYMENT__ ? absoluteApiBase() : window.location.origin);
   const rawUrl = `${displayedBaseUrl}/openapi.json`;
   const spec = useQuery({
     queryKey: ['openapi-spec', rawUrl],
@@ -40,7 +41,9 @@ export function OpenApiSettings() {
       const data = await apiJson<Record<string, unknown>>('/openapi.json', { signal });
       return {
         ...data,
-        servers: [{ url: `${window.location.origin}${apiPath('')}` }],
+        // Resolve against the page so an absolute (proxy/subpath) API base is
+        // not glued onto the page origin.
+        servers: [{ url: new URL(apiPath(''), window.location.href).toString() }],
       };
     },
     staleTime: 60_000,

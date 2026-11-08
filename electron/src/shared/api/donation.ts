@@ -11,6 +11,8 @@
  * Nothing here ever throws — a donation widget must never break the app.
  */
 
+import { publicAssetUrl } from '../utils/publicBase.ts';
+
 export interface DonationProgress {
   /** Amount raised so far, in `currency`. */
   raised: number;
@@ -38,7 +40,7 @@ export const BUNDLED_PROGRESS: DonationProgress = {
 };
 
 /** Where the runtime-refreshable copy lives (served from `public/`). */
-const PROGRESS_URL = '/donation_progress.json';
+const PROGRESS_URL = publicAssetUrl('donation_progress.json');
 
 /** Coerce an unknown parsed value into a safe DonationProgress, or null. */
 export function normalizeProgress(raw: unknown): DonationProgress | null {

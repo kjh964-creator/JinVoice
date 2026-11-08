@@ -210,6 +210,20 @@ describe("deployment API base", () => {
     expect(resolveApiBase(true, false)).toBe("");
   });
 
+  it("follows a subpath build's base when no runtime override is injected", () => {
+    expect(resolveApiBase(true, false, undefined, "/")).toBe("");
+    expect(resolveApiBase(true, false, undefined, "/jinvoice/app/")).toBe(
+      "/jinvoice/app",
+    );
+    expect(resolveApiBase(false, false, undefined, "/jinvoice/app/")).toBe("/api");
+    const win = {
+      __OMNIVOICE_API_BASE__: "https://imist.co.kr/jinvoice/app/",
+    } as Window & { __OMNIVOICE_API_BASE__?: string };
+    expect(resolveApiBase(true, false, win, "/jinvoice/app/")).toBe(
+      "https://imist.co.kr/jinvoice/app",
+    );
+  });
+
   it("honors the runtime Docker/reverse-proxy override", () => {
     const win = {
       __OMNIVOICE_API_BASE__: "https://voice.example/studio/",

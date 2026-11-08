@@ -14,6 +14,7 @@ import {
   isSameOriginApi,
 } from "@shared/api/authSession";
 import { joinApiPath } from "../../../../shared/web-api-routing";
+import { basePathPrefix } from "@shared/utils/publicBase";
 import {
   announceModelLicenceRequired,
   modelLicenceRequirements,
@@ -26,16 +27,21 @@ export function resolveApiBase(
   webDeployment: boolean,
   dev: boolean,
   win?: ApiBaseWindow,
+  baseUrl?: string,
 ): string {
   if (!webDeployment || dev) return "/api";
   const runtime = win?.__OMNIVOICE_API_BASE__?.trim();
-  return runtime ? runtime.replace(/\/+$/, "") : "";
+  // Without a runtime override the backend shares the page's origin and the
+  // build's base path (`/` → root; a subpath build behind a prefix-stripping
+  // proxy → that prefix).
+  return runtime ? runtime.replace(/\/+$/, "") : basePathPrefix(baseUrl);
 }
 
 export const API_BASE = resolveApiBase(
   __WEB_DEPLOYMENT__,
   import.meta.env.DEV,
   typeof window === "undefined" ? undefined : (window as ApiBaseWindow),
+  import.meta.env.BASE_URL,
 );
 
 export function absoluteApiBase(): string {

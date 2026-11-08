@@ -8,7 +8,21 @@ import { DEFAULT_BACKEND_PORT, DEFAULT_WEB_PORT, PRODUCT_NAME } from '../config/
 import { buildCommit } from '../config/build-commit.mjs';
 
 const root = resolve(import.meta.dirname, 'src/renderer');
-const webDist = resolve(import.meta.dirname, '../frontend/dist');
+// Opt-in subpath build for a reverse proxy that serves the UI under a prefix
+// (e.g. JINVOICE_WEB_BASE=/jinvoice/app/). Default `/` keeps the normal build.
+// JINVOICE_WEB_OUT sends that build elsewhere so frontend/dist (bundled into
+// the desktop installer) stays the root-base build.
+const webBase = normalizeWebBase(process.env.JINVOICE_WEB_BASE);
+const webDist = resolve(import.meta.dirname, process.env.JINVOICE_WEB_OUT?.trim() || '../frontend/dist');
+
+function normalizeWebBase(value: string | undefined): string {
+  const raw = (value || '/').trim();
+  if (!raw || raw === '/') return '/';
+  if (!raw.startsWith('/') || raw.startsWith('//') || /[\s?#\\]/.test(raw)) {
+    throw new Error(`JINVOICE_WEB_BASE must be an absolute path such as /jinvoice/app/ (got ${raw})`);
+  }
+  return `/${raw.replace(/^\/+|\/+$/g, '')}/`;
+}
 const version = JSON.parse(
   readFileSync(resolve(import.meta.dirname, '../package.json'), 'utf8'),
 ).version;
@@ -16,6 +30,7 @@ const backendPort = process.env.OMNIVOICE_PORT || String(DEFAULT_BACKEND_PORT);
 
 export default defineConfig({
   root,
+  base: webBase,
   publicDir: resolve(import.meta.dirname, 'public'),
   plugins: [
     react(),

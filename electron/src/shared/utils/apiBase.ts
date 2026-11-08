@@ -1,4 +1,5 @@
 import { DEFAULT_BACKEND_PORT } from '../app-config.ts';
+import { basePathPrefix } from './publicBase.ts';
 
 /**
  * Centralised API base URL resolver.
@@ -96,8 +97,14 @@ export function getApiBase(): string {
     return `http://127.0.0.1:${BACKEND_PORT}`;
   }
 
-  // 3. Plain browser → follow the page's own origin/host.
+  // 3. Plain browser → follow the page's own origin/host. A subpath web build
+  //    (JINVOICE_WEB_BASE) is always served by the backend behind a proxy that
+  //    strips that prefix, so it targets the same origin + prefix.
   if (typeof window !== 'undefined' && window.location) {
+    const prefix = basePathPrefix();
+    if (prefix && window.location.origin && window.location.origin !== 'null') {
+      return `${window.location.origin}${prefix}`;
+    }
     const { protocol, hostname } = window.location;
     if (hostname) {
       return `${protocol}//${hostname}:${BACKEND_PORT}`;

@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JinVoice — 내 목소리로 읽어 주는 앱</title>
+<meta name="description" content="3~10초 녹음으로 내 목소리를 등록하면, 적은 글을 그 목소리로 읽어 줘요. 긴 글은 오디오북으로. 무료이고, 내 컴퓨터에서만 동작해요.">
+<meta name="theme-color" content="#F6F6FB" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0C15" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://imist.co.kr/jinvoice/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="JinVoice">
+<meta property="og:title" content="JinVoice — 내 목소리로 읽어 주는 앱">
+<meta property="og:description" content="3~10초 녹음으로 내 목소리를 등록하고, 글을 그 목소리로 들어 보세요. 무료 · 내 컴퓨터에서만 동작.">
+<meta property="og:url" content="https://imist.co.kr/jinvoice/">
+<meta property="og:image" content="https://imist.co.kr/jinvoice/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-win" viewBox="0 0 24 24"><path d="M3 5.5 10.5 4.4v7.1H3zM11.7 4.2 21 3v8.5h-9.3zM3 12.6h7.5v7.1L3 18.6zM11.7 12.6H21V21l-9.3-1.3z" fill="currentColor"/></symbol>
+    <symbol id="i-android" viewBox="0 0 24 24"><path d="M4.5 16.5a7.5 7.5 0 0 1 15 0z" fill="currentColor"/><path d="m7.2 7.6-1.6-2.4M16.8 7.6l1.6-2.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="13" r="1" fill="var(--surface, #fff)"/><circle cx="15" cy="13" r="1" fill="var(--surface, #fff)"/><rect x="4.5" y="17.6" width="15" height="2.4" rx="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></g></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></g></symbol>
+    <symbol id="i-wave" viewBox="0 0 24 24"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 10.5v3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 5.5c3-1.3 6-1.3 9 .5 3-1.8 6-1.8 9-.5V19c-3-1.3-6-1.3-9 .5-3-1.8-6-1.8-9-.5z"/><path d="M12 6v13.5"/></g></symbol>
+    <symbol id="i-speaker" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.3 6.5a8 8 0 0 1 0 11"/></g></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3.5 9 4.7-9 4.7-9-4.7z"/><path d="m3 12.4 9 4.7 9-4.7M3 16.4l9 4.7 9-4.7" stroke-linecap="round"/></g></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3 4.5 6v5.5c0 4.6 3.1 8.3 7.5 9.5 4.4-1.2 7.5-4.9 7.5-9.5V6z"/><path d="m8.8 12.2 2.3 2.3 4.3-4.6"/></g></symbol>
+    <symbol id="i-pc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8.5 20h7M12 16v4"/></g></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5V20h14v-7.5M12 8.5V20M12 8.5S10.5 4 8 4.5 7.2 8.5 12 8.5zM12 8.5s1.5-4.5 4-4 .8 4-4 4z"/></g></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.2M12 17h.01"/></g></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m0 0-5-5m5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+</svg>
+
+<div class="glow" aria-hidden="true"></div>
+
+<header class="nav" id="top">
+  <div class="wrap nav-in">
+    <a class="brand" href="./" aria-label="JinVoice 처음으로"><img src="assets/logo.svg" alt="" width="34" height="34">JinVoice</a>
+    <ul class="nav-links">
+      <li><a href="#how">이렇게 써요</a></li>
+      <li><a href="#features">할 수 있는 일</a></li>
+      <li><a href="#guide">사용법</a></li>
+      <li><a href="#install">설치 안내</a></li>
+      <li><a href="#faq">자주 묻는 질문</a></li>
+    </ul>
+    <a class="btn btn-dark btn-sm nav-cta" href="#install"><svg width="18" height="18"><use href="#i-down"/></svg>내려받기</a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div class="lockup reveal">
+          <img src="assets/logo.svg" alt="JinVoice 아이콘" width="60" height="60">
+          <b>JinVoice</b><span class="tag">무료</span>
+        </div>
+        <h1 class="reveal">내 목소리로<br><span class="grad">글을 읽어 주는 앱</span></h1>
+        <p class="lead reveal">짧게 한 번 녹음해 두면, 적어 넣은 글을 내 목소리로 또박또박 읽어 줘요. 긴 글은 장별로 나눠 오디오북으로 만들어 드려요.</p>
+        <div class="cta-row reveal">
+          <a class="btn btn-primary btn-lg" data-dl="win" href="https://github.com/kjh964-creator/JinVoice/releases/latest" rel="noopener">
+            <svg width="24" height="24"><use href="#i-win"/></svg>
+            <span class="btn-text">Windows용 내려받기<small data-size="win">Windows 10 · 11</small></span>
+          </a>
+          <a class="btn btn-ghost btn-lg" data-dl="apk" href="https://github.com/kjh964-creator/JinVoice/releases/latest" rel="noopener">
+            <svg width="24" height="24" style="color:#3DDC84"><use href="#i-android"/></svg>
+            <span class="btn-text">안드로이드용 내려받기<small data-size="apk">APK 파일</small></span>
+          </a>
+        </div>
+        <div class="cta-sub reveal">
+          <span class="version"><span class="dot" aria-hidden="true"></span><span data-version>최신 버전</span></span>
+          <a class="btn-text-link" href="/app/jinvoice-login"><svg width="16" height="16"><use href="#i-globe"/></svg>웹에서 사용하기 (관리자)</a>
+        </div>
+      </div>
+
+      <div class="stage reveal">
+        <div class="halo" aria-hidden="true"></div>
+        <div class="window">
+          <div class="window-bar" aria-hidden="true"><span class="ctl"><i></i><i></i><i></i></span></div>
+          <picture>
+            <source srcset="assets/shots/home-dark.webp" media="(prefers-color-scheme: dark)">
+            <img class="shot" src="assets/shots/home.webp" width="900" height="640" alt="JinVoice 첫 화면: 음성 만들기, 긴 글 읽기(오디오북), 내 목소리, 만든 음성 네 개의 큰 버튼">
+          </picture>
+        </div>
+        <div class="float-card a" aria-hidden="true">
+          <span class="ico"><svg width="20" height="20"><use href="#i-mic"/></svg></span>
+          <span>내 목소리<small>3~10초면 충분해요</small></span>
+          <span class="bars"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+        </div>
+        <div class="float-card b" aria-hidden="true">
+          <span class="ico" style="background:linear-gradient(135deg,#12A374,#2CC59A)"><svg width="20" height="20"><use href="#i-shield"/></svg></span>
+          <span>내 PC에서만<small>목소리를 올리지 않아요</small></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap trust reveal" aria-label="요약">
+      <span><svg width="18" height="18"><use href="#i-gift"/></svg>완전 무료, 유료 버전 없음</span>
+      <span><svg width="18" height="18"><use href="#i-pc"/></svg>Windows · Android</span>
+      <span><svg width="18" height="18"><use href="#i-shield"/></svg>인터넷에 목소리를 올리지 않아요</span>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section class="section" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">이렇게 써요</span>
+        <h2 id="how-h">세 단계면 끝나요</h2>
+        <p>처음이어도 괜찮아요. 화면에 보이는 큰 버튼만 차례로 누르면 돼요.</p>
+      </div>
+      <div class="steps">
+        <article class="step reveal">
+          <div class="step-copy">
+            <span class="step-num">1</span>
+            <h3>내 목소리를 들려주세요</h3>
+            <p>화면에 나온 문장을 3~10초 동안 소리 내어 읽으면 끝. 녹음해 둔 음원 파일이 있다면 그걸 골라도 돼요.</p>
+            <ul>
+              <li><svg width="16" height="16"><use href="#i-check"/></svg>마이크로 바로 녹음하거나 파일 선택</li>
+              <li><svg width="16" height="16"><use href="#i-check"/></svg>한 번 등록하면 언제든 다시 써요</li>
+            </ul>
+          </div>
+          <div class="visual"><div class="shot-frame"><img src="assets/shots/record.webp" width="900" height="760" loading="lazy" alt="새 목소리 등록 화면: '안녕하세요. 오늘은 날씨가 참 좋네요.' 문장과 큰 녹음 버튼"></div></div>
+        </article>
+
+        <article class="step reveal">
+          <div class="step-copy">
+            <span class="step-num">2</span>
+            <h3>읽어 줄 글을 적어요</h3>
+            <p>목소리를 고르고 문장을 적거나 붙여 넣으세요. 한 번에 5,000자까지 쓸 수 있고, 말하기 속도도 고를 수 있어요.</p>
+            <ul>
+              <li><svg width="16" height="16"><use href="#i-check"/></svg>엄마 목소리, 내 목소리… 여러 개 저장</li>
+              <li><svg width="16" height="16"><use href="#i-check"/></svg>느리게 · 보통 · 빠르게</li>
+            </ul>
+          </div>
+          <div class="visual"><div class="shot-frame"><img src="assets/shots/write.webp" width="900" height="670" loading="lazy" alt="음성 만들기 화면: 목소리 선택 목록과 문장 입력 칸"></div></div>
+        </article>
+
+        <article class="step reveal">
+          <div class="step-copy">
+            <span class="step-num">3</span>
+            <h3>듣고, 저장해요</h3>
+            <p>'음성 만들기'를 누르면 잠시 뒤 바로 들을 수 있어요. 마음에 들면 파일로 저장하고, 만든 음성은 목록에 차곡차곡 남아요.</p>
+            <ul>
+              <li><svg width="16" height="16"><use href="#i-check"/></svg>작게 녹음해도 소리는 또렷하고 크게</li>
+              <li><svg width="16" height="16"><use href="#i-check"/></svg>파일로 저장해 어디서든 재생</li>
+            </ul>
+          </div>
+          <div class="visual"><div class="shot-frame"><img src="assets/shots/result.webp" width="900" height="640" loading="lazy" alt="음성이 완성됐어요 화면: 재생, 파일로 저장, 다시 만들기 버튼"></div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features" aria-labelledby="feat-h">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">할 수 있는 일</span>
+        <h2 id="feat-h">꼭 필요한 것만, 쉽게</h2>
+        <p>첫 화면엔 버튼이 딱 네 개. 더 많은 기능은 원할 때만 꺼내 쓰면 돼요.</p>
+      </div>
+      <div class="bento">
+        <article class="card big span-3 reveal">
+          <span class="chip"><svg width="14" height="14"><use href="#i-mic"/></svg>내 목소리 등록</span>
+          <h3>짧은 녹음 한 번이면 돼요</h3>
+          <p>3~10초면 충분해요. 마이크로 녹음하거나, 가지고 있는 음원 파일을 그대로 쓸 수 있어요.</p>
+          <div class="formats" aria-label="지원 형식"><span>WAV</span><span>MP3</span><span>M4A</span><span>FLAC</span><span>OGG</span><span>AAC</span><span>WEBM</span></div>
+          <div class="peek"><img src="assets/shots/voices.webp" width="900" height="640" loading="lazy" alt="내 목소리 목록 화면: 저장한 목소리 여러 개"></div>
+        </article>
+        <article class="card big span-3 reveal">
+          <span class="chip"><svg width="14" height="14"><use href="#i-book"/></svg>긴 글 · 오디오북</span>
+          <h3>책 한 권도 장별로 척척</h3>
+          <p>긴 글을 붙여 넣거나 텍스트 파일을 열면 알아서 장을 나눠 읽어요. 다 되면 한 파일(MP3)로 합쳐 저장할 수 있어요.</p>
+          <div class="peek"><img src="assets/shots/book.webp" width="900" height="640" loading="lazy" alt="오디오북이 완성됐어요 화면: 장별 목록과 하나로 저장 버튼"></div>
+        </article>
+
+        <article class="card span-2 reveal">
+          <span class="chip"><svg width="14" height="14"><use href="#i-wave"/></svg>글 읽기</span>
+          <div class="big-num">5,000<small>자</small></div>
+          <h3>한 번에 넉넉하게</h3>
+          <p>안내 방송, 편지, 발표 원고까지 한 번에 읽어 줘요.</p>
+        </article>
+        <article class="card span-2 reveal">
+          <span class="chip"><svg width="14" height="14"><use href="#i-speaker"/></svg>일정한 음량</span>
+          <div class="level" aria-hidden="true"><i style="height:26%"></i><i style="height:14%"></i><i style="height:34%"></i><i style="height:20%"></i><em class="arrow">→</em><i class="on" style="height:82%"></i><i class="on" style="height:90%"></i><i class="on" style="height:84%"></i><i class="on" style="height:88%"></i></div>
+          <h3>작게 녹음해도 또렷하게</h3>
+          <p>목소리 크기를 알아서 맞춰 줘서, 결과는 늘 듣기 좋은 크기로 나와요.</p>
+        </article>
+        <article class="card span-2 reveal">
+          <div class="shield" aria-hidden="true"><svg width="28" height="28"><use href="#i-shield"/></svg></div>
+          <h3>내 PC에서만 처리해요</h3>
+          <p>목소리와 글은 내 컴퓨터 안에서만 쓰여요. 인터넷에 올리지 않아요.</p>
+        </article>
+
+        <article class="card wide span-6 reveal">
+          <div>
+            <span class="chip"><svg width="14" height="14"><use href="#i-layers"/></svg>모든 기능 보기</span>
+            <h3>더 하고 싶을 땐, 스위치 하나</h3>
+            <p>설정에서 '모든 기능 보기'를 켜면 숨겨 둔 기능이 나타나요. 끄면 다시 쉬운 화면으로 돌아와요.</p>
+            <div class="extras"><span>더빙</span><span>받아쓰기</span><span>고급 오디오북</span><span>원래 VoiceStudio의 모든 메뉴</span></div>
+          </div>
+          <div class="toggle-demo" aria-hidden="true">모든 기능 보기 <span class="switch"></span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUIDE -->
+  <section class="section" id="guide" aria-labelledby="guide-h">
+    <div class="wrap guide">
+      <div class="guide-side reveal">
+        <div class="section-head">
+          <span class="eyebrow">사용법</span>
+          <h2 id="guide-h">헷갈릴 땐 이것만 보세요</h2>
+          <p>앱 오른쪽 위 '사용법'과 같은 내용이에요.</p>
+        </div>
+        <a class="btn btn-ghost" href="guide.html">자세한 사용법 보기<svg width="18" height="18"><use href="#i-arrow"/></svg></a>
+        <div class="shot-frame help-shot"><img src="assets/shots/help.webp" width="900" height="640" loading="lazy" alt="앱 안의 사용법 화면: 음성 만들기, 내 목소리 등록 단계 안내"></div>
+      </div>
+      <ol class="guide-list">
+        <li class="reveal"><span class="guide-ico" aria-hidden="true"><svg width="24" height="24"><use href="#i-wave"/></svg></span><div><h3>음성 만들기</h3><p>목소리를 고르고 문장을 적은 뒤 '음성 만들기'. '파일로 저장'을 누르면 WAV 파일로 저장돼요.</p></div></li>
+        <li class="reveal"><span class="guide-ico" aria-hidden="true"><svg width="24" height="24"><use href="#i-mic"/></svg></span><div><h3>내 목소리 등록</h3><p>'내 목소리' → '새 목소리 등록'. 녹음하거나 파일을 고르고, 들린 내용을 확인한 뒤 저장해요.</p></div></li>
+        <li class="reveal"><span class="guide-ico" aria-hidden="true"><svg width="24" height="24"><use href="#i-book"/></svg></span><div><h3>긴 글 읽기</h3><p>글을 붙여 넣고 장 나누기를 확인한 뒤 '오디오북 만들기'. 중간에 멈춰도 이어서 만들 수 있어요.</p></div></li>
+        <li class="reveal"><span class="guide-ico" aria-hidden="true"><svg width="24" height="24"><use href="#i-speaker"/></svg></span><div><h3>만든 음성</h3><p>만든 음성은 최신순으로 모여요. 다시 듣고, 저장하고, 필요 없으면 지울 수 있어요.</p></div></li>
+        <li class="reveal"><span class="guide-ico" aria-hidden="true"><svg width="24" height="24"><use href="#i-layers"/></svg></span><div><h3>숨겨진 기능 꺼내기</h3><p>'설정' → '일반'에서 '모든 기능 보기'를 켜요. '쉬운 화면으로'를 누르면 언제든 돌아와요.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section class="section" id="install" aria-labelledby="inst-h">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="eyebrow">설치 안내</span>
+        <h2 id="inst-h">내려받고 바로 시작해요</h2>
+        <p><span data-version>최신 버전</span> · 설치 전에 한 번만 읽어 주세요.</p>
+      </div>
+      <div class="install">
+        <article class="inst reveal">
+          <div class="inst-head">
+            <span class="os" aria-hidden="true"><svg width="26" height="26" style="color:#2F7BF5"><use href="#i-win"/></svg></span>
+            <div><h3>Windows</h3><p>Windows 10 · 11 (64비트)</p></div>
+          </div>
+          <ol>
+            <li><span>설치 파일을 내려받아 실행해요.</span></li>
+            <li><span>처음 한 번, 약 <b>3.6GB</b> 준비 파일을 내려받아요. 인터넷이 빠른 곳에서 해 주세요.</span></li>
+            <li><span><b>NVIDIA 그래픽카드</b>가 있으면 빠르게, 없어도 조금 느릴 뿐 잘 돼요.</span></li>
+          </ol>
+          <div class="note"><svg width="18" height="18"><use href="#i-warn"/></svg><span>'Windows의 PC 보호' 창이 뜨면 '추가 정보' → '실행'을 누르세요.</span></div>
+          <a class="btn btn-primary" data-dl="win" href="https://github.com/kjh964-creator/JinVoice/releases/latest" rel="noopener"><svg width="20" height="20"><use href="#i-down"/></svg>Windows용 내려받기<span class="size" data-size-inline="win" style="color:rgba(255,255,255,.8)"></span></a>
+        </article>
+        <article class="inst reveal">
+          <div class="inst-head">
+            <span class="os" aria-hidden="true"><svg width="26" height="26" style="color:#3DDC84"><use href="#i-android"/></svg></span>
+            <div><h3>Android</h3><p>APK 파일로 설치해요</p></div>
+          </div>
+          <ol>
+            <li><span>휴대폰에서 <b>JinVoice.apk</b>를 내려받아요.</span></li>
+            <li><span>파일을 열 때 <b>'출처를 알 수 없는 앱'</b> 설치를 허용해 주세요.</span></li>
+            <li><span>설치가 끝나면 홈 화면의 JinVoice를 눌러 시작해요.</span></li>
+          </ol>
+          <div class="note"><svg width="18" height="18"><use href="#i-warn"/></svg><span>Play 스토어 밖에서 받은 앱이라 <b>Play 프로텍트 경고</b>가 나올 수 있어요. '무시하고 설치'를 누르면 돼요.</span></div>
+          <a class="btn btn-dark" data-dl="apk" href="https://github.com/kjh964-creator/JinVoice/releases/latest" rel="noopener"><svg width="20" height="20"><use href="#i-down"/></svg>안드로이드용 내려받기<span class="size" data-size-inline="apk"></span></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="eyebrow">자주 묻는 질문</span>
+        <h2 id="faq-h">궁금한 점이 있나요?</h2>
+      </div>
+      <div class="faq">
+        <details class="reveal" open>
+          <summary><span class="q">Q</span>정말 무료인가요?<span class="pm" aria-hidden="true"><svg width="16" height="16"><use href="#i-plus"/></svg></span></summary>
+          <div class="a">네, <b>완전 무료</b>예요. 돈을 내야 하는 Pro 버전이나 숨은 결제도 없어요.</div>
+        </details>
+        <details class="reveal">
+          <summary><span class="q">Q</span>다른 사람 목소리도 되나요?<span class="pm" aria-hidden="true"><svg width="16" height="16"><use href="#i-plus"/></svg></span></summary>
+          <div class="a"><b>본인 목소리, 또는 허락을 받은 목소리만</b> 써 주세요. 가족 목소리라도 꼭 먼저 물어봐 주세요. 허락 없이 남의 목소리를 흉내 내 쓰면 안 돼요.</div>
+        </details>
+        <details class="reveal">
+          <summary><span class="q">Q</span>만든 음성을 돈 버는 데 써도 되나요?<span class="pm" aria-hidden="true"><svg width="16" height="16"><use href="#i-plus"/></svg></span></summary>
+          <div class="a">아니요. 기본으로 들어 있는 음성 기술이 <b>비상업용</b>이라, 개인적인 용도로만 써 주세요. 광고, 판매용 콘텐츠 등에는 쓸 수 없어요.</div>
+        </details>
+        <details class="reveal">
+          <summary><span class="q">Q</span>인터넷에 내 목소리가 올라가나요?<span class="pm" aria-hidden="true"><svg width="16" height="16"><use href="#i-plus"/></svg></span></summary>
+          <div class="a">아니요. 목소리와 글은 <b>내 컴퓨터 안에서만</b> 쓰여요. 처음 설치할 때 준비 파일을 내려받는 것 말고는 내 목소리를 어디에도 보내지 않아요.</div>
+        </details>
+        <details class="reveal">
+          <summary><span class="q">Q</span>제 컴퓨터에서도 될까요?<span class="pm" aria-hidden="true"><svg width="16" height="16"><use href="#i-plus"/></svg></span></summary>
+          <div class="a">Windows 10·11 컴퓨터라면 돼요. <b>NVIDIA 그래픽카드</b>가 있으면 훨씬 빠르고, 없으면 시간이 조금 더 걸려요. 안드로이드 휴대폰에서도 쓸 수 있어요.</div>
+        </details>
+      </div>
+
+      <div class="final reveal">
+        <span class="final-icon"><img src="assets/logo.svg" alt="" width="60" height="60"></span>
+        <h2>지금, 내 목소리로 들어 보세요</h2>
+        <p>무료로 내려받아 바로 시작할 수 있어요.</p>
+        <div class="cta-row">
+          <a class="btn btn-white btn-lg" data-dl="win" href="https://github.com/kjh964-creator/JinVoice/releases/latest" rel="noopener"><svg width="22" height="22"><use href="#i-win"/></svg>Windows용 내려받기</a>
+          <a class="btn btn-outline btn-lg" data-dl="apk" href="https://github.com/kjh964-creator/JinVoice/releases/latest" rel="noopener"><svg width="22" height="22"><use href="#i-android"/></svg>안드로이드용 내려받기</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" href="./"><img src="assets/logo.svg" alt="" width="30" height="30">JinVoice</a>
+        <p>내 목소리로 글을 읽어 주는 앱 · <b>무료 · 개인·비상업용</b></p>
+        <div class="foot-links">
+          <a href="https://github.com/kjh964-creator/JinVoice" rel="noopener">VoiceStudio(AGPL-3.0) 기반 · 소스 코드</a>
+          <a href="guide.html">사용법</a>
+          <a href="https://github.com/kjh964-creator/JinVoice/releases" rel="noopener">모든 버전</a>
+          <a href="/app/">뚱.꼬.떡. 으로 돌아가기</a>
+        </div>
+      </div>
+      <div class="tech">
+        <h4>기술 정보</h4>
+        오픈소스 <a href="https://github.com/kjh964-creator/JinVoice" rel="noopener">VoiceStudio</a>(AGPL-3.0)를 바탕으로 만든 앱이에요. 음성 합성(TTS)·목소리 복제에 쓰이는 기본 음성 모델 OmniVoice는 CC-BY-NC(비상업) 라이선스예요. 모든 추론은 내 기기에서 실행돼요(Windows: NVIDIA CUDA 또는 CPU).
+      </div>
+    </div>
+    <p class="copy">© JinVoice · imist.co.kr</p>
+  </div>
+</footer>
+
+<script src="assets/app.js" defer></script>
+</body>
+</html>

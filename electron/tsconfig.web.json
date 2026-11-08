@@ -44,6 +44,7 @@
     "src/shared/utils/backendStage.ts",
     "src/shared/utils/backendHint.ts",
     "src/shared/utils/deploymentMode.ts",
+    "src/shared/utils/publicBase.ts",
     "src/shared/utils/errorDocsMap.ts",
     "src/shared/utils/analytics.ts",
     "src/shared/api/external.ts",
