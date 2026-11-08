@@ -107,7 +107,7 @@ describe('DesktopUpdater', () => {
     expect(mocks.autoUpdater.channel).toBe(`electron-stable-${process.platform}-${process.arch}`);
     expect(mocks.autoUpdater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'generic',
-      url: 'https://github.com/debpalash/VoiceStudio/releases/latest/download',
+      url: 'https://github.com/kjh964-creator/JinVoice/releases/latest/download',
       channel: `electron-stable-${process.platform}-${process.arch}`,
     });
 
@@ -150,7 +150,7 @@ describe('DesktopUpdater', () => {
     expect(mocks.autoUpdater.channel).toBe(channel);
     expect(mocks.autoUpdater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'generic',
-      url: 'https://github.com/debpalash/VoiceStudio/releases/download/v0.5.7',
+      url: 'https://github.com/kjh964-creator/JinVoice/releases/download/v0.5.7',
       channel,
     });
   });
@@ -264,7 +264,7 @@ describe('DesktopUpdater', () => {
     expect(mocks.autoUpdater.channel).toBe(`electron-beta-${platform}-${arch}`);
     expect(mocks.autoUpdater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'generic',
-      url: 'https://github.com/debpalash/VoiceStudio/releases/download/v0.5.9-beta.10',
+      url: 'https://github.com/kjh964-creator/JinVoice/releases/download/v0.5.9-beta.10',
       channel: `electron-beta-${platform}-${arch}`,
     });
   });
@@ -287,7 +287,7 @@ describe('DesktopUpdater', () => {
       ),
     );
     expect(feed).toEqual({
-      url: 'https://github.com/debpalash/VoiceStudio/releases/download/v0.5.9',
+      url: 'https://github.com/kjh964-creator/JinVoice/releases/download/v0.5.9',
       channel: `electron-stable-${process.platform}-${process.arch}`,
     });
   });
@@ -495,7 +495,7 @@ describe('DesktopUpdater', () => {
       },
     ]);
     expect(fetcher).toHaveBeenCalledWith(
-      expect.stringContaining('/debpalash/VoiceStudio/releases?per_page=30'),
+      expect.stringContaining('/kjh964-creator/JinVoice/releases?per_page=30'),
       expect.objectContaining({
         headers: expect.objectContaining({ 'User-Agent': 'VoiceStudio' }),
         signal: expect.any(AbortSignal),

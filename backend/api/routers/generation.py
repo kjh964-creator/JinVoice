@@ -1583,6 +1583,15 @@ async def _finalize_generation(
     # AudioSeal embedding is CPU work that holds no VRAM, so occupying a GPU
     # worker with it only delays the next generate on 1-worker hosts.
     if not already_marked:
+        # Loudness master the whole take BEFORE the mark (nothing is processed
+        # after it): OmniVoice scales clones down to a quiet reference, so a
+        # softly recorded voice gave a soft take. Pref-gated (default on),
+        # never raises. Already-marked audio (voice convert) masters itself
+        # before its own mark.
+        from services.speech_loudness import master_take
+        audio_tensor = await asyncio.to_thread(
+            master_take, audio_tensor, sample_rate, context="generate.finalize",
+        )
         from services.watermark import mark_synthetic_async
         audio_tensor = await mark_synthetic_async(
             audio_tensor, sample_rate, context="generate.finalize",

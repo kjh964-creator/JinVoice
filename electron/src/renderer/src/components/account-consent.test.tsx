@@ -1,7 +1,12 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-const mock = vi.hoisted(() => ({ bridge: null as unknown }));
+const mock = vi.hoisted(() => ({ bridge: null as unknown, easy: false }));
+vi.mock('@/lib/easy-mode', () => ({
+  get EASY_MODE() {
+    return mock.easy;
+  },
+}));
 vi.mock('./bridge', () => ({ getBridge: () => mock.bridge }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 
@@ -33,6 +38,16 @@ function bridgeWith(state: Partial<typeof base>) {
 afterEach(() => {
   cleanup();
   mock.bridge = null;
+  mock.easy = false;
+});
+
+it('easy mode never asks about the cloud account and never blocks setup', async () => {
+  mock.easy = true;
+  bridgeWith({});
+  const required = vi.fn();
+  render(<AccountConsent onRequirementChange={required} />);
+  await waitFor(() => expect(required).toHaveBeenCalledWith(false));
+  expect(screen.queryByText('account.use_yes')).toBeNull();
 });
 
 it('asks with two equal Yes/No buttons when unprompted', async () => {

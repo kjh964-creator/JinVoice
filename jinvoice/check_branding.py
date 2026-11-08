@@ -26,8 +26,18 @@ has('electron/tests/packaged-smoke.mjs', 'win-unpacked/JinVoice.exe')
 has('mobile/android/app/build.gradle.kts', 'applicationId = "com.jinvoice.mobile"')
 visible = re.compile(r'VoiceStudio(?![.]sh)')
 for path in list((ROOT / 'electron/src/renderer/src/i18n/locales').glob('*.json')) + list((ROOT / 'mobile/contract').glob('strings*.json')):
-    if visible.search(path.read_text(encoding='utf-8')):
+    data = json.loads(path.read_text(encoding='utf-8'))
+    for key in ('proPage', 'supportPlans', 'donate'):
+        data.pop(key, None)
+        if key != 'donate' and isinstance(data.get(key), dict):
+            pass
+    if isinstance(data.get('account'), dict):
+        data['account'].pop('feature_pro', None)
+    if visible.search(json.dumps(data, ensure_ascii=False)):
         errors.append(f'{path.relative_to(ROOT)}: visible VoiceStudio string')
+ko = json.loads((ROOT / 'electron/src/renderer/src/i18n/locales/ko.json').read_text(encoding='utf-8'))
+if 'JinVoice' in json.dumps(ko.get('proPage', {}), ensure_ascii=False):
+    errors.append('ko.json proPage must name upstream VoiceStudio Pro, not JinVoice Pro')
 en = json.loads((ROOT / 'electron/src/renderer/src/i18n/locales/en.json').read_text(encoding='utf-8'))
 if en['app']['name'] != 'JinVoice':
     errors.append('en.json app.name (Android label) is not JinVoice')

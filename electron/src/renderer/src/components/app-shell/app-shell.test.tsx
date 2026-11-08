@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // The left column must not change between workspaces and Settings: the main
 // sidebar (navigation, library, status) is rendered on every route, so
@@ -21,6 +21,16 @@ vi.mock('@/components/command-palette', () => ({ CommandPalette: () => null }));
 vi.mock('../backend-gate', () => ({ BackendGate: ({ children }: any) => <>{children}</> }));
 vi.mock('../bridge', () => ({ isMac: () => false }));
 vi.mock('@/hooks/use-backend-status', () => ({ useBackendStatus: () => ({ stage: 'ready' }) }));
+const easy = vi.hoisted(() => ({ on: false }));
+vi.mock('@/lib/easy-mode', () => ({
+  get EASY_MODE() {
+    return easy.on;
+  },
+}));
+vi.mock('@/features/easy/easy-layout', () => ({
+  EasyShell: () => <div data-testid="easy-shell" />,
+  EasyTopBar: () => <header data-testid="easy-top-bar" />,
+}));
 import { AppShell } from './app-shell';
 
 it('keeps the main sidebar on Settings routes', () => {
@@ -40,4 +50,29 @@ it.each(['/clone', '/settings/account'])('shows the signed-in corner badge on %s
   route.pathname = pathname;
   render(<AppShell />);
   expect(screen.getByTestId('account-corner')).toBeInTheDocument();
+});
+
+describe('easy mode', () => {
+  beforeEach(() => {
+    easy.on = true;
+  });
+  afterEach(() => {
+    easy.on = false;
+  });
+
+  it('shows only the easy frame on the home route', () => {
+    route.pathname = '/';
+    render(<AppShell />);
+    expect(screen.getByTestId('easy-shell')).toBeInTheDocument();
+    expect(screen.queryByTestId('main-sidebar')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('account-corner')).not.toBeInTheDocument();
+  });
+
+  it('keeps Settings reachable under the easy bar without the workspace sidebar', () => {
+    route.pathname = '/settings/models/tts';
+    render(<AppShell />);
+    expect(screen.getByTestId('easy-top-bar')).toBeInTheDocument();
+    expect(screen.getByTestId('outlet')).toBeInTheDocument();
+    expect(screen.queryByTestId('main-sidebar')).not.toBeInTheDocument();
+  });
 });

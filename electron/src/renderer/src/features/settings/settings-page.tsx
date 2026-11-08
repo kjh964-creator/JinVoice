@@ -74,6 +74,7 @@ import i18n, { APP_LANGUAGE_ITEMS, APP_LANGUAGES, setAppLanguage, type AppLocale
 import { setReviewMode, useReviewMode } from '@/hooks/use-review-mode';
 import { rememberSettingsRoute } from '@/lib/settings-route';
 import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
+import { EASY_MODE, isEasyModePath } from '@/lib/easy-mode';
 
 const sections = ['general', 'appearance'] as const;
 const fields = {
@@ -242,7 +243,10 @@ export function SettingsPage() {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const extras = extraSettingsFor(useAccount().state?.available === true);
+  // Easy mode lists no donation, support-plan or account/cloud pages.
+  const extras = extraSettingsFor(useAccount().state?.available === true).filter(
+    (item) => !EASY_MODE || isEasyModePath(item.to),
+  );
   const extra = extras.find((item) => pathname === item.to);
   const isOpenApi = pathname === '/settings/openapi';
   const isModels = pathname.includes('/models');
@@ -486,23 +490,25 @@ export function SettingsPage() {
           )}
         </div>
         <div className="shrink-0 space-y-1.5 border-t border-sidebar-border/50 bg-background/15 p-3">
+          {!EASY_MODE && (
+            <Link
+              to="/settings/support"
+              title={t('donate.title')}
+              aria-current={extra?.to === '/settings/support' ? 'page' : undefined}
+              className={cn(
+                buttonVariants({ variant: 'ghost' }),
+                'group relative w-full justify-start overflow-hidden border border-primary/20 bg-gradient-to-r from-primary/15 via-primary/8 to-transparent text-foreground shadow-[inset_0_1px_0_rgb(255_255_255/10%)] transition-[border-color,background-color,box-shadow] hover:border-primary/35 hover:from-primary/20 hover:shadow-[0_8px_24px_-16px_var(--primary)]',
+                extra?.to === '/settings/support' && 'border-primary/40 bg-primary/15',
+              )}
+            >
+              <HeartHandshakeIcon className="size-4 shrink-0 text-primary transition-transform duration-200 group-hover:scale-110 motion-reduce:transition-none" />
+              <span data-slot="settings-nav-label" className="min-w-0 flex-1 truncate text-left">
+                {t('donate.title')}
+              </span>
+            </Link>
+          )}
           <Link
-            to="/settings/support"
-            title={t('donate.title')}
-            aria-current={extra?.to === '/settings/support' ? 'page' : undefined}
-            className={cn(
-              buttonVariants({ variant: 'ghost' }),
-              'group relative w-full justify-start overflow-hidden border border-primary/20 bg-gradient-to-r from-primary/15 via-primary/8 to-transparent text-foreground shadow-[inset_0_1px_0_rgb(255_255_255/10%)] transition-[border-color,background-color,box-shadow] hover:border-primary/35 hover:from-primary/20 hover:shadow-[0_8px_24px_-16px_var(--primary)]',
-              extra?.to === '/settings/support' && 'border-primary/40 bg-primary/15',
-            )}
-          >
-            <HeartHandshakeIcon className="size-4 shrink-0 text-primary transition-transform duration-200 group-hover:scale-110 motion-reduce:transition-none" />
-            <span data-slot="settings-nav-label" className="min-w-0 flex-1 truncate text-left">
-              {t('donate.title')}
-            </span>
-          </Link>
-          <Link
-            to="/clone"
+            to={EASY_MODE ? '/' : '/clone'}
             title={t('preferences.back')}
             className={cn(
               buttonVariants({ variant: 'ghost' }),

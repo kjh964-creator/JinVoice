@@ -1,6 +1,7 @@
 import { createRootRoute, createRoute, lazyRouteComponent, redirect } from '@tanstack/react-router';
 import { AppShell } from '@/components/app-shell/app-shell';
 import { readLastSettingsRoute } from '@/lib/settings-route';
+import { EASY_MODE, isEasyModePath } from '@/lib/easy-mode';
 
 const HomePage = lazyRouteComponent(() => import('@/features/home/home-page'), 'HomePage');
 
@@ -47,12 +48,54 @@ const SettingsPage = lazyRouteComponent(
 );
 const ProPage = lazyRouteComponent(() => import('@/features/pro/pro-page'), 'ProPage');
 
-export const rootRoute = createRootRoute({ component: AppShell });
+const EasyHomePage = lazyRouteComponent(
+  () => import('@/features/easy/easy-home-page'),
+  'EasyHomePage',
+);
+
+export const rootRoute = createRootRoute({
+  component: AppShell,
+  // Easy mode shows only its own screens and Settings; every other workspace
+  // stays in the code but is unreachable and lands on the easy home instead.
+  beforeLoad: ({ location }) => {
+    if (EASY_MODE && !isEasyModePath(location.pathname)) throw redirect({ to: '/' });
+  },
+});
 
 export const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: HomePage,
+  component: EASY_MODE ? EasyHomePage : HomePage,
+});
+
+export const easyCreateRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/easy/create',
+  component: lazyRouteComponent(() => import('@/features/easy/easy-create-page'), 'EasyCreatePage'),
+});
+
+export const easyVoicesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/easy/voices',
+  component: lazyRouteComponent(() => import('@/features/easy/easy-voices-page'), 'EasyVoicesPage'),
+});
+
+export const easyNewVoiceRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/easy/voices/new',
+  component: lazyRouteComponent(
+    () => import('@/features/easy/easy-register-wizard'),
+    'EasyRegisterWizard',
+  ),
+});
+
+export const easyHistoryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/easy/history',
+  component: lazyRouteComponent(
+    () => import('@/features/easy/easy-history-page'),
+    'EasyHistoryPage',
+  ),
 });
 
 export const savedVoicesRoute = createRoute({
@@ -74,7 +117,9 @@ export const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/settings',
   beforeLoad: () => {
-    throw redirect({ to: readLastSettingsRoute() });
+    const last = readLastSettingsRoute();
+    // A remembered page easy mode hides (support, account) opens General instead.
+    throw redirect({ to: EASY_MODE && !isEasyModePath(last) ? '/settings/general' : last });
   },
 });
 
@@ -283,6 +328,10 @@ export const routeTree = rootRoute.addChildren([
   audiobookRoute,
   projectsRoute,
   indexRoute,
+  easyCreateRoute,
+  easyVoicesRoute,
+  easyNewVoiceRoute,
+  easyHistoryRoute,
   cloneRoute,
   savedVoicesRoute,
   pronunciationRoute,

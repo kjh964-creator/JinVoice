@@ -369,6 +369,10 @@ async def convert_speech(
         # Provenance mark AFTER the stretch (one whole-take mark on the audio
         # the user actually keeps), then the shared finalize tail — WAV in
         # OUTPUTS_DIR, self-healing history row, retention prune, event emit.
+        from services.speech_loudness import master_take
+        audio_tensor = await asyncio.to_thread(
+            master_take, audio_tensor, sample_rate, context="convert.finalize",
+        )
         from services.watermark import mark_synthetic_async
         audio_tensor = await mark_synthetic_async(
             audio_tensor, sample_rate, context="convert.finalize",

@@ -10,12 +10,47 @@ import { useBackendStatus } from '@/hooks/use-backend-status';
 import { isBackendReachable } from '@shared/utils/backendStage';
 import { AccountCorner } from './account-corner';
 import { NowPlayingDock } from '@/components/now-playing-dock';
+import { EASY_MODE } from '@/lib/easy-mode';
+import { EasyShell, EasyTopBar } from '@/features/easy/easy-layout';
+
+/**
+ * Easy mode frame: only the JinVoice bar (logo, name, Settings) and the page.
+ * No sidebars, command palette, account corner, agent docks or now-playing
+ * dock; the first-run setup gate stays exactly as in the full shell.
+ */
+function EasyAppShell({ pathname }: { pathname: string }) {
+  const settings = pathname.startsWith('/settings');
+  return (
+    <div className="app-surface relative flex h-full flex-col bg-background text-foreground">
+      <div className="flex min-h-0 flex-1">
+        {settings ? (
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+            <EasyTopBar settingsActive />
+            <main
+              data-slot="workspace-content"
+              className="@container relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+            >
+              <div className="min-h-0 flex-1 overflow-hidden">
+                <Outlet />
+              </div>
+            </main>
+          </div>
+        ) : (
+          <BackendGate repairDock={<RepairAgentDock />}>
+            <EasyShell />
+          </BackendGate>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function AppShell() {
   const backend = useBackendStatus();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
+  if (EASY_MODE) return <EasyAppShell pathname={pathname} />;
   const shellOnly = pathname.startsWith('/settings') || pathname === '/pro';
   const macWorkspace = isMac() && !shellOnly;
   const SettingsWorkspace = pathname === '/settings/openapi' ? 'div' : 'main';

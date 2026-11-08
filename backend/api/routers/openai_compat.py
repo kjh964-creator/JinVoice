@@ -601,6 +601,10 @@ def _run_tts(backend, text: str, kw: dict):
     if not getattr(backend, "applies_own_mastering", False):
         wav = apply_mastering(wav, sample_rate=sr)
     wav = normalize_audio(wav, target_dBFS=-2.0)
+    # Whole-take speech loudness master (quiet references gave quiet takes);
+    # before the mark, pref-gated, never raises.
+    from services.speech_loudness import master_take
+    wav = master_take(wav, sr, context="openai_compat.speech")
     # Invisible AudioSeal provenance mark at the tensor stage, before any
     # container encoding (#1169 — this route used to return unmarked audio
     # while /generate marked the same text). Same failure semantics as

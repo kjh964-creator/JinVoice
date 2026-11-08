@@ -143,4 +143,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           version=$(node -p "require('./package.json').version")
-          gh release create "v$version" dist/* --target "$GITHUB_SHA" --title "JinVoice $version" --notes "JinVoice $version (VoiceStudio 기반, AGPL-3.0)" --latest
+          gh release create "v$version" dist/* --target "$GITHUB_SHA" --title "JinVoice $version" --notes "JinVoice $version (based on VoiceStudio, AGPL-3.0)" --latest

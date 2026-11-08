@@ -1,0 +1,200 @@
+import type { ReactNode } from 'react';
+import { Link, Outlet, useNavigate } from '@tanstack/react-router';
+import { ArrowLeftIcon, PauseIcon, PlayIcon, SettingsIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { isMac } from '@/components/bridge';
+import { Button } from '@/components/ui/button';
+import { brandIcon } from '@/lib/brand';
+import { EASY_ROUTES } from '@/lib/easy-mode';
+import { runRendererTask } from '@/lib/global-error-recovery';
+import { cn } from '@/lib/utils';
+import { toggleEasyPlayback, useEasyPlaying } from './easy-audio';
+
+/** The whole easy-mode frame: logo + name, and one small Settings button. */
+export function EasyTopBar({ settingsActive = false }: { settingsActive?: boolean }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  return (
+    <header
+      data-slot="easy-top-bar"
+      className={cn(
+        'workspace-titlebar flex shrink-0 items-center gap-3 border-b border-border/50 px-5',
+        isMac() ? 'ps-22' : 'native-controls-right',
+      )}
+    >
+      <Link
+        to={EASY_ROUTES.home}
+        className="flex items-center gap-2.5 rounded-lg px-1 py-1 outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+        aria-label={t('easy.go_home')}
+      >
+        <img src={brandIcon} alt="" className="size-7" draggable={false} />
+        <span className="text-[17px] font-semibold tracking-tight">{t('easy.app_name')}</span>
+      </Link>
+      <div className="ms-auto flex items-center">
+        <Button
+          variant={settingsActive ? 'secondary' : 'ghost'}
+          size="lg"
+          className="gap-2 px-3"
+          aria-current={settingsActive ? 'page' : undefined}
+          onClick={() => runRendererTask('Open settings', () => navigate({ to: '/settings' }))}
+        >
+          <SettingsIcon className="size-4" />
+          {t('easy.settings')}
+        </Button>
+      </div>
+    </header>
+  );
+}
+
+export function EasyShell() {
+  return (
+    <div data-slot="easy-shell" className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <EasyTopBar />
+      <main
+        data-slot="workspace-content"
+        className="studio-scrollbar min-h-0 flex-1 overflow-y-auto bg-background break-keep"
+      >
+        <Outlet />
+      </main>
+    </div>
+  );
+}
+
+/** A subpage: a fixed "← Home" button and the page title above the content. */
+export function EasyPage({
+  title,
+  actions,
+  children,
+  backTo = EASY_ROUTES.home,
+  backLabel,
+}: {
+  title: string;
+  actions?: ReactNode;
+  children: ReactNode;
+  backTo?: string;
+  backLabel?: string;
+}) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  return (
+    <div className="flex min-h-full flex-col">
+      <div className="sticky top-0 z-10 border-b border-border/40 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+        <div className="mx-auto flex w-full max-w-3xl items-center gap-4 px-6 py-3.5">
+          <Button
+            variant="outline"
+            className="h-11 gap-2 rounded-xl px-4 text-[15px]"
+            onClick={() => runRendererTask('Easy back', () => navigate({ to: backTo }))}
+          >
+            <ArrowLeftIcon className="size-5" />
+            {backLabel ?? t('easy.home')}
+          </Button>
+          <h1 className="min-w-0 flex-1 truncate text-2xl font-semibold tracking-tight">{title}</h1>
+          {actions}
+        </div>
+      </div>
+      <div className="mx-auto w-full max-w-3xl flex-1 px-6 pt-6 pb-12">{children}</div>
+    </div>
+  );
+}
+
+export function EasySection({
+  step,
+  title,
+  hint,
+  children,
+  className,
+}: {
+  step?: number;
+  title: string;
+  hint?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      className={cn('rounded-2xl border border-border/70 bg-card p-5 shadow-xs sm:p-6', className)}
+    >
+      <div className="mb-4 flex items-center gap-3">
+        {step !== undefined && (
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/12 text-sm font-semibold text-primary">
+            {step}
+          </span>
+        )}
+        <h2 className="text-lg font-semibold">{title}</h2>
+        {hint && <div className="ms-auto text-sm text-muted-foreground">{hint}</div>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+export function EasyEmpty({
+  icon,
+  title,
+  description,
+  action,
+}: {
+  icon: ReactNode;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card/60 px-6 py-12 text-center">
+      <div className="flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary [&_svg]:size-8">
+        {icon}
+      </div>
+      <p className="text-lg font-semibold">{title}</p>
+      {description && <p className="max-w-sm text-[15px] text-muted-foreground">{description}</p>}
+      {action && <div className="mt-2">{action}</div>}
+    </div>
+  );
+}
+
+export function EasyPlayButton({
+  playKey,
+  src,
+  label,
+  size = 'default',
+  disabled,
+}: {
+  playKey: string;
+  src: string | null | undefined;
+  label?: string;
+  size?: 'default' | 'large' | 'icon';
+  disabled?: boolean;
+}) {
+  const { t } = useTranslation();
+  const playing = useEasyPlaying(playKey);
+  const text = playing ? t('easy.stop') : (label ?? t('easy.play'));
+  const Icon = playing ? PauseIcon : PlayIcon;
+  if (size === 'icon')
+    return (
+      <Button
+        variant="outline"
+        className="size-11 rounded-full"
+        aria-label={text}
+        title={text}
+        aria-pressed={playing}
+        disabled={disabled || !src}
+        onClick={() => src && toggleEasyPlayback(playKey, src)}
+      >
+        <Icon className="size-5" />
+      </Button>
+    );
+  return (
+    <Button
+      variant={size === 'large' ? 'default' : 'outline'}
+      className={cn(
+        'gap-2 rounded-xl',
+        size === 'large' ? 'h-12 px-5 text-base' : 'h-11 px-4 text-[15px]',
+      )}
+      aria-pressed={playing}
+      disabled={disabled || !src}
+      onClick={() => src && toggleEasyPlayback(playKey, src)}
+    >
+      <Icon className="size-5" />
+      {text}
+    </Button>
+  );
+}

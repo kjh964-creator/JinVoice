@@ -67,14 +67,21 @@ def main():
     # 4. Visible strings: desktop catalogs + mobile contract. Keep the
     #    upstream web/email domain (voicestudio.sh) as attribution.
     pattern = re.compile(r'VoiceStudio(?![.]sh)')
+    # Upstream's paid plan and donations belong to VoiceStudio, not to us.
+    upstream_owned = ('proPage', 'supportPlans', 'donate')
     files = sorted((ROOT / 'electron/src/renderer/src/i18n/locales').glob('*.json'))
     files += sorted((ROOT / 'mobile/contract').glob('strings*.json'))
     for path in files:
-        text = path.read_text(encoding='utf-8')
-        fixed = pattern.sub(NAME, text)
-        if fixed != text:
-            json.loads(fixed)
-            path.write_bytes(fixed.encode('utf-8'))
+        original = path.read_text(encoding='utf-8')
+        data = json.loads(pattern.sub(NAME, original))
+        for key in upstream_owned:
+            if isinstance(data.get(key), dict):
+                data[key] = json.loads(json.dumps(data[key], ensure_ascii=False).replace(NAME, 'VoiceStudio'))
+        account = data.get('account')
+        if isinstance(account, dict) and isinstance(account.get('feature_pro'), str):
+            account['feature_pro'] = account['feature_pro'].replace(NAME, 'VoiceStudio')
+        if data != json.loads(original):
+            path.write_bytes((json.dumps(data, ensure_ascii=False, indent=2) + '\n').encode('utf-8'))
 
     # 4b. Packaged smoke test looks for the exe and title by product name.
     smoke = 'electron/tests/packaged-smoke.mjs'

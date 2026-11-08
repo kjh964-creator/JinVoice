@@ -20,6 +20,8 @@ vi.mock('@/lib/api/client', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/lib/api/client')>()),
   apiJson: vi.fn().mockImplementation(() => Promise.resolve(modelStatus.value)),
 }));
+// The full studio announces finished takes with a toast; easy mode shows a result card.
+vi.mock('@/lib/easy-mode', () => ({ EASY_MODE: false }));
 vi.mock('sonner', () => ({
   toast: { error: vi.fn(), info: vi.fn(), success: vi.fn(), warning: vi.fn() },
 }));

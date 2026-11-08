@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { useAccount } from '@/features/account/use-account';
+import { EASY_MODE } from '@/lib/easy-mode';
 
 /** First-run choice (owner rule 2026-10-16): equal-weight Yes/No, skipping = off. */
 export function AccountConsent({
@@ -11,7 +12,8 @@ export function AccountConsent({
 }) {
   const { t } = useTranslation();
   const { supported, state, setSwitches } = useAccount();
-  const required = Boolean(supported && state?.available && !state.prompted);
+  // Easy mode never offers the cloud account; skipping leaves it off (same as "No").
+  const required = Boolean(!EASY_MODE && supported && state?.available && !state.prompted);
   useEffect(() => {
     if (!supported || state) onRequirementChange?.(required);
   }, [required, supported, state, onRequirementChange]);

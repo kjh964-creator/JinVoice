@@ -901,6 +901,10 @@ def _render_chapter_cached(chapter, synth, sr, engine_id, resolve, cache_dir, le
     # intermediate assembly inputs, re-marked here on every chapter render.
     # Already runs in the GPU-pool executor; never raises (degrades to
     # unmarked on failure).
+    # Per-chapter speech loudness master before the mark, so every chapter
+    # lands at the same level even from a quiet reference voice.
+    from services.speech_loudness import master_take
+    audio = master_take(audio, sr, context="longform.chapter")
     audio = trace_call("watermark", mark_synthetic, audio, sr, context="longform.chapter")
     # Durable: a power-off right after this chapter must not leave a torn
     # file under its key (#2279).
