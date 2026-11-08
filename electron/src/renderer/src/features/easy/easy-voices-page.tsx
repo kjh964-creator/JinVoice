@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { MicIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+import { DownloadIcon, MicIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ProfileAvatar } from '@/components/profile-avatar';
@@ -24,7 +24,7 @@ import type { Profile } from '@/lib/api/types';
 import { EASY_ROUTES } from '@/lib/easy-mode';
 import { runRendererTask } from '@/lib/global-error-recovery';
 import { queryKeys } from '@/lib/query';
-import { easyDate } from './easy-audio';
+import { easyDate, saveEasyVoice } from './easy-audio';
 import { EasyEmpty, EasyPage, EasyPlayButton } from './easy-layout';
 import { easyVoices } from './easy-voices';
 
@@ -153,6 +153,16 @@ export function EasyVoicesPage() {
                     playKey={`voice:${voice.id}`}
                     src={profileAudioUrl(voice.id, voice.audio_url)}
                   />
+                  <Button
+                    variant="ghost"
+                    className="h-11 gap-2 rounded-xl px-3 text-[15px]"
+                    onClick={() =>
+                      void saveEasyVoice(profileAudioUrl(voice.id, voice.audio_url), voice.name)
+                    }
+                  >
+                    <DownloadIcon className="size-4" />
+                    {t('easy.save_short')}
+                  </Button>
                   <Button
                     variant="ghost"
                     className="h-11 gap-2 rounded-xl px-3 text-[15px]"

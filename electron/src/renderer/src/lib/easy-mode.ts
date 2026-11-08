@@ -1,4 +1,9 @@
 import { useSyncExternalStore } from 'react';
+import {
+  getEnabledEasyFeatures,
+  isEnabledEasyFeaturePath,
+  type EasyFeatureId,
+} from './easy-features';
 
 /**
  * JinVoice easy mode: the app shows a few plain screens (make speech, my
@@ -79,6 +84,7 @@ export const EASY_ROUTES = {
   history: '/easy/history',
   audiobook: '/easy/audiobook',
   help: '/easy/help',
+  features: '/easy/features',
 } as const;
 
 /**
@@ -104,7 +110,16 @@ export function isEasyModePath(pathname: string): boolean {
   );
 }
 
-/** Where the root route guard sends `pathname`, or null to let it through. */
-export function easyModeRedirect(pathname: string, easy = isEasyModeEnabled()): string | null {
-  return easy && !isEasyModePath(pathname) ? '/' : null;
+/**
+ * Where the root route guard sends `pathname`, or null to let it through.
+ * Easy mode also lets through the original workspaces the user switched on
+ * one by one (Settings → General → "Turn features on and off").
+ */
+export function easyModeRedirect(
+  pathname: string,
+  easy = isEasyModeEnabled(),
+  features: readonly EasyFeatureId[] = getEnabledEasyFeatures(),
+): string | null {
+  if (!easy || isEasyModePath(pathname)) return null;
+  return isEnabledEasyFeaturePath(pathname, features) ? null : '/';
 }

@@ -41,7 +41,9 @@ _SKIP_EXT = {
 # CJK (test-fixture descriptions, model/engine identifiers like CosyVoice
 # speaker IDs, multilingual sample text) — they are documentation, not shipped
 # UI strings, so they belong on the same footing as the allowlisted docs below.
-_ALLOWED_PREFIXES = ("electron/src/shared/i18n/", "electron/src/renderer/src/i18n/", "docs/specs/")
+# jinvoice/ holds the Korean-only JinVoice homepage and web-server helpers
+# (not part of the translated app UI).
+_ALLOWED_PREFIXES = ("electron/src/shared/i18n/", "electron/src/renderer/src/i18n/", "docs/specs/", "jinvoice/")
 
 # Functional / data / documentation files where CJK is intentional and required.
 _ALLOWED_FILES = {

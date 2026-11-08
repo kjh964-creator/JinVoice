@@ -68,7 +68,7 @@ def main():
     #    upstream web/email domain (voicestudio.sh) as attribution.
     pattern = re.compile(r'VoiceStudio(?![.]sh)')
     # Upstream's paid plan and donations belong to VoiceStudio, not to us.
-    upstream_owned = ('proPage', 'supportPlans', 'donate')
+    upstream_owned = ('proPage', 'supportPlans', 'donate', 'enterprise')
     files = sorted((ROOT / 'electron/src/renderer/src/i18n/locales').glob('*.json'))
     files += sorted((ROOT / 'mobile/contract').glob('strings*.json'))
     for path in files:

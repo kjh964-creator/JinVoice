@@ -187,6 +187,23 @@ def discard_manifest_file(path: str) -> None:
         return
 
 
+def discard_job_dir(manifest_file: str) -> None:
+    """Delete an interrupted job's whole work dir (the user gave up on it), by
+    a manifest path from :func:`scan_resumable`. Only a direct child of
+    OUTPUTS_DIR named ``<type>_<id>`` is removed. The shared chapter cache is
+    left alone. Raises OSError when the folder could not be removed."""
+    import shutil
+    from core.config import OUTPUTS_DIR
+    root = os.path.realpath(OUTPUTS_DIR)
+    d = os.path.realpath(os.path.dirname(manifest_file))
+    if os.path.dirname(d) != root or not _SAFE_SEG_RE.match(os.path.basename(d)):
+        raise OSError("not a job work dir")
+    discard_manifest_file(manifest_file)
+    shutil.rmtree(d, ignore_errors=True)
+    if os.path.exists(os.path.join(d, _MANIFEST_NAME)):
+        raise OSError("could not remove the job")
+
+
 def load_manifest_file(path: str) -> Optional[dict]:
     """Read + validate a manifest from a path obtained via :func:`scan_resumable`
     (a trusted, os.listdir-derived path — NOT a request-derived one). Returns

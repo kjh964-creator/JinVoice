@@ -27,7 +27,7 @@ has('mobile/android/app/build.gradle.kts', 'applicationId = "com.jinvoice.mobile
 visible = re.compile(r'VoiceStudio(?![.]sh)')
 for path in list((ROOT / 'electron/src/renderer/src/i18n/locales').glob('*.json')) + list((ROOT / 'mobile/contract').glob('strings*.json')):
     data = json.loads(path.read_text(encoding='utf-8'))
-    for key in ('proPage', 'supportPlans', 'donate'):
+    for key in ('proPage', 'supportPlans', 'donate', 'enterprise'):
         data.pop(key, None)
         if key != 'donate' and isinstance(data.get(key), dict):
             pass

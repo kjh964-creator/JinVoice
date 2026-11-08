@@ -76,6 +76,7 @@ import { rememberSettingsRoute } from '@/lib/settings-route';
 import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
 import { isEasyModePath, useEasyMode } from '@/lib/easy-mode';
 import { useEasyModeSwitch } from '@/lib/use-easy-mode-switch';
+import { EasyFeatureSettings } from '@/features/easy/easy-feature-settings';
 
 const sections = ['general', 'appearance'] as const;
 const fields = {
@@ -745,6 +746,10 @@ export function SettingsPage() {
                 </>
               )}
             </SettingsSection>
+          )}
+          {/* JinVoice: per-feature switches for easy mode, right below "Show all features". */}
+          {!extra && !isMedia && !isLogs && !isModels && section === 'general' && (
+            <EasyFeatureSettings />
           )}
         </SettingsContent>
       </section>

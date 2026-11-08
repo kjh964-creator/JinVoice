@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { isMac } from '@/components/bridge';
+import { useEasyMode } from '@/lib/easy-mode';
 
 /**
  * True while the page shows its own pane titled exactly like the shell title, so
@@ -22,6 +23,9 @@ export function titleShownByPane(header: HTMLElement): boolean {
 
 export function WorkspaceHeader({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
+  // JinVoice: a feature switched on in easy mode opens under the easy bar, which
+  // already has the way home; upstream's Pro/star shortcuts lead to hidden pages.
+  const easyMode = useEasyMode();
   const header = useRef<HTMLElement>(null);
   const [paneTitled, setPaneTitled] = useState(false);
   // Re-checks on every render (title text, language) and whenever the pane opens or collapses.
@@ -67,8 +71,8 @@ export function WorkspaceHeader({ children }: { children: ReactNode }) {
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
         {/* JinVoice: one click back to the easy screens. */}
-        <EasyModeReturnButton className="h-7 px-2 text-xs font-medium" />
-        <SupportShortcut />
+        {!easyMode && <EasyModeReturnButton className="h-7 px-2 text-xs font-medium" />}
+        {!easyMode && <SupportShortcut />}
         <Button
           variant="ghost"
           size="sm"

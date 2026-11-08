@@ -128,8 +128,9 @@ describe('easy mode routes', () => {
 describe('EasyHomePage', () => {
   it('shows four big cards in a 2x2 grid that open each easy screen', () => {
     render(<EasyHomePage />);
-    const cards = screen.getAllByRole('button');
-    expect(cards).toHaveLength(4);
+    // Four big cards; the quiet "turn on more features" link is not one of them.
+    expect(document.querySelectorAll('[data-slot="easy-home-card"]')).toHaveLength(4);
+    expect(screen.getAllByRole('button')).toHaveLength(5);
     expect(document.querySelector('[data-slot="easy-home-grid"]')).toHaveClass('sm:grid-cols-2');
     fireEvent.click(screen.getByRole('button', { name: /easy\.audiobook_title/ }));
     expect(mocks.navigate).toHaveBeenLastCalledWith({ to: '/easy/audiobook' });
@@ -220,6 +221,34 @@ describe('EasyVoicesPage', () => {
     expect(row.getByRole('button', { name: 'easy.rename' })).toBeInTheDocument();
     fireEvent.click(row.getByRole('button', { name: 'easy.delete' }));
     expect(screen.getByText('easy.delete_voice_body')).toBeInTheDocument();
+  });
+
+  it('saves a voice recording under the voice name', async () => {
+    mocks.profiles = { data: [voice('v1', 'Mine')], isLoading: false };
+    const fetchMock = vi.fn(async (_url: unknown) =>
+      new Response(new Blob(['RIFF']), { status: 200, headers: { 'content-type': 'audio/wav' } }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const saveLocalFile = vi.spyOn(await import('@/lib/local-export'), 'saveLocalFile').mockResolvedValue(
+      { canceled: false } as never,
+    );
+    renderWithQuery(<EasyVoicesPage />);
+    fireEvent.click(within(screen.getAllByRole('listitem')[0]).getByRole('button', { name: 'easy.save_short' }));
+    await waitFor(() => expect(saveLocalFile).toHaveBeenCalled());
+    expect(String(fetchMock.mock.calls[0][0])).toContain('/profiles/v1/audio');
+    expect(saveLocalFile.mock.calls[0][1]).toBe('Mine.wav');
+    vi.unstubAllGlobals();
+    saveLocalFile.mockRestore();
+  });
+});
+
+describe('easyVoiceExt', () => {
+  it('picks the extension from the type, then the URL, else wav', async () => {
+    const { easyVoiceExt } = await import('./easy-audio');
+    expect(easyVoiceExt('audio/mpeg', '/x')).toBe('mp3');
+    expect(easyVoiceExt('audio/x-wav; charset=binary', '/x')).toBe('wav');
+    expect(easyVoiceExt('application/octet-stream', '/voice_audio/a.flac?t=1')).toBe('flac');
+    expect(easyVoiceExt(null, '/voice_audio/a.exe')).toBe('wav');
   });
 });
 
@@ -318,5 +347,41 @@ describe('EasyRegisterWizard', () => {
       target: { value: 'typed by hand' },
     });
     expect(screen.getByRole('button', { name: /easy\.next/ })).toBeEnabled();
+  });
+});
+
+describe('EasyWebSession', () => {
+  it('finds the gate root only for the /jinvoice/app web build', async () => {
+    const { jinvoiceWebRoot } = await import('./easy-web-session');
+    expect(jinvoiceWebRoot('/jinvoice/app')).toBe('/jinvoice');
+    expect(jinvoiceWebRoot('')).toBeNull();
+    expect(jinvoiceWebRoot('/other/app')).toBeNull();
+  });
+
+  it('shows the signed-in name and a log-out link from /jinvoice/me', async () => {
+    const { EasyWebSession } = await import('./easy-web-session');
+    const fetchMock = vi.fn(async (_url: unknown) =>
+      new Response(JSON.stringify({ logged_in: true, name: '민수' }), { status: 200 }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    render(<EasyWebSession root="/jinvoice" />);
+    const link = await screen.findByRole('link', { name: 'easy.logout' });
+    expect(link).toHaveAttribute('href', '/jinvoice/logout');
+    expect(String(fetchMock.mock.calls[0][0])).toBe('/jinvoice/me');
+    vi.unstubAllGlobals();
+  });
+
+  it('shows nothing in the desktop app or when signed out', async () => {
+    const { EasyWebSession } = await import('./easy-web-session');
+    const fetchMock = vi.fn(async (_url: unknown) => new Response(JSON.stringify({ logged_in: false }), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    const { container } = render(<EasyWebSession root={null} />);
+    expect(container).toBeEmptyDOMElement();
+    expect(fetchMock).not.toHaveBeenCalled();
+    cleanup();
+    const out = render(<EasyWebSession root="/jinvoice" />);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+    expect(out.container).toBeEmptyDOMElement();
+    vi.unstubAllGlobals();
   });
 });

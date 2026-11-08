@@ -11,6 +11,7 @@ import { isBackendReachable } from '@shared/utils/backendStage';
 import { AccountCorner } from './account-corner';
 import { NowPlayingDock } from '@/components/now-playing-dock';
 import { useEasyMode } from '@/lib/easy-mode';
+import { isEnabledEasyFeaturePath, useEasyFeatures } from '@/lib/easy-features';
 import { EasyShell, EasyTopBar } from '@/features/easy/easy-layout';
 
 /**
@@ -20,10 +21,31 @@ import { EasyShell, EasyTopBar } from '@/features/easy/easy-layout';
  */
 function EasyAppShell({ pathname }: { pathname: string }) {
   const settings = pathname.startsWith('/settings');
+  // An original workspace the user switched on (Settings → General → feature
+  // switches) opens as it is, under the easy bar with a big "back home" button.
+  const feature = isEnabledEasyFeaturePath(pathname, useEasyFeatures());
   return (
     <div className="app-surface relative flex h-full flex-col bg-background text-foreground">
       <div className="flex min-h-0 flex-1">
-        {settings ? (
+        {feature ? (
+          <div data-slot="easy-feature-frame" className="flex min-h-0 min-w-0 flex-1 flex-col">
+            <EasyTopBar backHome />
+            <div className="flex min-h-0 min-w-0 flex-1">
+              <BackendGate repairDock={<RepairAgentDock />}>
+                <ContextSidebar />
+                <main
+                  data-slot="workspace-content"
+                  className="@container relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+                >
+                  <div className="min-h-0 flex-1 overflow-hidden">
+                    <Outlet />
+                  </div>
+                  <RepairAgentDock />
+                </main>
+              </BackendGate>
+            </div>
+          </div>
+        ) : settings ? (
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <EasyTopBar settingsActive />
             <main
@@ -41,6 +63,7 @@ function EasyAppShell({ pathname }: { pathname: string }) {
           </BackendGate>
         )}
       </div>
+      {feature && <NowPlayingDock />}
     </div>
   );
 }

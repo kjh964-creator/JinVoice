@@ -6,6 +6,7 @@ vi.mock('@/components/bridge', () => ({ isMac: () => true }));
 vi.mock('./support-shortcut', () => ({ SupportShortcut: () => null }));
 vi.mock('./sidebar-toggle', () => ({ SidebarToggle: () => null }));
 
+import { setEasyModeEnabled } from '@/lib/easy-mode';
 import { WorkspaceHeader } from './workspace-header';
 
 afterEach(cleanup);
@@ -69,8 +70,13 @@ it('lets a page item pushed right sit beside search instead of mid-bar', () => {
 });
 
 it('shows the JinVoice way back to the easy screen in the full UI top bar', () => {
-  render(<Page />);
-  const back = screen.getByRole('button', { name: 'easy.back_to_easy' });
-  expect(back).toHaveClass('h-7');
-  expect(back).toHaveTextContent('easy.back_to_easy');
+  setEasyModeEnabled(false);
+  try {
+    render(<Page />);
+    const back = screen.getByRole('button', { name: 'easy.back_to_easy' });
+    expect(back).toHaveClass('h-7');
+    expect(back).toHaveTextContent('easy.back_to_easy');
+  } finally {
+    setEasyModeEnabled(true);
+  }
 });

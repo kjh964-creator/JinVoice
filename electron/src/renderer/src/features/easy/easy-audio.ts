@@ -143,6 +143,41 @@ export async function saveEasyAudioFile(audioPath: string, name: string): Promis
   }
 }
 
+const VOICE_EXT: Record<string, string> = {
+  'audio/wav': 'wav',
+  'audio/x-wav': 'wav',
+  'audio/wave': 'wav',
+  'audio/mpeg': 'mp3',
+  'audio/mp3': 'mp3',
+  'audio/mp4': 'm4a',
+  'audio/x-m4a': 'm4a',
+  'audio/ogg': 'ogg',
+  'audio/webm': 'webm',
+  'audio/flac': 'flac',
+  'audio/x-flac': 'flac',
+};
+
+/** File extension for a voice recording, from its type or URL (wav if unknown). */
+export function easyVoiceExt(contentType: string | null, url: string): string {
+  const type = (contentType ?? '').split(';')[0].trim().toLowerCase();
+  if (VOICE_EXT[type]) return VOICE_EXT[type];
+  const match = /\.([a-z0-9]{2,5})(?:[?#]|$)/i.exec(url);
+  const ext = match?.[1]?.toLowerCase();
+  return ext && Object.values(VOICE_EXT).includes(ext) ? ext : 'wav';
+}
+
+/** Save a registered voice's own recording (the sample it was made from). */
+export async function saveEasyVoice(url: string, name: string): Promise<void> {
+  try {
+    const res = await fetch(url, { credentials: 'same-origin' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const ext = easyVoiceExt(res.headers.get('content-type'), url);
+    await save(await res.blob(), `${easySafeFileName(name, 'JinVoice-voice')}.${ext}`);
+  } catch (error) {
+    toast.error(tr('easy.save_failed', { message: describeError(error) }));
+  }
+}
+
 /** 16-bit PCM WAV for mono samples. */
 export function encodeEasyWav(samples: Float32Array, sampleRate: number): Blob {
   const buffer = new ArrayBuffer(44 + samples.length * 2);

@@ -341,6 +341,30 @@ describe('EasyAudiobookPage', () => {
     expect(screen.getByRole('button', { name: /easy\.book_retry/ })).toBeInTheDocument();
   });
 
+  it('deletes an unfinished book after confirming', async () => {
+    mocks.profiles = { data: [voice('v1', 'Mine')], isLoading: false };
+    let jobs = [{ job_id: 'job 1', type: 'audiobook', title: 'Old book', chapters_done: 1, total_chapters: 3 }];
+    mocks.apiJson.mockImplementation(async (_path: string, init?: { method?: string }) => {
+      if (init?.method === 'DELETE') {
+        jobs = [];
+        return { deleted: 'job 1' };
+      }
+      return { jobs };
+    });
+    renderWithQuery(<EasyAudiobookPage />);
+    const row = await screen.findByText('easy.book_resume_title');
+    expect(row).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'easy.delete' }));
+    expect(screen.getByText('easy.book_delete_title')).toBeInTheDocument();
+    expect(mocks.apiJson).not.toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ method: 'DELETE' }));
+    const dialog = screen.getByRole('dialog');
+    fireEvent.click(within(dialog).getByRole('button', { name: 'easy.delete' }));
+    await waitFor(() =>
+      expect(mocks.apiJson).toHaveBeenCalledWith('/audiobook/jobs/job%201', { method: 'DELETE' }),
+    );
+    await waitFor(() => expect(screen.queryByText('easy.book_resume_title')).not.toBeInTheDocument());
+  });
+
   it('resumes an interrupted book through upstream’s resume endpoint', async () => {
     mocks.profiles = { data: [voice('v1', 'Mine')], isLoading: false };
     mocks.apiJson.mockResolvedValue({

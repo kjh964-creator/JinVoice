@@ -1553,6 +1553,27 @@ def list_resumable_jobs() -> dict:
     return {"jobs": out}
 
 
+@router.delete("/audiobook/jobs/{job_id}")
+def delete_resumable_job(job_id: str) -> dict:
+    """Throw away an interrupted longform render the user no longer wants: its
+    resume manifest and work dir go, so it stops being offered for resume.
+    The id only selects an entry from the trusted filesystem scan."""
+    from core import job_store
+
+    entry = next((e for e in longform_resume.scan_resumable()
+                  if e["job_id"] == job_id), None)
+    if entry is None:
+        raise HTTPException(status_code=404, detail="No resumable job for that id")
+    status = (job_store.get(entry["job_id"]) or {}).get("status")
+    if status in ("running", "queued", "pending"):
+        raise HTTPException(status_code=409, detail="That job is still running")
+    try:
+        longform_resume.discard_job_dir(entry["manifest_path"])
+    except OSError as exc:
+        raise HTTPException(status_code=500, detail="Could not delete that job") from exc
+    return {"deleted": entry["job_id"]}
+
+
 @router.post("/audiobook/resume/{job_id}")
 async def resume_longform(job_id: str, request: Request = None):
     """Resume an interrupted longform render from its persisted manifest. The

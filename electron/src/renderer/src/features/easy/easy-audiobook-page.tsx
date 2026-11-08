@@ -14,6 +14,7 @@ import {
   RotateCcwIcon,
   SettingsIcon,
   SquareIcon,
+  Trash2Icon,
   XCircleIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -24,6 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
+import { ConfirmDialog } from '@/features/clone/confirm-dialog';
 import { useProfiles } from '@/hooks/use-profiles';
 import { useTtsReadiness } from '@/hooks/use-tts-readiness';
 import { apiJson, apiPath, describeError, profileAudioUrl } from '@/lib/api/client';
@@ -205,6 +207,7 @@ export function EasyAudiobookPage() {
     if (!busy) void refetchJobs();
   }, [busy, book.phase, refetchJobs]);
   const resumable = busy ? [] : (jobs.data?.jobs ?? []);
+  const [deletingJob, setDeletingJob] = useState<ResumableJob | null>(null);
 
   const deferredText = useDeferredValue(draft.text);
   const labels = useMemo(
@@ -323,8 +326,41 @@ export function EasyAudiobookPage() {
             >
               {t('easy.book_resume')}
             </Button>
+            <Button
+              variant="ghost"
+              data-slot="easy-book-delete"
+              className="h-11 gap-2 rounded-xl px-3 text-[15px] text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => setDeletingJob(job)}
+            >
+              <Trash2Icon className="size-4" />
+              {t('easy.delete')}
+            </Button>
           </div>
         ))}
+        <ConfirmDialog
+          open={deletingJob !== null}
+          onOpenChange={(open) => !open && setDeletingJob(null)}
+          title={t('easy.book_delete_title')}
+          description={t('easy.book_delete_body', {
+            title: deletingJob?.title || t('easy.book_untitled'),
+          })}
+          confirmLabel={t('easy.delete')}
+          cancelLabel={t('easy.cancel')}
+          onConfirm={async () => {
+            if (!deletingJob) return;
+            try {
+              await apiJson(`/audiobook/jobs/${encodeURIComponent(deletingJob.job_id)}`, {
+                method: 'DELETE',
+              });
+              toast.success(t('easy.book_deleted'));
+            } catch (error) {
+              toast.error(t('easy.delete_failed', { message: describeError(error) }));
+            } finally {
+              setDeletingJob(null);
+              void refetchJobs();
+            }
+          }}
+        />
 
         {busy && (
           <section

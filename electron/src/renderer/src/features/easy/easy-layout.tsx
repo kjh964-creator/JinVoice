@@ -1,22 +1,26 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Link, Outlet, useNavigate } from '@tanstack/react-router';
 import { ArrowLeftIcon, CircleHelpIcon, PauseIcon, PlayIcon, SettingsIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { isMac } from '@/components/bridge';
+import { getBridge, isMac } from '@/components/bridge';
 import { Button } from '@/components/ui/button';
 import { brandIcon } from '@/lib/brand';
 import { EASY_ROUTES } from '@/lib/easy-mode';
 import { runRendererTask } from '@/lib/global-error-recovery';
 import { cn } from '@/lib/utils';
 import { toggleEasyPlayback, useEasyPlaying, type EasyPlayRange } from './easy-audio';
+import { EasyWebSession } from './easy-web-session';
 
 /** The whole easy-mode frame: logo + name, and small Help and Settings buttons. */
 export function EasyTopBar({
   settingsActive = false,
   helpActive = false,
+  backHome = false,
 }: {
   settingsActive?: boolean;
   helpActive?: boolean;
+  /** An original workspace opened from the easy home: show a big way back. */
+  backHome?: boolean;
 }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -25,7 +29,9 @@ export function EasyTopBar({
       data-slot="easy-top-bar"
       className={cn(
         'workspace-titlebar flex shrink-0 items-center gap-3 border-b border-border/50 px-5',
-        isMac() ? 'ps-22' : 'native-controls-right',
+        // The 148px right gap is for the desktop window buttons; a browser has none,
+        // and on a phone that gap squeezed the logo and buttons together.
+        isMac() ? 'ps-22' : getBridge() ? 'native-controls-right' : 'px-3 sm:px-5',
       )}
     >
       <Link
@@ -34,9 +40,31 @@ export function EasyTopBar({
         aria-label={t('easy.go_home')}
       >
         <img src={brandIcon} alt="" className="size-7" draggable={false} />
-        <span className="text-[17px] font-semibold tracking-tight">{t('easy.app_name')}</span>
+        <span
+          className={cn(
+            'text-[17px] font-semibold tracking-tight',
+            backHome && 'max-sm:sr-only',
+          )}
+        >
+          {t('easy.app_name')}
+        </span>
       </Link>
+      {backHome && (
+        <Button
+          data-slot="easy-back-home"
+          variant="outline"
+          size="lg"
+          className="gap-2 rounded-xl px-3.5"
+          onClick={() =>
+            runRendererTask('Back to easy home', () => navigate({ to: EASY_ROUTES.home }))
+          }
+        >
+          <ArrowLeftIcon className="size-4" />
+          {t('easy.back_home')}
+        </Button>
+      )}
       <div className="ms-auto flex items-center gap-1">
+        <EasyWebSession />
         <Button
           data-slot="easy-help-button"
           variant={helpActive ? 'secondary' : 'ghost'}
@@ -66,10 +94,16 @@ export function EasyTopBar({
 }
 
 export function EasyShell({ pathname = '' }: { pathname?: string }) {
+  const main = useRef<HTMLElement>(null);
+  // Every easy screen starts at its top, even when opened from far down the home.
+  useEffect(() => {
+    main.current?.scrollTo?.({ top: 0 });
+  }, [pathname]);
   return (
     <div data-slot="easy-shell" className="flex min-h-0 min-w-0 flex-1 flex-col">
       <EasyTopBar helpActive={pathname === EASY_ROUTES.help} />
       <main
+        ref={main}
         data-slot="workspace-content"
         className="studio-scrollbar min-h-0 flex-1 overflow-y-auto bg-background break-keep"
       >

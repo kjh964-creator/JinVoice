@@ -4,14 +4,17 @@ import {
   BookOpenTextIcon,
   ChevronRightIcon,
   MicIcon,
+  SlidersHorizontalIcon,
   Volume2Icon,
 } from 'lucide-react';
 import type { ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from '@/hooks/use-history';
 import { useProfiles } from '@/hooks/use-profiles';
+import { useEasyFeatures } from '@/lib/easy-features';
 import { EASY_ROUTES } from '@/lib/easy-mode';
 import { runRendererTask } from '@/lib/global-error-recovery';
+import { easyFeatureInfo } from './easy-feature-catalog';
 import { easyVoices } from './easy-voices';
 
 type EasyTarget =
@@ -60,6 +63,82 @@ function HomeCard({
   );
 }
 
+/**
+ * The original workspaces the user switched on in Settings ("Turn features on
+ * and off"), as smaller cards below the four main ones. With none on, only a
+ * quiet link to that list is shown.
+ */
+function EasyExtraFeatures() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const features = useEasyFeatures();
+  const manage = (
+    <button
+      type="button"
+      data-slot="easy-features-manage"
+      onClick={() =>
+        runRendererTask('Open feature switches', () => navigate({ to: EASY_ROUTES.features }))
+      }
+      className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-muted-foreground transition-colors outline-none hover:text-primary focus-visible:ring-3 focus-visible:ring-ring/40"
+    >
+      <SlidersHorizontalIcon className="size-4" />
+      {features.length ? t('easy.features_manage') : t('easy.features_more')}
+    </button>
+  );
+  if (!features.length)
+    return (
+      <div data-slot="easy-extra-features" className="-mt-3 flex justify-center">
+        {manage}
+      </div>
+    );
+  return (
+    <section
+      data-slot="easy-extra-features"
+      aria-labelledby="easy-extra-title"
+      className="flex flex-col gap-4"
+    >
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div className="flex flex-col gap-1">
+          <h2 id="easy-extra-title" className="text-xl font-semibold tracking-tight">
+            {t('easy.extra_title')}
+          </h2>
+          <p className="text-[15px] text-muted-foreground">{t('easy.extra_subtitle')}</p>
+        </div>
+        {manage}
+      </div>
+      <div
+        data-slot="easy-extra-grid"
+        className="grid gap-4 sm:grid-cols-2"
+      >
+        {features.map((id) => {
+          const { path, icon: Icon, nameKey, descKey } = easyFeatureInfo(id);
+          return (
+            <button
+              key={id}
+              type="button"
+              data-slot="easy-extra-card"
+              data-feature={id}
+              onClick={() => runRendererTask('Open extra feature', () => navigate({ to: path }))}
+              className="group flex items-center gap-4 rounded-2xl border border-border/70 bg-card p-4 text-start shadow-xs transition-[border-color,box-shadow,transform] outline-none hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            >
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary [&_svg]:size-6">
+                <Icon />
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="text-[17px] font-semibold tracking-tight">{t(nameKey)}</span>
+                <span className="text-sm leading-snug text-muted-foreground">
+                  {t(descKey)}
+                </span>
+              </span>
+              <ChevronRightIcon className="size-5 shrink-0 text-primary transition-transform group-hover:translate-x-0.5" />
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 export function EasyHomePage() {
   const { t } = useTranslation();
   const profiles = useProfiles();
@@ -104,6 +183,7 @@ export function EasyHomePage() {
           accent="bg-primary/12 text-primary"
         />
       </div>
+      <EasyExtraFeatures />
     </div>
   );
 }

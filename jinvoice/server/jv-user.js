@@ -18,6 +18,7 @@
         '#jv-who a:hover{filter:brightness(.96)}' +
         '@media (prefers-color-scheme:dark){#jv-who{color:#DADBEA;background:rgba(21,22,36,.9);border-color:rgba(255,255,255,.12)}' +
         '#jv-who a{color:#C9C6FF;background:rgba(124,108,255,.2)}}' +
+        '@media (max-width:640px){#jv-who{top:auto;bottom:12px;left:auto;right:12px;transform:none}#jv-who span{display:none}}' +
         '@media print{#jv-who{display:none}}';
       var box = document.createElement('div');
       box.id = 'jv-who';
@@ -31,6 +32,11 @@
       box.appendChild(dot); box.appendChild(name); box.appendChild(out);
       document.head.appendChild(css);
       document.body.appendChild(box);
+      // The easy screens show their own name + log-out button in the top bar;
+      // keep this floating one only for the other (advanced) screens.
+      var sync = function () { box.style.display = document.querySelector('[data-jv-session]') ? 'none' : ''; };
+      sync();
+      new MutationObserver(sync).observe(document.body, { childList: true, subtree: true });
     })
     .catch(function () {});
 })();
