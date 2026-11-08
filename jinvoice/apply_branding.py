@@ -28,7 +28,7 @@ def write(rel, text):
 
 def anchored(rel, old, new, count=1):
     text = read(rel)
-    if new in text and old not in text:
+    if new in text:
         return
     found = text.count(old)
     if found != count:
