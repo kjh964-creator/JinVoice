@@ -76,6 +76,14 @@ def main():
             json.loads(fixed)
             path.write_bytes(fixed.encode('utf-8'))
 
+    # 4b. Packaged smoke test looks for the exe and title by product name.
+    smoke = 'electron/tests/packaged-smoke.mjs'
+    text = read(smoke)
+    if 'VoiceStudio' in text:
+        write(smoke, text.replace('VoiceStudio.exe', f'{NAME}.exe')
+              .replace('VoiceStudio.app/Contents/MacOS/VoiceStudio', f'{NAME}.app/Contents/MacOS/{NAME}')
+              .replace("'VoiceStudio'", f"'{NAME}'"))
+
     # 5. Android: separate app id so it installs beside the store app.
     anchored('mobile/android/app/build.gradle.kts', 'applicationId = "sh.voicestudio.mobile"',
              f'applicationId = "{ANDROID_ID}"')

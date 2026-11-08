@@ -15,19 +15,19 @@ const defaultExecutableCandidates =
   process.platform === 'win32'
     ? targetArch === 'arm64'
       ? [
-          'electron/release/win-arm64-unpacked/VoiceStudio.exe',
-          'electron/release/win-unpacked/VoiceStudio.exe',
+          'electron/release/win-arm64-unpacked/JinVoice.exe',
+          'electron/release/win-unpacked/JinVoice.exe',
         ]
-      : ['electron/release/win-unpacked/VoiceStudio.exe']
+      : ['electron/release/win-unpacked/JinVoice.exe']
     : process.platform === 'darwin'
       ? targetArch === 'arm64'
         ? [
-            'electron/release/mac-arm64/VoiceStudio.app/Contents/MacOS/VoiceStudio',
-            'electron/release/mac/VoiceStudio.app/Contents/MacOS/VoiceStudio',
+            'electron/release/mac-arm64/JinVoice.app/Contents/MacOS/JinVoice',
+            'electron/release/mac/JinVoice.app/Contents/MacOS/JinVoice',
           ]
         : [
-            'electron/release/mac/VoiceStudio.app/Contents/MacOS/VoiceStudio',
-            'electron/release/mac-x64/VoiceStudio.app/Contents/MacOS/VoiceStudio',
+            'electron/release/mac/JinVoice.app/Contents/MacOS/JinVoice',
+            'electron/release/mac-x64/JinVoice.app/Contents/MacOS/JinVoice',
           ]
       : targetArch === 'arm64'
         ? [
@@ -164,14 +164,14 @@ try {
     verifyManagedShutdown = true;
     console.log('PASS: packaged backend reached deferred startup before deliberate quit');
   } else if (setup) {
-    await window.getByText('VoiceStudio', { exact: true }).first().waitFor();
+    await window.getByText('JinVoice', { exact: true }).first().waitFor();
     await app.evaluate(({ BrowserWindow }) => {
       BrowserWindow.getAllWindows()[0]?.setSize(960, 640);
     });
     const setupLayout = await window.evaluate(() => {
       const header = document.querySelector('header.workspace-titlebar');
       const scroller = document.querySelector('[data-testid="backend-gate-scroll"]');
-      const brand = header?.textContent?.includes('VoiceStudio') ? header : null;
+      const brand = header?.textContent?.includes('JinVoice') ? header : null;
       const headerRect = header?.getBoundingClientRect();
       const scrollRect = scroller?.getBoundingClientRect();
       return {
@@ -233,7 +233,7 @@ try {
       window.voicestudio.backend.chooseRuntimeLocation('Choose runtime location'),
     );
     assert.deepEqual(selected, {
-      path: join(customParent, 'VoiceStudio'),
+      path: join(customParent, 'JinVoice'),
       custom: true,
     });
     assert.equal(
@@ -258,7 +258,7 @@ try {
       null,
     );
     assert.equal(
-      existsSync(join(customParent, 'VoiceStudio')),
+      existsSync(join(customParent, 'JinVoice')),
       false,
       'Choosing a runtime location must not install before consent',
     );
@@ -395,7 +395,7 @@ try {
       );
     }
     if (!firstSound) {
-      await window.getByText('VoiceStudio', { exact: true }).first().waitFor({ timeout: 120_000 });
+      await window.getByText('JinVoice', { exact: true }).first().waitFor({ timeout: 120_000 });
     }
     if (existing) {
       const deadline = Date.now() + 120_000;

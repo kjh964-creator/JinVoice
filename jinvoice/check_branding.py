@@ -22,6 +22,7 @@ for rel in ['electron/electron-builder.config.mjs', 'electron/src/main/updater.t
     has(rel, 'kjh964-creator/JinVoice')
 has('backend/core/config.py', '"JinVoiceData"')
 has('electron/src/main/reset-data.ts', "'jinvoicedata'")
+has('electron/tests/packaged-smoke.mjs', 'win-unpacked/JinVoice.exe')
 has('mobile/android/app/build.gradle.kts', 'applicationId = "com.jinvoice.mobile"')
 visible = re.compile(r'VoiceStudio(?![.]sh)')
 for path in list((ROOT / 'electron/src/renderer/src/i18n/locales').glob('*.json')) + list((ROOT / 'mobile/contract').glob('strings*.json')):
