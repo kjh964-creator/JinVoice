@@ -82,7 +82,9 @@ def main():
     if 'VoiceStudio' in text:
         write(smoke, text.replace('VoiceStudio.exe', f'{NAME}.exe')
               .replace('VoiceStudio.app/Contents/MacOS/VoiceStudio', f'{NAME}.app/Contents/MacOS/{NAME}')
-              .replace("'VoiceStudio'", f"'{NAME}'"))
+              .replace("'VoiceStudio'", f"'{NAME}'")
+              # The app's custom runtime sub-folder keeps its internal name.
+              .replace(f"join(customParent, '{NAME}')", "join(customParent, 'VoiceStudio')"))
 
     # 5. Android: separate app id so it installs beside the store app.
     anchored('mobile/android/app/build.gradle.kts', 'applicationId = "sh.voicestudio.mobile"',

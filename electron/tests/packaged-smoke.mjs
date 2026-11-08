@@ -233,7 +233,7 @@ try {
       window.voicestudio.backend.chooseRuntimeLocation('Choose runtime location'),
     );
     assert.deepEqual(selected, {
-      path: join(customParent, 'JinVoice'),
+      path: join(customParent, 'VoiceStudio'),
       custom: true,
     });
     assert.equal(
@@ -258,7 +258,7 @@ try {
       null,
     );
     assert.equal(
-      existsSync(join(customParent, 'JinVoice')),
+      existsSync(join(customParent, 'VoiceStudio')),
       false,
       'Choosing a runtime location must not install before consent',
     );
