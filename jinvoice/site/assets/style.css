@@ -382,3 +382,12 @@ footer { position: relative; z-index: 1; margin-top: 88px; border-top: 1px solid
   .shot-frame img, .card.big .peek img, .window img.shot { filter: brightness(.9) contrast(1.02); }
   .shot-frame, .card.big .peek { border-color: rgba(255,255,255,.12); }
 }
+
+/* login status chip (filled by app.js from /jinvoice/me) */
+.who{display:inline-flex;align-items:center;gap:10px;margin-left:auto;margin-right:12px;padding:6px 8px 6px 12px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);font-size:14px;color:var(--ink-2);white-space:nowrap}
+.who[hidden]{display:none}
+.who-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 25%,transparent)}
+.who a{color:var(--muted);text-decoration:none;font-size:13px;padding:3px 8px;border-radius:999px}
+.who a:hover{background:var(--accent-soft);color:var(--accent-ink)}
+.who a:first-of-type{color:var(--accent-ink);font-weight:600}
+@media (max-width:720px){.who{margin-right:6px;gap:4px;padding:4px 4px 4px 10px;font-size:13px}.who a:first-of-type{display:none}}

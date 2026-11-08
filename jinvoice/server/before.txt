@@ -1,0 +1,5 @@
+/ 200
+/app/ 200
+/webhard/ 200
+/chat 301
+/watchai/ 404

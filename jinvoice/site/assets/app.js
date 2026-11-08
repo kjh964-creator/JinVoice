@@ -139,3 +139,18 @@
   reveal();
   loadRelease();
 })();
+
+// Login status chip: shows who is signed in to the web JinVoice.
+(function () {
+  var box = document.querySelector('[data-who]');
+  if (!box || !window.fetch) return;
+  fetch('/jinvoice/me', { credentials: 'same-origin', cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (!d || !d.logged_in) return;
+      box.querySelector('[data-who-name]').textContent = d.name + ' 로그인 중';
+      box.hidden = false;
+      document.querySelectorAll('a[href="/app/jinvoice-login"]').forEach(function (a) { a.href = '/jinvoice/app/'; });
+    })
+    .catch(function () {});
+})();

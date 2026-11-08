@@ -32,6 +32,14 @@ const run = spawnSync(vite, ['build', '--config', 'vite.web.config.ts'], {
 });
 if (run.status !== 0) process.exit(run.status ?? 1);
 
+// Web-only extra: the "who is signed in / logout" chip (not in desktop builds).
+{
+  const p = join(distDir, 'index.html');
+  const pfx = `/${base.replace(/^\/+|\/+$/g, '')}/`;
+  writeFileSync(join(distDir, 'jv-user.js'), readFileSync(join(here, 'jv-user.js')));
+  writeFileSync(p, readFileSync(p, 'utf8').replace('</body>', `  <script src="${pfx}jv-user.js" defer></script>\n  </body>`));
+}
+
 const index = readFileSync(join(distDir, 'index.html'), 'utf8');
 const prefix = `/${base.replace(/^\/+|\/+$/g, '')}/`;
 if (!index.includes(`src="${prefix}assets/`) || /(?:src|href)="\/(?:assets|favicon|early-error)/.test(index)) {

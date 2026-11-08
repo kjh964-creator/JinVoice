@@ -1,0 +1,43 @@
+JinVoice 웹 연결 3단계를 해 줘. 승인 없이 진행하고 비밀값(접속 키)은 절대 출력·로그하지 마. 기존 서비스는 멈추지 마. Caddy 를 바꾸는 단계라 반드시 백업 → 검증 → 실패 시 원래대로 복구 순서를 지켜 줘.
+
+A. 파일 받기
+1. https://github.com/kjh964-creator/JinVoice/releases/download/v0.5.9/jinvoice-web-0.5.9.zip 받기 → sha256 84ac209fabaed5c9254c3e62be3f19d8f6dc63f81a0b6c02db12b026ea8f0d31 확인 → D:/0.make/JinVoice-web 를 비우고 그 안에 풀기(zip 루트에 index.html 이 있음).
+2. https://github.com/kjh964-creator/JinVoice/releases/download/v0.5.9/jinvoice-site.zip 받기 → sha256 a519daf75f5c09cff60e3f2f109c347b8cbb6411ef91370c580d74df321c34b3 확인 → D:/0.make/JinVoiceSite 폴더를 만들고 그 안에 풀기(루트에 index.html, guide.html, assets/).
+3. JinVoice 서버(3920)를 다시 시작: 3920 포트를 쓰는 python 프로세스(트리 포함)만 종료 → D:/0.make/JinVoice-cache/start-jinvoice.vbs 실행 → http://127.0.0.1:3920/health 200 확인. (환경변수 OMNIVOICE_FRONTEND_DIST=D:/0.make/JinVoice-web 은 이미 start-jinvoice.ps1 에 있음.) http://127.0.0.1:3920/ 의 HTML 에 '/jinvoice/app/assets/' 가 들어 있는지 확인.
+
+B. Caddy (D:/0.make/homepage/caddy/Caddyfile)
+4. Caddyfile 을 Caddyfile.bak-jinvoice-<날짜시간> 으로 백업.
+5. 같은 폴더에 jinvoice-key.caddy 파일을 만들어 아래 한 블록만 넣기 (KEY 자리에 D:/0.make/JinVoice-cache/api.key 의 내용을 그대로). 이 파일은 icacls 로 현재 사용자·SYSTEM·Administrators 만 읽게 제한.
+   (jinvoice_key) {
+       header_up Authorization "Bearer KEY"
+   }
+6. Caddyfile 맨 위 전역 옵션 블록 바로 다음(사이트 블록들 앞)에 `import jinvoice-key.caddy` 한 줄 추가 (상대 경로가 안 되면 절대 경로 D:/0.make/homepage/caddy/jinvoice-key.caddy).
+7. imist.co.kr 사이트 블록 안에, 기존 handle 들과 같은 높이로 아래를 추가 (기존 줄은 하나도 바꾸지 말 것):
+   redir /jinvoice /jinvoice/ 308
+   redir /jinvoice/app /jinvoice/app/ 308
+   handle_path /jinvoice/app/* {
+       forward_auth 127.0.0.1:5090 {
+           uri /app/api/jinvoice-auth
+           @denied status 401
+           handle_response @denied {
+               redir * /app/jinvoice-login 302
+           }
+       }
+       reverse_proxy 127.0.0.1:3920 {
+           import jinvoice_key
+       }
+   }
+   handle_path /jinvoice/* {
+       root * D:/0.make/JinVoiceSite
+       file_server
+   }
+8. 이 PC에서 쓰는 caddy.exe 로 `caddy validate --config Caddyfile --adapter caddyfile` 실행. 실패하면 백업으로 되돌리고 오류를 보고(키가 오류 메시지에 나오면 가려서).
+9. 검증 통과하면 `caddy reload` (기존 방식대로; admin 2019). reload 실패 시 백업 복구 후 reload.
+
+C. 확인 (모두 https 로, 결과 코드만)
+10. https://imist.co.kr/jinvoice/ → 200 이고 'JinVoice' 문자열 포함
+11. https://imist.co.kr/jinvoice/guide.html → 200
+12. https://imist.co.kr/jinvoice/app/ (쿠키 없이) → 302 이고 Location 이 /app/jinvoice-login
+13. https://imist.co.kr/jinvoice/app/health (쿠키 없이) → 302 (백엔드에 안 닿아야 함)
+14. 기존 사이트가 그대로인지: https://imist.co.kr/ , https://imist.co.kr/app/ , https://imist.co.kr/webhard/ , https://imist.co.kr/chat , https://imist.co.kr/watchai/ (코드만, 401/200 등 기존과 같은지)
+15. 결과를 항목별로 짧게 보고.
