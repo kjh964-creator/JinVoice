@@ -9,10 +9,10 @@
       "connect": "Connect"
     },
     "connect": {
-      "title": "Connect to VoiceStudio",
-      "subtitle": "This app drives VoiceStudio running on your own computer or server. Nothing is processed in the cloud.",
+      "title": "Connect to JinVoice",
+      "subtitle": "This app drives JinVoice running on your own computer or server. Nothing is processed in the cloud.",
       "scan_qr": "Scan QR code",
-      "scan_help": "On your computer, open VoiceStudio, click the Local pill in the footer and choose Network. Then scan the QR code shown there.",
+      "scan_help": "On your computer, open JinVoice, click the Local pill in the footer and choose Network. Then scan the QR code shown there.",
       "manual": "Enter address",
       "url_label": "Server address",
       "url_placeholder": "http://192.168.1.20:3900",
@@ -26,14 +26,14 @@
       "saved_hosts": "Saved servers",
       "last_seen": "Last seen {{time}}",
       "forget": "Forget",
-      "error_unreachable": "Can't reach {{host}}. Make sure VoiceStudio is running, Network sharing is on, and this phone is on the same network or Tailscale.",
-      "error_not_voicestudio": "{{host}} answered, but it isn't a VoiceStudio server. Check the address and port.",
+      "error_unreachable": "Can't reach {{host}}. Make sure JinVoice is running, Network sharing is on, and this phone is on the same network or Tailscale.",
+      "error_not_voicestudio": "{{host}} answered, but it isn't a JinVoice server. Check the address and port.",
       "error_pin": "The PIN was rejected. Sharing generates a new PIN each time it's turned on — scan the QR code again.",
       "error_api_key": "The API key was rejected. Check the key set in OMNIVOICE_API_KEY on the server.",
       "error_session_expired": "Your session expired. Enter the API key again to reconnect.",
       "error_insecure": "Plain http:// is only allowed for addresses on your local network or Tailscale. Use https:// for other servers.",
       "error_invalid_url": "That doesn't look like a server address. Example: http://192.168.1.20:3900",
-      "error_qr": "This QR code isn't a VoiceStudio sharing code."
+      "error_qr": "This QR code isn't a JinVoice sharing code."
     },
     "speak": {
       "placeholder": "Type what you want to hear…",
@@ -81,7 +81,7 @@
       "failed_notification": "Dub failed: {{title}}",
       "language_unavailable": "This language has no supported target code. Choose another target language.",
       "remove_language": "Remove {{language}}",
-      "translation_setup": "Choose, install, and configure a translation engine on your computer in VoiceStudio → Settings, then try again.",
+      "translation_setup": "Choose, install, and configure a translation engine on your computer in JinVoice → Settings, then try again.",
       "translation_changed": "The translation engine changed on your computer. Start this dub again to review the selected service.",
       "translation_online_title": "Allow online translation for this dub?",
       "translation_online_body": "Your computer will send this dub’s transcript to {{service}} for translation. Allow this only for this job?",
@@ -100,10 +100,10 @@
       "copy": "Copy",
       "copied": "Copied",
       "not_ready": "Dictation isn't ready on the server yet: {{reason}}",
-      "install_model": "Install {{model}} on your computer in VoiceStudio → Settings → Models / Dictation, then retry.",
-      "setup": "Dictation is not ready. On your computer, check VoiceStudio → Settings → Models / Dictation, then refresh.",
+      "install_model": "Install {{model}} on your computer in JinVoice → Settings → Models / Dictation, then retry.",
+      "setup": "Dictation is not ready. On your computer, check JinVoice → Settings → Models / Dictation, then refresh.",
       "authorization": "Dictation requires authorization. Reconnect with your API key, or configure a trusted network on your computer; a sharing PIN alone does not authorize dictation.",
-      "install_model_size": "Install {{model}} ({{size}} GB) on your computer in VoiceStudio → Settings → Models / Dictation, then retry."
+      "install_model_size": "Install {{model}} ({{size}} GB) on your computer in JinVoice → Settings → Models / Dictation, then retry."
     },
     "settings": {
       "connection": "Connection",
@@ -118,15 +118,15 @@
       "notifications": "Notifications",
       "notifications_help": "Notify when a dub finishes. Notifications are created on this phone; nothing goes through a cloud service.",
       "privacy": "Privacy",
-      "privacy_help": "This app only talks to the VoiceStudio server you paired. No accounts, no cloud processing.",
+      "privacy_help": "This app only talks to the JinVoice server you paired. No accounts, no cloud processing.",
       "about": "About",
       "version": "Version {{version}}",
       "licenses": "Open-source licenses"
     },
     "permissions": {
-      "camera": "VoiceStudio uses the camera only to scan the pairing QR code.",
-      "microphone": "VoiceStudio uses the microphone to record voice samples and for dictation. Audio goes only to your paired server.",
-      "local_network": "VoiceStudio connects to the VoiceStudio server on your local network.",
+      "camera": "JinVoice uses the camera only to scan the pairing QR code.",
+      "microphone": "JinVoice uses the microphone to record voice samples and for dictation. Audio goes only to your paired server.",
+      "local_network": "JinVoice connects to the JinVoice server on your local network.",
       "denied": "Permission denied. You can allow it in system Settings.",
       "open_settings": "Open Settings"
     },
@@ -134,9 +134,9 @@
       "offline": "The server isn't reachable right now. Retrying…",
       "server": "The server reported an error: {{message}}",
       "timeout": "The server took too long to answer. It may be busy loading a model — try again in a moment.",
-      "model_licence_required": "{{models}}\nAccept it on your computer in VoiceStudio → Model Catalogue",
-      "invalid_response": "The server returned an unexpected response. Update VoiceStudio on the host and try again.",
-      "forbidden": "The host refused this action. Check permissions on your computer in VoiceStudio and reconnect.",
+      "model_licence_required": "{{models}}\nAccept it on your computer in JinVoice → Model Catalogue",
+      "invalid_response": "The server returned an unexpected response. Update JinVoice on the host and try again.",
+      "forbidden": "The host refused this action. Check permissions on your computer in JinVoice and reconnect.",
       "rate_limited": "The host is busy or limiting requests. Wait {{seconds}} seconds, then retry.",
       "redirect": "The host tried to redirect this request. Enter its final HTTPS address and reconnect.",
       "backend": "The host could not complete this request ({{status}}). Check the host, then retry.",
@@ -147,13 +147,13 @@
       "audio": "Audio could not start. Check microphone access and the audio device, then retry.",
       "dictation": "Dictation stopped. Check the speech-to-text model and connection on your computer, then retry.",
       "translation": "The host could not translate every segment. Check the translation engine and installed languages on the host, then retry.",
-      "asr_missing": "Install a speech-to-text model on your computer in VoiceStudio → Settings → Models / Dictation, then retry.",
+      "asr_missing": "Install a speech-to-text model on your computer in JinVoice → Settings → Models / Dictation, then retry.",
       "upload_active": "Wait for the current operation to finish or cancel the upload before switching servers."
     },
     "android": {
-      "app_name": "VoiceStudio",
+      "app_name": "JinVoice",
       "request_failed": "The server refused this request (HTTP {{code}}). Check the connection, server permissions and installed models, then try again.",
-      "invalid_response": "The server returned an incomplete response. Update VoiceStudio on your computer and try again.",
+      "invalid_response": "The server returned an incomplete response. Update JinVoice on your computer and try again.",
       "operation_failed": "This action could not finish. Check the connection, permissions and available storage, then try again.",
       "choose": "Choose",
       "selection": "{{label}}, currently {{value}}",
@@ -192,14 +192,14 @@
       "disconnected_offline": "Disconnected on this phone. The host could not confirm revocation; its session will expire automatically.",
       "remove_selection": "Remove {{name}}",
       "more_actions": "More actions for {{name}}",
-      "dub_restart": "Dubbing could not start. Select the source and start again. If this keeps happening, reconnect to your VoiceStudio host.",
-      "dub_foreground_failed": "Android could not start the background upload service. Reopen VoiceStudio and start the dub again. If it still fails, update or reinstall the app."
+      "dub_restart": "Dubbing could not start. Select the source and start again. If this keeps happening, reconnect to your JinVoice host.",
+      "dub_foreground_failed": "Android could not start the background upload service. Reopen JinVoice and start the dub again. If it still fails, update or reinstall the app."
     },
     "keyboard": {
       "done": "Done"
     },
     "ios": {
-      "app_name": "VoiceStudio",
+      "app_name": "JinVoice",
       "host_label": "Server name",
       "clone_create": "Create clone",
       "clone_file_ready": "Audio sample selected",
@@ -209,7 +209,7 @@
       "engine_default": "Host default",
       "model_licenses": "Model licenses on host",
       "licenses_inter": "Inter 4.1 — SIL Open Font License 1.1",
-      "licenses_app": "VoiceStudio — GNU Affero General Public License v3.0",
+      "licenses_app": "JinVoice — GNU Affero General Public License v3.0",
       "licenses_host": "View model license information on the paired host.",
       "notifications_permission": "Allow local notifications for completed dubs.",
       "dub_stages": {
@@ -221,7 +221,7 @@
         "failed": "Failed",
         "cancelled": "Stopped"
       },
-      "upload_pending": "Upload continues in the background. Keep VoiceStudio on your computer running.",
+      "upload_pending": "Upload continues in the background. Keep JinVoice on your computer running.",
       "upload_resume": "Resume monitoring",
       "upload_failed": "Upload failed. Reconnect to the same host and select the media again.",
       "privacy_local": "Analytics preference is saved on this device. This version never sends analytics.",
@@ -260,7 +260,7 @@
       "accept_licence": "Accept licence",
       "withdraw": "Withdraw acceptance",
       "licence_confirm": "I have the rights this licence requires for my use.",
-      "licensor_notice": "VoiceStudio is not the model licensor and cannot grant rights. Review the declared licence and restrictions before accepting. Acceptance applies only to these exact terms.",
+      "licensor_notice": "JinVoice is not the model licensor and cannot grant rights. Review the declared licence and restrictions before accepting. Acceptance applies only to these exact terms.",
       "terms_fingerprint": "Terms fingerprint: {{fingerprint}}",
       "licence_storage": "Model licence records could not be read or saved. Free storage and try again; models remain blocked.",
       "licence_required": "Accept the licence in Models first.",
@@ -370,7 +370,7 @@
       },
       "note": "Details (optional)",
       "include_text": "Include the text I entered",
-      "disclosure": "Sends your reason, note, the app version and the model that made this to the VoiceStudio team. No audio, account or device ID is sent.",
+      "disclosure": "Sends your reason, note, the app version and the model that made this to the JinVoice team. No audio, account or device ID is sent.",
       "send": "Send report",
       "sending": "Sending…",
       "sent": "Report sent. Thank you.",

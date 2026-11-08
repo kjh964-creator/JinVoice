@@ -8,11 +8,11 @@ def get_app_data_dir():
         return custom_dir
         
     if sys.platform == "darwin":
-        return os.path.expanduser("~/Library/Application Support/OmniVoice")
+        return os.path.expanduser("~/Library/Application Support/JinVoiceData")
     elif sys.platform == "win32":
-        return os.path.join(os.environ.get("APPDATA", ""), "OmniVoice")
+        return os.path.join(os.environ.get("APPDATA", ""), "JinVoiceData")
     else:
-        return os.path.expanduser("~/.omnivoice")
+        return os.path.expanduser("~/.jinvoice")
 
 
 def _configured_hf_token_path():

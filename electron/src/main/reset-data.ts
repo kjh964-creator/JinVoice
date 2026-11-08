@@ -112,6 +112,12 @@ export async function isValidVoiceStudioRoot(path: string, home: string | null):
     '.omnivoice',
     'voicestudio',
     'com.debpalash.omnivoice-studio',
+    'jinvoicedata',
+    'jinvoice',
+    '.jinvoice',
+    'jinvoicedata',
+    'jinvoice',
+    '.jinvoice',
     'huggingface',
   ]);
   if (components(path).some((part) => owned.has(part.toLocaleLowerCase('en-US')))) return true;

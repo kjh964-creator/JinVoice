@@ -1,0 +1,146 @@
+name: JinVoice build
+
+# Manual only. Builds the branded Windows installer and the signed Android APK.
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Create a GitHub release (tag v<version>) from the artifacts'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jinvoice-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash
+    env:
+      VOICESTUDIO_RUST_TARGET: x86_64-pc-windows-msvc
+      VOICESTUDIO_UPDATE_CHANNEL: electron-stable-win32-x64
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: '1.4.2'
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          workspaces: native/desktop-bridge -> target
+          key: electron-x86_64-pc-windows-msvc
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+        with:
+          version: '0.12.13'
+          enable-cache: false
+      - name: Branding check
+        run: python jinvoice/apply_branding.py && python jinvoice/check_branding.py
+      - name: Bundle pinned uv
+        run: |
+          mkdir -p electron/build/uv
+          cp "$(where.exe uv | head -n1 | tr -d '\r')" electron/build/uv/uv-x86_64-pc-windows-msvc.exe
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+      - name: Build Electron + web UI
+        run: |
+          bun run --cwd electron build
+          bun run --cwd electron build:web
+      - name: Package (no publish)
+        working-directory: electron
+        run: bun x electron-builder --config electron-builder.config.mjs --win --x64 --publish never
+      - name: Packaged startup smoke test
+        working-directory: electron
+        run: node tests/packaged-smoke.mjs --setup
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: JinVoice-windows-x64
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            electron/release/JinVoice-*.exe
+            electron/release/JinVoice-*.exe.blockmap
+            electron/release/*.yml
+
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: mobile/android
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@42ebad84b0585498c0413b0967cf4e80ec0e1d19 # v4.4.1
+      - name: Branding check
+        working-directory: .
+        run: python3 jinvoice/apply_branding.py && python3 jinvoice/check_branding.py
+      - name: SDK location
+        run: printf 'sdk.dir=%s\n' "$ANDROID_HOME" > local.properties
+      - name: NDK and CMake
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;27.1.12297006" "cmake;3.22.1" > /dev/null
+      - name: Cache native runtimes
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: mobile/native/android/build
+          key: android-native-${{ hashFiles('mobile/native/pins.json', 'mobile/native/android/**', '!mobile/native/android/build/**', 'mobile/native/mp3/**') }}
+      - name: Signed release APK
+        env:
+          KEYSTORE_B64: ${{ secrets.JINVOICE_ANDROID_KEYSTORE_B64 }}
+          VOICESTUDIO_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.JINVOICE_ANDROID_KEYSTORE_PASSWORD }}
+          VOICESTUDIO_ANDROID_KEY_PASSWORD: ${{ secrets.JINVOICE_ANDROID_KEYSTORE_PASSWORD }}
+          VOICESTUDIO_ANDROID_KEY_ALIAS: jinvoice
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/jinvoice.jks"
+          export VOICESTUDIO_ANDROID_KEYSTORE="$RUNNER_TEMP/jinvoice.jks"
+          ./gradlew --no-daemon :app:assembleRelease
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp app/build/outputs/apk/release/*.apk "$GITHUB_WORKSPACE/out/JinVoice.apk"
+          rm -f "$RUNNER_TEMP/jinvoice.jks"
+      - name: Upload reports on failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: android-reports
+          path: mobile/android/**/build/reports/
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: JinVoice-android
+          retention-days: 30
+          if-no-files-found: error
+          path: out/JinVoice.apk
+
+  release:
+    if: inputs.publish
+    needs: [windows, android]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          gh release create "v$version" dist/* --target "$GITHUB_SHA" --title "JinVoice $version" --notes "JinVoice $version (VoiceStudio 기반, AGPL-3.0)" --latest

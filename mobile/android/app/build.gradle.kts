@@ -30,7 +30,7 @@ android {
     ndkVersion = "27.1.12297006"
     defaultConfig {
         // Store identity (voicestudio.sh); the Kotlin namespace stays com.voicestudio.mobile.
-        applicationId = "sh.voicestudio.mobile"
+        applicationId = "com.jinvoice.mobile"
         minSdk = 29
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
         targetSdk = 36

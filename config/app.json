@@ -1,6 +1,6 @@
 {
-  "productName": "VoiceStudio",
-  "appId": "com.voicestudio.desktop",
+  "productName": "JinVoice",
+  "appId": "com.jinvoice.desktop",
   "ports": {
     "backend": 3900,
     "web": 3901,
