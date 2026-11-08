@@ -48,6 +48,8 @@ vi.mock('./status-bar', () => ({
   ),
 }));
 vi.mock('./system-notifications', () => ({ SystemNotifications: () => null }));
+const router = vi.hoisted(() => ({ navigate: vi.fn(async () => {}) }));
+vi.mock('@/router', () => ({ router }));
 
 vi.mock('./use-workspace-sidebar', () => ({
   useWorkspaceSidebarState: () => ({
@@ -59,6 +61,7 @@ vi.mock('./use-workspace-sidebar', () => ({
   }),
 }));
 import { MAC_TRAFFIC_LIGHTS_BAND } from '@shared/utils/windowChrome';
+import { isEasyModeEnabled, setEasyModeEnabled } from '@/lib/easy-mode';
 import { versionTranslationKey, WorkspaceSidebar } from './workspace-sidebar';
 
 beforeEach(() => {
@@ -139,4 +142,20 @@ it('shows the brand mark on the compact rail on macOS too, with the expand icon 
   } finally {
     platform.mac = false;
   }
+});
+
+it('offers a way back to the easy screen in the full UI that turns easy mode on again', async () => {
+  setEasyModeEnabled(false);
+  for (const compact of [false, true]) {
+    sidebar.compact = compact;
+    const { unmount } = render(<WorkspaceSidebar />);
+    expect(screen.getAllByRole('button', { name: 'easy.back_to_easy' }).length).toBeGreaterThan(0);
+    unmount();
+  }
+  sidebar.compact = false;
+  render(<WorkspaceSidebar />);
+  fireEvent.click(screen.getByRole('button', { name: 'easy.back_to_easy' }));
+  expect(isEasyModeEnabled()).toBe(true);
+  expect(localStorage.getItem('jinvoice.easy-mode.v1')).toBe('1');
+  await vi.waitFor(() => expect(router.navigate).toHaveBeenCalledWith({ to: '/' }));
 });

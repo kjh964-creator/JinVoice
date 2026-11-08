@@ -10,7 +10,7 @@ import { useBackendStatus } from '@/hooks/use-backend-status';
 import { isBackendReachable } from '@shared/utils/backendStage';
 import { AccountCorner } from './account-corner';
 import { NowPlayingDock } from '@/components/now-playing-dock';
-import { EASY_MODE } from '@/lib/easy-mode';
+import { useEasyMode } from '@/lib/easy-mode';
 import { EasyShell, EasyTopBar } from '@/features/easy/easy-layout';
 
 /**
@@ -37,7 +37,7 @@ function EasyAppShell({ pathname }: { pathname: string }) {
           </div>
         ) : (
           <BackendGate repairDock={<RepairAgentDock />}>
-            <EasyShell />
+            <EasyShell pathname={pathname} />
           </BackendGate>
         )}
       </div>
@@ -50,7 +50,8 @@ export function AppShell() {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  if (EASY_MODE) return <EasyAppShell pathname={pathname} />;
+  const easyMode = useEasyMode();
+  if (easyMode) return <EasyAppShell pathname={pathname} />;
   const shellOnly = pathname.startsWith('/settings') || pathname === '/pro';
   const macWorkspace = isMac() && !shellOnly;
   const SettingsWorkspace = pathname === '/settings/openapi' ? 'div' : 'main';

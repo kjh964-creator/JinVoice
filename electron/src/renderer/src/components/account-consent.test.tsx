@@ -3,9 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 const mock = vi.hoisted(() => ({ bridge: null as unknown, easy: false }));
 vi.mock('@/lib/easy-mode', () => ({
-  get EASY_MODE() {
-    return mock.easy;
-  },
+  useEasyMode: () => mock.easy,
 }));
 vi.mock('./bridge', () => ({ getBridge: () => mock.bridge }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));

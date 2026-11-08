@@ -12,6 +12,7 @@ import { useWorkspace } from '@/lib/store/workspace';
 import { useWorkspaceSidebarState } from './use-workspace-sidebar';
 import { WorkspaceNavigation } from './workspace-menu';
 import { StatusBar } from './status-bar';
+import { EasyModeReturnButton } from './easy-mode-return';
 
 export function versionTranslationKey(development: boolean) {
   return development ? ('app.version_dev' as const) : ('app.version' as const);
@@ -110,6 +111,7 @@ export function WorkspaceSidebar() {
                 data-motion="turn"
               />
             </Link>
+            <EasyModeReturnButton compact />
             {mac && <StatusBar compact inline />}
           </div>
         </aside>
@@ -211,6 +213,12 @@ export function WorkspaceSidebar() {
                   />
                   {t('nav.settings')}
                 </Link>
+                <EasyModeReturnButton />
+              </div>
+            )}
+            {mac && (
+              <div className="flex items-center justify-end gap-2 border-t border-border/50 px-3 py-2">
+                <EasyModeReturnButton />
               </div>
             )}
           </div>

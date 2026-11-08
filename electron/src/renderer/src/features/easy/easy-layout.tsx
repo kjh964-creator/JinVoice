@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link, Outlet, useNavigate } from '@tanstack/react-router';
-import { ArrowLeftIcon, PauseIcon, PlayIcon, SettingsIcon } from 'lucide-react';
+import { ArrowLeftIcon, CircleHelpIcon, PauseIcon, PlayIcon, SettingsIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { isMac } from '@/components/bridge';
 import { Button } from '@/components/ui/button';
@@ -8,10 +8,16 @@ import { brandIcon } from '@/lib/brand';
 import { EASY_ROUTES } from '@/lib/easy-mode';
 import { runRendererTask } from '@/lib/global-error-recovery';
 import { cn } from '@/lib/utils';
-import { toggleEasyPlayback, useEasyPlaying } from './easy-audio';
+import { toggleEasyPlayback, useEasyPlaying, type EasyPlayRange } from './easy-audio';
 
-/** The whole easy-mode frame: logo + name, and one small Settings button. */
-export function EasyTopBar({ settingsActive = false }: { settingsActive?: boolean }) {
+/** The whole easy-mode frame: logo + name, and small Help and Settings buttons. */
+export function EasyTopBar({
+  settingsActive = false,
+  helpActive = false,
+}: {
+  settingsActive?: boolean;
+  helpActive?: boolean;
+}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   return (
@@ -30,7 +36,20 @@ export function EasyTopBar({ settingsActive = false }: { settingsActive?: boolea
         <img src={brandIcon} alt="" className="size-7" draggable={false} />
         <span className="text-[17px] font-semibold tracking-tight">{t('easy.app_name')}</span>
       </Link>
-      <div className="ms-auto flex items-center">
+      <div className="ms-auto flex items-center gap-1">
+        <Button
+          data-slot="easy-help-button"
+          variant={helpActive ? 'secondary' : 'ghost'}
+          size="lg"
+          className="gap-2 px-3"
+          aria-current={helpActive ? 'page' : undefined}
+          onClick={() =>
+            runRendererTask('Open easy help', () => navigate({ to: EASY_ROUTES.help }))
+          }
+        >
+          <CircleHelpIcon className="size-4" />
+          {t('easy.help')}
+        </Button>
         <Button
           variant={settingsActive ? 'secondary' : 'ghost'}
           size="lg"
@@ -46,10 +65,10 @@ export function EasyTopBar({ settingsActive = false }: { settingsActive?: boolea
   );
 }
 
-export function EasyShell() {
+export function EasyShell({ pathname = '' }: { pathname?: string }) {
   return (
     <div data-slot="easy-shell" className="flex min-h-0 min-w-0 flex-1 flex-col">
-      <EasyTopBar />
+      <EasyTopBar helpActive={pathname === EASY_ROUTES.help} />
       <main
         data-slot="workspace-content"
         className="studio-scrollbar min-h-0 flex-1 overflow-y-auto bg-background break-keep"
@@ -157,12 +176,14 @@ export function EasyPlayButton({
   label,
   size = 'default',
   disabled,
+  range,
 }: {
   playKey: string;
   src: string | null | undefined;
   label?: string;
   size?: 'default' | 'large' | 'icon';
   disabled?: boolean;
+  range?: EasyPlayRange;
 }) {
   const { t } = useTranslation();
   const playing = useEasyPlaying(playKey);
@@ -177,7 +198,7 @@ export function EasyPlayButton({
         title={text}
         aria-pressed={playing}
         disabled={disabled || !src}
-        onClick={() => src && toggleEasyPlayback(playKey, src)}
+        onClick={() => src && toggleEasyPlayback(playKey, src, range)}
       >
         <Icon className="size-5" />
       </Button>
@@ -191,7 +212,7 @@ export function EasyPlayButton({
       )}
       aria-pressed={playing}
       disabled={disabled || !src}
-      onClick={() => src && toggleEasyPlayback(playKey, src)}
+      onClick={() => src && toggleEasyPlayback(playKey, src, range)}
     >
       <Icon className="size-5" />
       {text}

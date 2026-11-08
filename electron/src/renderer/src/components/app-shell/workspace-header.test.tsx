@@ -67,3 +67,10 @@ it('lets a page item pushed right sit beside search instead of mid-bar', () => {
     'ml-auto',
   );
 });
+
+it('shows the JinVoice way back to the easy screen in the full UI top bar', () => {
+  render(<Page />);
+  const back = screen.getByRole('button', { name: 'easy.back_to_easy' });
+  expect(back).toHaveClass('h-7');
+  expect(back).toHaveTextContent('easy.back_to_easy');
+});

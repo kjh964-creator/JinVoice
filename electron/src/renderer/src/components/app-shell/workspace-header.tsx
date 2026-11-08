@@ -1,5 +1,6 @@
 import { SupportShortcut } from './support-shortcut';
 import { SidebarToggle } from './sidebar-toggle';
+import { EasyModeReturnButton } from './easy-mode-return';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { SearchIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -65,6 +66,8 @@ export function WorkspaceHeader({ children }: { children: ReactNode }) {
         {children}
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
+        {/* JinVoice: one click back to the easy screens. */}
+        <EasyModeReturnButton className="h-7 px-2 text-xs font-medium" />
         <SupportShortcut />
         <Button
           variant="ghost"

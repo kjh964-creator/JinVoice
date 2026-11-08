@@ -23,9 +23,7 @@ vi.mock('../bridge', () => ({ isMac: () => false }));
 vi.mock('@/hooks/use-backend-status', () => ({ useBackendStatus: () => ({ stage: 'ready' }) }));
 const easy = vi.hoisted(() => ({ on: false }));
 vi.mock('@/lib/easy-mode', () => ({
-  get EASY_MODE() {
-    return easy.on;
-  },
+  useEasyMode: () => easy.on,
 }));
 vi.mock('@/features/easy/easy-layout', () => ({
   EasyShell: () => <div data-testid="easy-shell" />,

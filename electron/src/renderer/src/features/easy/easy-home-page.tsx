@@ -1,5 +1,11 @@
 import { useNavigate } from '@tanstack/react-router';
-import { AudioLinesIcon, ChevronRightIcon, MicIcon, Volume2Icon } from 'lucide-react';
+import {
+  AudioLinesIcon,
+  BookOpenTextIcon,
+  ChevronRightIcon,
+  MicIcon,
+  Volume2Icon,
+} from 'lucide-react';
 import type { ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from '@/hooks/use-history';
@@ -11,7 +17,8 @@ import { easyVoices } from './easy-voices';
 type EasyTarget =
   | typeof EASY_ROUTES.create
   | typeof EASY_ROUTES.voices
-  | typeof EASY_ROUTES.history;
+  | typeof EASY_ROUTES.history
+  | typeof EASY_ROUTES.audiobook;
 
 function HomeCard({
   to,
@@ -34,21 +41,19 @@ function HomeCard({
       type="button"
       data-slot="easy-home-card"
       onClick={() => runRendererTask('Open easy screen', () => navigate({ to }))}
-      className="group flex min-h-56 flex-col items-start gap-4 rounded-3xl border border-border/70 bg-card p-6 text-start shadow-xs transition-[border-color,box-shadow,transform] outline-none hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      className="group flex min-h-44 flex-row items-start gap-5 rounded-3xl border border-border/70 bg-card p-6 text-start shadow-xs transition-[border-color,box-shadow,transform] outline-none hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
     >
       <span
-        className={`flex size-16 items-center justify-center rounded-2xl ${accent} [&_svg]:size-8`}
+        className={`flex size-16 shrink-0 items-center justify-center rounded-2xl ${accent} [&_svg]:size-8`}
       >
         <Icon />
       </span>
-      <span className="flex flex-col gap-1.5">
+      <span className="flex min-h-full min-w-0 flex-1 flex-col gap-1.5 self-stretch">
         <span className="text-xl font-semibold tracking-tight">{title}</span>
         <span className="text-[15px] leading-relaxed text-muted-foreground">{description}</span>
-      </span>
-      <span className="mt-auto flex w-full items-center justify-between text-sm font-medium text-primary">
-        <span className="text-muted-foreground">{meta}</span>
-        <span className="flex items-center gap-1">
-          <ChevronRightIcon className="size-5 transition-transform group-hover:translate-x-0.5" />
+        <span className="mt-auto flex w-full items-center justify-between pt-3 text-sm font-medium">
+          <span className="text-muted-foreground">{meta}</span>
+          <ChevronRightIcon className="size-5 text-primary transition-transform group-hover:translate-x-0.5" />
         </span>
       </span>
     </button>
@@ -67,13 +72,20 @@ export function EasyHomePage() {
         <h1 className="text-3xl font-semibold tracking-tight">{t('easy.home_title')}</h1>
         <p className="text-base text-muted-foreground">{t('easy.home_subtitle')}</p>
       </div>
-      <div className="grid gap-5 sm:grid-cols-3">
+      <div data-slot="easy-home-grid" className="grid gap-5 sm:grid-cols-2">
         <HomeCard
           to={EASY_ROUTES.create}
           icon={AudioLinesIcon}
           title={t('easy.create_title')}
           description={t('easy.create_card')}
           accent="bg-primary text-primary-foreground"
+        />
+        <HomeCard
+          to={EASY_ROUTES.audiobook}
+          icon={BookOpenTextIcon}
+          title={t('easy.audiobook_title')}
+          description={t('easy.audiobook_card')}
+          accent="bg-primary/12 text-primary"
         />
         <HomeCard
           to={EASY_ROUTES.voices}

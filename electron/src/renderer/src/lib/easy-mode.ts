@@ -1,11 +1,75 @@
+import { useSyncExternalStore } from 'react';
+
 /**
- * JinVoice easy mode: the whole app is three plain screens (make speech, my
- * voices, made speech) plus Settings for first-run downloads. Every other
- * workspace stays in the code base but is unlinked and redirected home.
+ * JinVoice easy mode: the app shows a few plain screens (make speech, my
+ * voices, made speech, long text, help) plus Settings. Every other workspace
+ * stays in the code base; it is only hidden while easy mode is on.
  *
- * Flip this to `false` to bring back the full VoiceStudio workspace UI.
+ * Easy mode is a saved preference, on by default. Settings → General →
+ * "Show all features (advanced)" turns it off and brings back the full
+ * VoiceStudio workspace at once; the full UI has a "Back to easy screen"
+ * button that turns it on again. One source of truth: `isEasyModeEnabled()`
+ * for plain code (route guards) and `useEasyMode()` for components.
  */
-export const EASY_MODE: boolean = true;
+export const EASY_MODE_STORAGE_KEY = 'jinvoice.easy-mode.v1';
+
+function readStored(): boolean {
+  try {
+    // Only an explicit "0" (the user chose the full UI) turns easy mode off.
+    return globalThis.localStorage?.getItem(EASY_MODE_STORAGE_KEY) !== '0';
+  } catch {
+    return true;
+  }
+}
+
+let enabled = readStored();
+const listeners = new Set<() => void>();
+
+function notify() {
+  for (const listener of listeners) listener();
+}
+
+/** Current mode, for code outside React (route `beforeLoad`, callbacks). */
+export function isEasyModeEnabled(): boolean {
+  return enabled;
+}
+
+/** Save the mode and update every screen at once (no restart). */
+export function setEasyModeEnabled(next: boolean): void {
+  try {
+    globalThis.localStorage?.setItem(EASY_MODE_STORAGE_KEY, next ? '1' : '0');
+  } catch {
+    /* Storage can be unavailable; the choice still applies to this session. */
+  }
+  if (next === enabled) return;
+  enabled = next;
+  notify();
+}
+
+/** Re-read the saved value (another window changed it, or a test reset it). */
+export function reloadEasyModePreference(): void {
+  const next = readStored();
+  if (next === enabled) return;
+  enabled = next;
+  notify();
+}
+
+export function subscribeEasyMode(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+if (typeof window !== 'undefined')
+  window.addEventListener('storage', (event) => {
+    if (event.key === null || event.key === EASY_MODE_STORAGE_KEY) reloadEasyModePreference();
+  });
+
+/** Reactive easy-mode flag for components. */
+export function useEasyMode(): boolean {
+  return useSyncExternalStore(subscribeEasyMode, isEasyModeEnabled, isEasyModeEnabled);
+}
 
 export const EASY_ROUTES = {
   home: '/',
@@ -13,11 +77,14 @@ export const EASY_ROUTES = {
   voices: '/easy/voices',
   newVoice: '/easy/voices/new',
   history: '/easy/history',
+  audiobook: '/easy/audiobook',
+  help: '/easy/help',
 } as const;
 
 /**
  * Settings pages easy mode hides: upstream's donation/support-plan page and
- * the VoiceStudio Cloud account page (sign-in, sync, Pro).
+ * the VoiceStudio Cloud account page (sign-in, sync, Pro). The full UI shows
+ * them exactly as upstream does.
  */
 const EASY_HIDDEN_SETTINGS = ['/settings/support', '/settings/account'];
 
@@ -35,4 +102,9 @@ export function isEasyModePath(pathname: string): boolean {
     pathname === '/settings' ||
     pathname.startsWith('/settings/')
   );
+}
+
+/** Where the root route guard sends `pathname`, or null to let it through. */
+export function easyModeRedirect(pathname: string, easy = isEasyModeEnabled()): string | null {
+  return easy && !isEasyModePath(pathname) ? '/' : null;
 }

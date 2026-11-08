@@ -74,20 +74,23 @@ import i18n, { APP_LANGUAGE_ITEMS, APP_LANGUAGES, setAppLanguage, type AppLocale
 import { setReviewMode, useReviewMode } from '@/hooks/use-review-mode';
 import { rememberSettingsRoute } from '@/lib/settings-route';
 import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
-import { EASY_MODE, isEasyModePath } from '@/lib/easy-mode';
+import { isEasyModePath, useEasyMode } from '@/lib/easy-mode';
+import { useEasyModeSwitch } from '@/lib/use-easy-mode-switch';
 
 const sections = ['general', 'appearance'] as const;
 const fields = {
-  general: ['language', 'review_mode'],
+  general: ['language', 'review_mode', 'easy_mode'],
   appearance: ['theme', 'font', 'ui_scale', 'glass', 'sidebar_expanded'],
 };
 
 const fieldKey = (key: string) =>
   key === 'glass'
     ? 'themeAppearance.glass'
-    : key === 'language' || key === 'review_mode'
-      ? `settings.${key}`
-      : `preferences.${key}`;
+    : key === 'easy_mode'
+      ? 'easy.show_all_features'
+      : key === 'language' || key === 'review_mode'
+        ? `settings.${key}`
+        : `preferences.${key}`;
 
 const settingsNavItemClass =
   'group h-9 min-w-0 rounded-lg font-normal transition-[color,background-color,box-shadow,backdrop-filter] duration-150 hover:bg-[var(--sidebar-row-hover)] hover:backdrop-blur-xl hover:shadow-[inset_0_1px_0_rgb(255_255_255/8%),0_5px_15px_rgb(0_0_0/9%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/60 aria-[current=page]:bg-[var(--sidebar-row-active)] aria-[current=page]:font-medium aria-[current=page]:shadow-[inset_2px_0_0_var(--primary)]';
@@ -243,9 +246,11 @@ export function SettingsPage() {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
+  const easyMode = useEasyMode();
+  const switchEasyMode = useEasyModeSwitch();
   // Easy mode lists no donation, support-plan or account/cloud pages.
   const extras = extraSettingsFor(useAccount().state?.available === true).filter(
-    (item) => !EASY_MODE || isEasyModePath(item.to),
+    (item) => !easyMode || isEasyModePath(item.to),
   );
   const extra = extras.find((item) => pathname === item.to);
   const isOpenApi = pathname === '/settings/openapi';
@@ -279,6 +284,7 @@ export function SettingsPage() {
     sidebar_expanded: 'sidebar-expanded-label',
     language: 'language-label',
     review_mode: 'review-mode-label',
+    easy_mode: 'easy-mode-label',
   };
   const extraMatches = extras.filter((item) =>
     item.fields.some((key) =>
@@ -490,7 +496,7 @@ export function SettingsPage() {
           )}
         </div>
         <div className="shrink-0 space-y-1.5 border-t border-sidebar-border/50 bg-background/15 p-3">
-          {!EASY_MODE && (
+          {!easyMode && (
             <Link
               to="/settings/support"
               title={t('donate.title')}
@@ -508,7 +514,7 @@ export function SettingsPage() {
             </Link>
           )}
           <Link
-            to={EASY_MODE ? '/' : '/clone'}
+            to={easyMode ? '/' : '/clone'}
             title={t('preferences.back')}
             className={cn(
               buttonVariants({ variant: 'ghost' }),
@@ -723,6 +729,18 @@ export function SettingsPage() {
                         </Button>
                       ))}
                     </div>
+                  </SettingsRow>
+                  <SettingsRow
+                    id="easy-mode-label"
+                    title={t('easy.show_all_features')}
+                    description={t('easy.show_all_features_desc')}
+                  >
+                    <Switch
+                      data-slot="easy-mode-switch"
+                      aria-labelledby="easy-mode-label"
+                      checked={!easyMode}
+                      onCheckedChange={(showAll) => switchEasyMode(!showAll)}
+                    />
                   </SettingsRow>
                 </>
               )}

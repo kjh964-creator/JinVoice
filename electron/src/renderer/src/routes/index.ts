@@ -1,7 +1,8 @@
+import { createElement } from 'react';
 import { createRootRoute, createRoute, lazyRouteComponent, redirect } from '@tanstack/react-router';
 import { AppShell } from '@/components/app-shell/app-shell';
 import { readLastSettingsRoute } from '@/lib/settings-route';
-import { EASY_MODE, isEasyModePath } from '@/lib/easy-mode';
+import { easyModeRedirect, isEasyModeEnabled, isEasyModePath, useEasyMode } from '@/lib/easy-mode';
 
 const HomePage = lazyRouteComponent(() => import('@/features/home/home-page'), 'HomePage');
 
@@ -56,16 +57,23 @@ const EasyHomePage = lazyRouteComponent(
 export const rootRoute = createRootRoute({
   component: AppShell,
   // Easy mode shows only its own screens and Settings; every other workspace
-  // stays in the code but is unreachable and lands on the easy home instead.
+  // stays in the code and comes back when Settings turns easy mode off. The
+  // guard reads the saved preference on every navigation, so a switch applies
+  // at once without a restart.
   beforeLoad: ({ location }) => {
-    if (EASY_MODE && !isEasyModePath(location.pathname)) throw redirect({ to: '/' });
+    if (easyModeRedirect(location.pathname)) throw redirect({ to: '/' });
   },
 });
+
+/** `/` follows the saved mode live: the easy home, or upstream's home page. */
+function IndexPage() {
+  return createElement(useEasyMode() ? EasyHomePage : HomePage);
+}
 
 export const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: EASY_MODE ? EasyHomePage : HomePage,
+  component: IndexPage,
 });
 
 export const easyCreateRoute = createRoute({
@@ -98,6 +106,21 @@ export const easyHistoryRoute = createRoute({
   ),
 });
 
+export const easyAudiobookRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/easy/audiobook',
+  component: lazyRouteComponent(
+    () => import('@/features/easy/easy-audiobook-page'),
+    'EasyAudiobookPage',
+  ),
+});
+
+export const easyHelpRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/easy/help',
+  component: lazyRouteComponent(() => import('@/features/easy/easy-help-page'), 'EasyHelpPage'),
+});
+
 export const savedVoicesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/personas',
@@ -119,7 +142,9 @@ export const settingsRoute = createRoute({
   beforeLoad: () => {
     const last = readLastSettingsRoute();
     // A remembered page easy mode hides (support, account) opens General instead.
-    throw redirect({ to: EASY_MODE && !isEasyModePath(last) ? '/settings/general' : last });
+    throw redirect({
+      to: isEasyModeEnabled() && !isEasyModePath(last) ? '/settings/general' : last,
+    });
   },
 });
 
@@ -332,6 +357,8 @@ export const routeTree = rootRoute.addChildren([
   easyVoicesRoute,
   easyNewVoiceRoute,
   easyHistoryRoute,
+  easyAudiobookRoute,
+  easyHelpRoute,
   cloneRoute,
   savedVoicesRoute,
   pronunciationRoute,

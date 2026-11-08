@@ -5,7 +5,7 @@ const mocks = vi.hoisted(() => ({ generate: vi.fn(), warning: vi.fn(), success: 
 vi.mock('sonner', () => ({ toast: { warning: mocks.warning, success: mocks.success } }));
 vi.mock('@/lib/api/generate', () => ({ generateClone: mocks.generate }));
 // The full studio announces finished takes with a toast; easy mode shows a result card.
-vi.mock('@/lib/easy-mode', () => ({ EASY_MODE: false }));
+vi.mock('@/lib/easy-mode', () => ({ isEasyModeEnabled: () => false, useEasyMode: () => false }));
 vi.mock('@tanstack/react-router', () => ({
   Link: ({
     children,

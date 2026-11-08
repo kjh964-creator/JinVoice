@@ -10,7 +10,7 @@ export function easyVoices(profiles: Profile[] | undefined): Profile[] {
     );
 }
 
-/** 느리게 / 보통 / 빠르게 → the speaking-rate multiplier sent with each take. */
+/** Slow / normal / fast → the speaking-rate multiplier sent with each take. */
 export const EASY_SPEEDS = { slow: 0.85, normal: 1, fast: 1.2 } as const;
 export type EasySpeed = keyof typeof EASY_SPEEDS;
 
@@ -20,5 +20,12 @@ export function easySpeedOf(speed: number): EasySpeed {
   return 'normal';
 }
 
-/** Longest text easy mode accepts in one take; long scripts belong to the full studio. */
-export const EASY_MAX_CHARS = 2000;
+/**
+ * Longest text easy mode accepts in one take. The backend reads long text in
+ * ~800-character pieces by itself; longer writing belongs to the read-long-text page (the
+ * easy audiobook), which renders and saves it chapter by chapter.
+ */
+export const EASY_MAX_CHARS = 5000;
+
+/** From this length on, the make-speech page points to the audiobook page. */
+export const EASY_LONG_TEXT_HINT = 4000;

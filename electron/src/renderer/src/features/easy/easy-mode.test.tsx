@@ -126,10 +126,13 @@ describe('easy mode routes', () => {
 });
 
 describe('EasyHomePage', () => {
-  it('shows three big cards that open each easy screen', () => {
+  it('shows four big cards in a 2x2 grid that open each easy screen', () => {
     render(<EasyHomePage />);
     const cards = screen.getAllByRole('button');
-    expect(cards).toHaveLength(3);
+    expect(cards).toHaveLength(4);
+    expect(document.querySelector('[data-slot="easy-home-grid"]')).toHaveClass('sm:grid-cols-2');
+    fireEvent.click(screen.getByRole('button', { name: /easy\.audiobook_title/ }));
+    expect(mocks.navigate).toHaveBeenLastCalledWith({ to: '/easy/audiobook' });
     fireEvent.click(screen.getByRole('button', { name: /easy\.create_title/ }));
     expect(mocks.navigate).toHaveBeenLastCalledWith({ to: '/easy/create' });
     fireEvent.click(screen.getByRole('button', { name: /easy\.voices_title/ }));
@@ -174,6 +177,20 @@ describe('EasyCreatePage', () => {
     expect(createButton()).toBeDisabled();
     fireEvent.click(screen.getByRole('button', { name: 'easy.open_settings' }));
     expect(mocks.navigate).toHaveBeenCalledWith({ to: '/settings/models' });
+  });
+
+  it('accepts up to 5000 characters and points long text to the audiobook page', () => {
+    mocks.profiles = { data: [voice('v1', 'Mine')], isLoading: false };
+    setCloneSetting('text', 'a'.repeat(4500));
+    render(<EasyCreatePage />);
+    expect(createButton()).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: /easy\.long_text_hint/ }));
+    expect(mocks.navigate).toHaveBeenCalledWith({ to: '/easy/audiobook' });
+    cleanup();
+    setCloneSetting('text', 'a'.repeat(5001));
+    render(<EasyCreatePage />);
+    expect(createButton()).toBeDisabled();
+    expect(screen.getByText('easy.too_long')).toBeInTheDocument();
   });
 
   it('shows a waiting state while speech is being made', () => {

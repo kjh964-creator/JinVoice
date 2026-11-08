@@ -16,4 +16,7 @@
 4. **No fake "JinVoice Pro"** — owner asked "진보이스 프로는 뭐야 돈을 받고하는거야?". The /pro page, supportPlans, account.feature_pro,
    donate and cloudsync pro strings are upstream's paid VoiceStudio Pro (checkout at voicestudio.sh). Easy mode must not link them;
    branding script must keep the upstream name ("VoiceStudio Pro") in pro/donate/supportPlans strings instead of "JinVoice Pro".
+5. **고급 기능 꺼내기 스위치** — owner asked how to bring hidden features back. Turn EASY_MODE from a constant into a saved
+   preference: ⚙ 설정 → bottom '모든 기능 보기 (고급)' switch (default off = easy). On → full upstream navigation; a
+   '쉬운 화면으로' button in the full UI's top-left switches back. Persist the choice (localStorage/prefs), apply without restart.
 2. **Loudness** — quiet reference recordings must still give loud output: normalize every saved generation (speech RMS ≈ -17 dBFS, smooth limiter ≤ -0.4 dBFS). Reference: `E:/app_make4/JinhoVoice/engine_worker.py` `master_loudness`.

@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import {
   AudioLinesIcon,
+  BookOpenTextIcon,
   CheckCircle2Icon,
+  ChevronRightIcon,
   CircleAlertIcon,
   DownloadIcon,
   MicIcon,
@@ -11,7 +13,6 @@ import {
   SettingsIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { ProfileAvatar } from '@/components/profile-avatar';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
@@ -32,60 +33,8 @@ import { useLatestOutput } from '@/lib/store/output';
 import { cn } from '@/lib/utils';
 import { easyDate, saveEasyBlob } from './easy-audio';
 import { EasyEmpty, EasyPage, EasyPlayButton, EasySection } from './easy-layout';
-import {
-  EASY_MAX_CHARS,
-  EASY_SPEEDS,
-  easySpeedOf,
-  easyVoices,
-  type EasySpeed,
-} from './easy-voices';
-
-function VoiceTile({
-  name,
-  imageUrl,
-  subtitle,
-  selected,
-  onSelect,
-  playKey,
-  playSrc,
-}: {
-  name: string;
-  imageUrl?: string | null;
-  subtitle?: string;
-  selected: boolean;
-  onSelect: () => void;
-  playKey?: string;
-  playSrc?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        'flex min-h-18 items-center gap-2 rounded-2xl border bg-background p-2 ps-3 transition-colors',
-        selected
-          ? 'border-primary bg-primary/6 ring-2 ring-primary/25'
-          : 'border-border hover:border-primary/40',
-      )}
-    >
-      <button
-        type="button"
-        role="radio"
-        aria-checked={selected}
-        onClick={onSelect}
-        className="flex min-h-14 min-w-0 flex-1 items-center gap-3 rounded-xl text-start outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
-      >
-        <ProfileAvatar name={name} imageUrl={imageUrl} className="size-11 text-sm" />
-        <span className="flex min-w-0 flex-col">
-          <span className="truncate text-base font-medium">{name}</span>
-          {subtitle && <span className="truncate text-sm text-muted-foreground">{subtitle}</span>}
-        </span>
-        {selected && <CheckCircle2Icon className="ms-auto size-5 shrink-0 text-primary" />}
-      </button>
-      {playKey && playSrc && <EasyPlayButton playKey={playKey} src={playSrc} size="icon" />}
-    </div>
-  );
-}
-
-const SPEEDS: EasySpeed[] = ['slow', 'normal', 'fast'];
+import { EasySpeedPicker, EasyVoiceTile } from './easy-voice-tile';
+import { EASY_LONG_TEXT_HINT, EASY_MAX_CHARS, easyVoices } from './easy-voices';
 
 export function EasyCreatePage() {
   const { t, i18n } = useTranslation();
@@ -138,6 +87,8 @@ export function EasyCreatePage() {
 
   const openRegister = () =>
     runRendererTask('Open voice registration', () => navigate({ to: EASY_ROUTES.newVoice }));
+  const openAudiobook = () =>
+    runRendererTask('Open easy audiobook', () => navigate({ to: EASY_ROUTES.audiobook }));
   const openSettings = () =>
     runRendererTask('Open settings', () => navigate({ to: '/settings/models' }));
 
@@ -171,7 +122,7 @@ export function EasyCreatePage() {
                 className="grid gap-3 sm:grid-cols-2"
               >
                 {presets.map((preset, index) => (
-                  <VoiceTile
+                  <EasyVoiceTile
                     key={preset}
                     name={preset}
                     subtitle={t('easy.builtin_voice')}
@@ -205,7 +156,7 @@ export function EasyCreatePage() {
               className="grid gap-3 sm:grid-cols-2"
             >
               {voices.map((voice) => (
-                <VoiceTile
+                <EasyVoiceTile
                   key={voice.id}
                   name={voice.name}
                   imageUrl={voice.image_url}
@@ -251,37 +202,27 @@ export function EasyCreatePage() {
             value={text}
             onChange={(event) => setCloneSetting('text', event.target.value)}
             placeholder={t('easy.text_placeholder')}
-            className="min-h-36 rounded-xl px-4 py-3 text-base leading-relaxed md:text-base"
+            className="max-h-96 min-h-36 rounded-xl px-4 py-3 text-base leading-relaxed md:text-base"
           />
+          {text.length >= EASY_LONG_TEXT_HINT && (
+            <button
+              type="button"
+              data-slot="easy-long-text-hint"
+              onClick={openAudiobook}
+              className="group mt-3 flex w-full items-center gap-3 rounded-xl border border-primary/25 bg-primary/6 px-4 py-3 text-start text-[15px] transition-colors outline-none hover:border-primary/45 focus-visible:ring-2 focus-visible:ring-ring/40"
+            >
+              <BookOpenTextIcon className="size-5 shrink-0 text-primary" />
+              <span className="min-w-0 flex-1">{t('easy.long_text_hint')}</span>
+              <span className="flex shrink-0 items-center gap-0.5 font-medium text-primary">
+                {t('easy.audiobook_title_short')}
+                <ChevronRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </button>
+          )}
         </EasySection>
 
         <EasySection step={3} title={t('easy.step_speed')}>
-          <div
-            role="radiogroup"
-            aria-label={t('easy.step_speed')}
-            className="grid grid-cols-3 gap-2 rounded-2xl bg-muted/60 p-1.5"
-          >
-            {SPEEDS.map((option) => {
-              const active = easySpeedOf(speed) === option;
-              return (
-                <button
-                  key={option}
-                  type="button"
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => setCloneSetting('speed', EASY_SPEEDS[option])}
-                  className={cn(
-                    'h-12 rounded-xl text-base font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/40',
-                    active
-                      ? 'bg-background text-foreground shadow-sm ring-1 ring-border'
-                      : 'text-muted-foreground hover:text-foreground',
-                  )}
-                >
-                  {t(`easy.speed_${option}`)}
-                </button>
-              );
-            })}
-          </div>
+          <EasySpeedPicker speed={speed} onChange={(next) => setCloneSetting('speed', next)} />
         </EasySection>
 
         {generation.isGenerating ? (

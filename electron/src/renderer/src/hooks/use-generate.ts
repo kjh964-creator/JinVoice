@@ -38,7 +38,7 @@ import { isPresetOnly, useTtsReadiness } from './use-tts-readiness';
 import { useEngines } from './use-engines';
 import { recordActionBreadcrumb } from '@/lib/report-breadcrumb';
 import { announceDroppedSpeech } from '@/lib/dropped-speech';
-import { EASY_MODE } from '@/lib/easy-mode';
+import { isEasyModeEnabled } from '@/lib/easy-mode';
 
 const TIMER_TICK_MS = 100;
 const PROGRESS_THROTTLE_MS = 100;
@@ -400,7 +400,8 @@ function useGenerateController(): UseGenerateClone {
         setLatestOutput(result, design?.text ?? settings.text);
         recordActionBreadcrumb(`generate:${reportMode}:complete`);
         // Easy mode shows the finished take as a big result card instead.
-        if (!EASY_MODE) toast.success(tr('tts.generationComplete'), { position: 'top-right' });
+        if (!isEasyModeEnabled())
+          toast.success(tr('tts.generationComplete'), { position: 'top-right' });
         if (!design)
           // Record what was actually rendered: a take sent without emotion (an
           // engine without IndexTTS2 controls, or Off) is saved as neutral, so
