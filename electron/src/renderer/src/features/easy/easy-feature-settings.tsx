@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { EASY_FEATURE_CATALOG } from './easy-feature-catalog';
 
 /**
- * Settings → General: one 사용/미사용 switch per original workspace. A switched-on
+ * Settings → General: one on/off switch per original workspace. A switched-on
  * feature appears on the easy home under "More features" and opens inside easy
  * mode; while the full UI is shown everything is visible anyway, so the list
  * stays editable and says so.

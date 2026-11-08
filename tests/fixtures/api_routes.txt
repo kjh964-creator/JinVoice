@@ -62,6 +62,7 @@ GET /audio/{audio_id}.ogg
 GET /audio/{audio_id}.opus
 GET /audio/{audio_id}/quality
 GET /audiobook/jobs
+DELETE /audiobook/jobs/{job_id}
 GET /batch/download/{job_id}/{lang}
 GET /batch/jobs
 GET /batch/jobs/{job_id}
