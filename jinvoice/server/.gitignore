@@ -1,1 +1,7 @@
 out/
+# local ops notes for the mini PC (not for the public repo)
+task-*.txt
+minipc_run.py
+pack_data.py
+before.txt
+*.log
