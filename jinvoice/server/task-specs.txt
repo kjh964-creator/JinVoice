@@ -1,9 +1,0 @@
-미니PC 사양을 읽기만 해서 보고해 줘. 아무것도 설치·변경·재시작하지 마.
-1. CPU 이름, 코어/스레드 수, 메모리(RAM) 총량과 현재 여유량
-2. 그래픽카드 목록 (Get-CimInstance Win32_VideoController 의 Name, AdapterRAM, DriverVersion). nvidia-smi 가 있으면 그 결과 요약
-3. 각 드라이브(C:, D: 등) 총 용량과 남은 용량
-4. Windows 버전
-5. Caddy 설정 파일 위치와, 그 안의 사이트 블록 이름 목록(도메인/주소만, 비밀값 제외). imist.co.kr 블록 안의 handle/route 경로 목록
-6. 3900, 3920 포트를 쓰는 프로세스가 있는지
-7. uv, git, python 이 설치돼 있는지와 버전
-결과를 항목별로 짧게 보고.

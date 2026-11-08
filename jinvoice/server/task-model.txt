@@ -1,5 +1,0 @@
-JinVoice 음성 모델을 미리 받아 줘. 승인 없이 진행. 서버(3920)와 다른 서비스는 그대로 두고, Caddy도 건드리지 마.
-D:/0.make/JinVoice 에서 환경변수 HF_HOME=D:/0.make/JinVoice-cache/models , HF_HUB_CACHE=D:/0.make/JinVoice-cache/models/hub 로
-`C:/Users/kjh964/.local/bin/uv.exe run --no-sync python -c "from huggingface_hub import snapshot_download as s; print(s('k2-fsa/OmniVoice'))"`
-를 실행해 줘. (서버가 쓰는 OMNIVOICE_CACHE_DIR 과 같은 위치인지 backend/core/config.py 에서 OMNIVOICE_CACHE_DIR 처리 방식을 확인하고, 서버가 실제로 찾는 hub 경로에 받아지도록 맞춰 줘.)
-끝나면 받은 폴더 경로, 크기(GB), 걸린 시간, D: 남은 용량을 보고.
