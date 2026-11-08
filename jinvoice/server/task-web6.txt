@@ -1,0 +1,28 @@
+JinVoice 웹 업데이트를 해 줘. 승인 없이 진행. 비밀값 출력 금지. 기존 서비스 멈추지 마. Caddy 는 백업 → validate → reload, 실패 시 복구.
+
+A. 파일 교체
+1. https://github.com/kjh964-creator/JinVoice/releases/download/v0.5.9/jinvoice-web-0.5.9.zip 받기 → sha256 7a283f1e1ecaeed5af3684f8e0fd8bea47e453c8c214ede1ae9e31baf64acd8e 확인 → D:/0.make/JinVoice-web 비우고 풀기. index.html 에 'jv-user.js' 가 있는지 확인. (서버 재시작은 필요 없음. 정적 파일이라 바로 반영되는지 http://127.0.0.1:3920/jv-user.js 200 확인. 404 면 그때만 JinVoice 서버를 지난번 방식(explorer 로 vbs)으로 재시작.)
+2. https://github.com/kjh964-creator/JinVoice/releases/download/v0.5.9/jinvoice-site.zip 받기 → sha256 0a0b7e9eca5d7596997fb0894d0145c7885d6cc47c647c453b792130795e86f9 확인 → D:/0.make/JinVoiceSite 비우고 풀기.
+
+B. Caddy (D:/0.make/homepage/caddy/Caddyfile)
+3. Caddyfile.bak-jinvoice-me-<날짜시간> 으로 백업.
+4. imist.co.kr 블록 안, 기존 `handle_path /jinvoice/app/*` 블록 바로 앞에 추가 (다른 줄은 그대로):
+   handle /jinvoice/me {
+       rewrite * /app/api/jinvoice-me
+       reverse_proxy 127.0.0.1:5090
+   }
+   handle /jinvoice/logout {
+       rewrite * /app/api/jinvoice-logout
+       reverse_proxy 127.0.0.1:5090
+   }
+5. 기존 forward_auth 블록의 `redir * /app/jinvoice-login 302` 는 그대로 둠.
+6. caddy validate → reload. 실패 시 백업 복구.
+
+C. 확인 (https://imist.co.kr, 쿠키 없이, 코드만)
+7. /jinvoice/me → 200 이고 내용이 {"logged_in":false,"name":null} 비슷한지
+8. /jinvoice/logout → 302, Location /jinvoice/
+9. /app/jinvoice-login → 200 이고 HTML 에 name="uid" 가 있는지 (appsite 새 버전이 반영됐는지)
+10. /jinvoice/app/ → 302 /app/jinvoice-login
+11. /jinvoice/ → 200 이고 'data-who' 포함, /jinvoice/app/jv-user.js 는 쿠키 없으면 302
+12. D:/0.make/appsite/data/config.json 의 secret_key 로 '민수' 이름 쿠키를 만들어 (형식: exp.base64url(utf8 이름).hmac_sha256(secret, b"jinvoice-user|"+f"{exp}.{who}".encode()).hexdigest(), 값 출력 금지) /jinvoice/me 와 /jinvoice/app/health 를 요청 → me 의 name 이 '민수', health 200 인지.
+13. /, /app/, /webhard/ 200 확인.
