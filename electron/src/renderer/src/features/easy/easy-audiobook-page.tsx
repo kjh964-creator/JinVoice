@@ -126,7 +126,7 @@ function StatusBadge({ status }: { status: EasyChapterStatus }) {
 
 function ChapterNumber({ n }: { n: number }) {
   return (
-    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground tabular-nums">
+    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground tabular-nums max-sm:size-7 max-sm:text-[13px]">
       {n}
     </span>
   );
@@ -145,7 +145,10 @@ function ProgressList({ chapters }: { chapters: EasyBookChapterState[] }) {
       className="studio-scrollbar flex max-h-80 flex-col divide-y divide-border/60 overflow-y-auto rounded-xl border border-border/70 bg-card"
     >
       {chapters.map((chapter, index) => (
-        <li key={index} className="flex items-center gap-3 px-4 py-3">
+        <li
+          key={index}
+          className="flex items-center gap-3 px-4 py-3 max-sm:gap-2.5 max-sm:px-3 max-sm:py-2.5"
+        >
           <ChapterNumber n={index + 1} />
           <span className="min-w-0 flex-1">
             <span className="block truncate text-[15px] font-medium">
@@ -284,11 +287,11 @@ export function EasyAudiobookPage() {
 
   return (
     <EasyPage title={t('easy.audiobook_title')}>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-4 max-sm:gap-3">
         {needsSetup && (
           <div
             role="status"
-            className="flex flex-wrap items-center gap-4 rounded-2xl border border-warning/40 bg-warning/10 p-5"
+            className="flex flex-wrap items-center gap-4 rounded-2xl border border-warning/40 bg-warning/10 p-5 max-sm:gap-3 max-sm:p-4"
           >
             <CircleAlertIcon className="size-6 shrink-0 text-warning" />
             <div className="min-w-0 flex-1">
@@ -306,7 +309,7 @@ export function EasyAudiobookPage() {
           <div
             key={job.job_id}
             data-slot="easy-book-resume"
-            className="flex flex-wrap items-center gap-4 rounded-2xl border border-primary/30 bg-primary/5 p-5"
+            className="flex flex-wrap items-center gap-4 rounded-2xl border border-primary/30 bg-primary/5 p-5 max-sm:gap-3 max-sm:p-4"
           >
             <RotateCcwIcon className="size-6 shrink-0 text-primary" />
             <div className="min-w-0 flex-1">
@@ -367,7 +370,7 @@ export function EasyAudiobookPage() {
             role="status"
             aria-live="polite"
             data-slot="easy-book-running"
-            className="flex flex-col gap-4 rounded-2xl border border-primary/30 bg-primary/5 p-5 sm:p-6"
+            className="flex flex-col gap-4 rounded-2xl border border-primary/30 bg-primary/5 p-5 sm:p-6 max-sm:gap-3 max-sm:p-4"
           >
             <div className="flex items-center gap-4">
               <Spinner className="size-8 shrink-0 text-primary" aria-hidden="true" />
@@ -409,7 +412,7 @@ export function EasyAudiobookPage() {
             role={book.phase === 'error' ? 'alert' : 'status'}
             data-slot="easy-book-stopped"
             className={cn(
-              'flex flex-col gap-4 rounded-2xl border p-5 sm:p-6',
+              'flex flex-col gap-4 rounded-2xl border p-5 sm:p-6 max-sm:gap-3 max-sm:p-4',
               book.phase === 'error'
                 ? 'border-destructive/40 bg-destructive/8'
                 : 'border-border/70 bg-card',
@@ -454,7 +457,7 @@ export function EasyAudiobookPage() {
           <section
             data-slot="easy-book-result"
             aria-label={t('easy.book_done_title')}
-            className="flex flex-col gap-5 rounded-2xl border border-success/40 bg-success/8 p-5 sm:p-6"
+            className="flex flex-col gap-5 rounded-2xl border border-success/40 bg-success/8 p-5 sm:p-6 max-sm:gap-3 max-sm:p-3.5"
           >
             <div className="flex items-center gap-3">
               <CheckCircle2Icon className="size-7 shrink-0 text-success" />
@@ -473,7 +476,7 @@ export function EasyAudiobookPage() {
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 max-sm:grid max-sm:grid-cols-2">
               <EasyPlayButton
                 playKey={`book:${book.output}`}
                 src={outputUrl}
@@ -482,7 +485,7 @@ export function EasyAudiobookPage() {
               />
               <Button
                 variant="outline"
-                className="h-12 gap-2 rounded-xl px-5 text-base"
+                className="h-12 gap-2 rounded-xl px-5 text-base max-sm:h-11 max-sm:px-3 max-sm:text-[15px]"
                 onClick={() => void saveAll()}
               >
                 <DownloadIcon className="size-5" />
@@ -490,7 +493,7 @@ export function EasyAudiobookPage() {
               </Button>
               <Button
                 variant="ghost"
-                className="h-12 gap-2 rounded-xl px-5 text-base"
+                className="h-12 gap-2 rounded-xl px-5 text-base max-sm:col-span-2 max-sm:h-10 max-sm:text-[15px]"
                 onClick={clearEasyBookResult}
               >
                 <PlusIcon className="size-5" />
@@ -526,7 +529,10 @@ export function EasyAudiobookPage() {
                   const range = ranges[index];
                   const title = chapterTitle(chapter, index);
                   return (
-                    <li key={index} className="flex items-center gap-3 px-4 py-2.5">
+                    <li
+                      key={index}
+                      className="flex items-center gap-3 px-4 py-2.5 max-sm:gap-2 max-sm:px-3 max-sm:py-2"
+                    >
                       <ChapterNumber n={index + 1} />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[15px] font-medium">{title}</span>
@@ -546,7 +552,7 @@ export function EasyAudiobookPage() {
                           />
                           <Button
                             variant="outline"
-                            className="size-11 rounded-full"
+                            className="size-11 rounded-full max-sm:size-10"
                             aria-label={t('easy.book_save_chapter')}
                             title={t('easy.book_save_chapter')}
                             onClick={() =>
@@ -574,179 +580,189 @@ export function EasyAudiobookPage() {
         )}
 
         {!busy && book.phase !== 'done' && (
-          <>
-            <EasySection
-              step={1}
-              title={t('easy.book_step_text')}
-              hint={
-                <span aria-live="polite" className="tabular-nums">
-                  {t('easy.book_char_count', { n: draft.text.length.toLocaleString() })}
-                </span>
-              }
-            >
-              <div className="flex flex-col gap-3">
-                <Input
-                  aria-label={t('easy.book_title_label')}
-                  value={draft.title}
-                  onChange={(event) => set({ title: event.target.value })}
-                  placeholder={t('easy.book_title_placeholder')}
-                  className="h-12 rounded-xl px-4 text-base md:text-base"
-                />
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button
-                    variant="outline"
-                    className="h-11 gap-2 rounded-xl px-4 text-[15px]"
-                    onClick={() => fileInput.current?.click()}
-                  >
-                    <FileTextIcon className="size-5" />
-                    {t('easy.book_open_file')}
-                  </Button>
-                  <span className="text-sm text-muted-foreground">{t('easy.book_file_hint')}</span>
-                  <input
-                    ref={fileInput}
-                    type="file"
-                    accept=".txt,.md,text/plain"
-                    aria-label={t('easy.book_open_file')}
-                    className="hidden"
-                    data-testid="easy-book-file"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      event.target.value = '';
-                      if (file) void openFile(file);
-                    }}
+          <div className="grid min-w-0 items-start gap-4 max-sm:gap-3 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+            <div className="min-w-0">
+              <EasySection
+                step={1}
+                title={t('easy.book_step_text')}
+                hint={
+                  <span aria-live="polite" className="tabular-nums">
+                    {t('easy.book_char_count', { n: draft.text.length.toLocaleString() })}
+                  </span>
+                }
+              >
+                <div className="flex flex-col gap-3">
+                  <Input
+                    aria-label={t('easy.book_title_label')}
+                    value={draft.title}
+                    onChange={(event) => set({ title: event.target.value })}
+                    placeholder={t('easy.book_title_placeholder')}
+                    className="h-12 rounded-xl px-4 text-base md:text-base max-sm:h-11 max-sm:px-3.5 max-sm:text-[15px]"
                   />
+                  <div className="flex flex-wrap items-center gap-3 max-sm:flex-nowrap max-sm:gap-2.5">
+                    <Button
+                      variant="outline"
+                      className="h-11 gap-2 rounded-xl px-4 text-[15px] max-sm:h-10 max-sm:px-3 max-sm:text-sm"
+                      onClick={() => fileInput.current?.click()}
+                    >
+                      <FileTextIcon className="size-5 max-sm:size-4" />
+                      {t('easy.book_open_file')}
+                    </Button>
+                    <span className="text-sm text-muted-foreground max-sm:text-[12.5px] max-sm:leading-snug">
+                      {t('easy.book_file_hint')}
+                    </span>
+                    <input
+                      ref={fileInput}
+                      type="file"
+                      accept=".txt,.md,text/plain"
+                      aria-label={t('easy.book_open_file')}
+                      className="hidden"
+                      data-testid="easy-book-file"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        event.target.value = '';
+                        if (file) void openFile(file);
+                      }}
+                    />
+                  </div>
+                  {fileError && (
+                    <p role="alert" className="text-sm text-destructive">
+                      {fileError}
+                    </p>
+                  )}
+                  <Textarea
+                    aria-label={t('easy.book_step_text')}
+                    value={draft.text}
+                    onChange={(event) => set({ text: event.target.value })}
+                    placeholder={t('easy.book_text_placeholder')}
+                    className="max-h-[28rem] min-h-40 rounded-xl px-4 py-3 text-base leading-relaxed md:text-base lg:max-h-40 max-sm:max-h-80 max-sm:min-h-36 max-sm:px-3.5 max-sm:py-2.5 max-sm:text-[15px]"
+                  />
+                  <p className="text-sm text-muted-foreground max-sm:text-[13px]">
+                    {t('easy.book_limit', { max: EASY_BOOK_MAX_CHAPTERS.toLocaleString() })}
+                  </p>
+
+                  <div
+                    data-slot="easy-book-preview"
+                    className="flex flex-col gap-2 rounded-xl border border-border/60 bg-muted/50 p-3 max-sm:gap-2 max-sm:p-3"
+                  >
+                    <div className="flex items-center gap-2">
+                      <ListOrderedIcon className="size-5 text-primary" />
+                      <h3 className="text-[15px] font-semibold">{t('easy.book_preview_title')}</h3>
+                      {preview.length > 0 && (
+                        <span className="ms-auto text-sm font-medium text-primary">
+                          {t('easy.book_preview_count', { n: preview.length.toLocaleString() })}
+                        </span>
+                      )}
+                    </div>
+                    {preview.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">
+                        {t('easy.book_preview_empty')}
+                      </p>
+                    ) : (
+                      <ol className="studio-scrollbar flex max-h-64 flex-col gap-1.5 overflow-y-auto lg:max-h-32">
+                        {preview.slice(0, 200).map((chapter, index) => (
+                          <li
+                            key={index}
+                            className="flex items-center gap-3 rounded-lg border border-border/60 bg-background px-3 py-2 shadow-xs max-sm:gap-2.5 max-sm:py-1.5"
+                          >
+                            <ChapterNumber n={index + 1} />
+                            <span className="min-w-0 flex-1 truncate text-[15px]">
+                              {chapter.title}
+                            </span>
+                            <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
+                              {t('easy.book_char_count', { n: chapter.chars.toLocaleString() })}
+                            </span>
+                          </li>
+                        ))}
+                      </ol>
+                    )}
+                    <p className="text-sm text-muted-foreground max-sm:text-[13px]">
+                      {t('easy.book_split_hint', { n: EASY_BOOK_PART_CHARS.toLocaleString() })}
+                    </p>
+                  </div>
                 </div>
-                {fileError && (
-                  <p role="alert" className="text-sm text-destructive">
-                    {fileError}
+              </EasySection>
+            </div>
+            <div className="flex min-w-0 flex-col gap-4 max-sm:gap-3">
+              <EasySection step={2} title={t('easy.step_voice')}>
+                {profiles.isLoading ? (
+                  <div className="flex items-center gap-2 py-6 text-muted-foreground">
+                    <Spinner className="size-5" />
+                    {t('easy.loading')}
+                  </div>
+                ) : voices.length === 0 ? (
+                  <EasyEmpty
+                    icon={<MicIcon />}
+                    title={t('easy.no_voices_title')}
+                    description={t('easy.no_voices_create')}
+                    action={
+                      <Button
+                        className="h-12 gap-2 rounded-xl px-5 text-base"
+                        onClick={openRegister}
+                      >
+                        <PlusIcon className="size-5" />
+                        {t('easy.register_voice')}
+                      </Button>
+                    }
+                  />
+                ) : (
+                  <div
+                    role="radiogroup"
+                    aria-label={t('easy.step_voice')}
+                    className="grid gap-3 sm:grid-cols-2 max-sm:grid-cols-2 max-sm:gap-2"
+                  >
+                    {voices.map((voice) => (
+                      <EasyVoiceTile
+                        key={voice.id}
+                        name={voice.name}
+                        imageUrl={voice.image_url}
+                        subtitle={
+                          easyDate(voice.created_at)
+                            ? t('easy.registered_on', {
+                                date: dateFormat.format(easyDate(voice.created_at)!),
+                              })
+                            : t('easy.my_voice')
+                        }
+                        selected={voice.id === draft.voiceId}
+                        onSelect={() => set({ voiceId: voice.id })}
+                        playKey={`voice:${voice.id}`}
+                        playSrc={profileAudioUrl(voice.id, voice.audio_url)}
+                      />
+                    ))}
+                  </div>
+                )}
+              </EasySection>
+
+              <EasySection step={3} title={t('easy.step_speed')}>
+                <EasySpeedPicker speed={draft.speed} onChange={(speed) => set({ speed })} />
+              </EasySection>
+
+              <div className="flex flex-col items-stretch gap-2">
+                <Button
+                  data-slot="easy-book-start"
+                  className="h-14 gap-3 rounded-2xl text-lg font-semibold max-sm:h-13 max-sm:gap-2 max-sm:text-[17px]"
+                  disabled={!ready}
+                  onClick={start}
+                >
+                  <BookOpenTextIcon className="size-6" />
+                  {t('easy.book_start')}
+                </Button>
+                {!ready && !needsSetup && (
+                  <p className="text-center text-sm text-muted-foreground">
+                    {!hasText
+                      ? t('easy.book_need_text')
+                      : !hasVoice
+                        ? t('easy.need_voice')
+                        : tooMany
+                          ? t('easy.book_too_many', { max: EASY_BOOK_MAX_CHAPTERS })
+                          : ttsBlocker === 'loading'
+                            ? t('easy.getting_ready')
+                            : null}
                   </p>
                 )}
-                <Textarea
-                  aria-label={t('easy.book_step_text')}
-                  value={draft.text}
-                  onChange={(event) => set({ text: event.target.value })}
-                  placeholder={t('easy.book_text_placeholder')}
-                  className="max-h-[28rem] min-h-48 rounded-xl px-4 py-3 text-base leading-relaxed md:text-base"
-                />
-                <p className="text-sm text-muted-foreground">
-                  {t('easy.book_limit', { max: EASY_BOOK_MAX_CHAPTERS.toLocaleString() })}
-                </p>
-
-                <div
-                  data-slot="easy-book-preview"
-                  className="flex flex-col gap-3 rounded-xl border border-border/60 bg-muted/50 p-4"
-                >
-                  <div className="flex items-center gap-2">
-                    <ListOrderedIcon className="size-5 text-primary" />
-                    <h3 className="text-[15px] font-semibold">{t('easy.book_preview_title')}</h3>
-                    {preview.length > 0 && (
-                      <span className="ms-auto text-sm font-medium text-primary">
-                        {t('easy.book_preview_count', { n: preview.length.toLocaleString() })}
-                      </span>
-                    )}
-                  </div>
-                  {preview.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">{t('easy.book_preview_empty')}</p>
-                  ) : (
-                    <ol className="studio-scrollbar flex max-h-64 flex-col gap-1.5 overflow-y-auto">
-                      {preview.slice(0, 200).map((chapter, index) => (
-                        <li
-                          key={index}
-                          className="flex items-center gap-3 rounded-lg border border-border/60 bg-background px-3 py-2 shadow-xs"
-                        >
-                          <ChapterNumber n={index + 1} />
-                          <span className="min-w-0 flex-1 truncate text-[15px]">
-                            {chapter.title}
-                          </span>
-                          <span className="shrink-0 text-sm text-muted-foreground tabular-nums">
-                            {t('easy.book_char_count', { n: chapter.chars.toLocaleString() })}
-                          </span>
-                        </li>
-                      ))}
-                    </ol>
-                  )}
-                  <p className="text-sm text-muted-foreground">
-                    {t('easy.book_split_hint', { n: EASY_BOOK_PART_CHARS.toLocaleString() })}
-                  </p>
-                </div>
               </div>
-            </EasySection>
-
-            <EasySection step={2} title={t('easy.step_voice')}>
-              {profiles.isLoading ? (
-                <div className="flex items-center gap-2 py-6 text-muted-foreground">
-                  <Spinner className="size-5" />
-                  {t('easy.loading')}
-                </div>
-              ) : voices.length === 0 ? (
-                <EasyEmpty
-                  icon={<MicIcon />}
-                  title={t('easy.no_voices_title')}
-                  description={t('easy.no_voices_create')}
-                  action={
-                    <Button className="h-12 gap-2 rounded-xl px-5 text-base" onClick={openRegister}>
-                      <PlusIcon className="size-5" />
-                      {t('easy.register_voice')}
-                    </Button>
-                  }
-                />
-              ) : (
-                <div
-                  role="radiogroup"
-                  aria-label={t('easy.step_voice')}
-                  className="grid gap-3 sm:grid-cols-2"
-                >
-                  {voices.map((voice) => (
-                    <EasyVoiceTile
-                      key={voice.id}
-                      name={voice.name}
-                      imageUrl={voice.image_url}
-                      subtitle={
-                        easyDate(voice.created_at)
-                          ? t('easy.registered_on', {
-                              date: dateFormat.format(easyDate(voice.created_at)!),
-                            })
-                          : t('easy.my_voice')
-                      }
-                      selected={voice.id === draft.voiceId}
-                      onSelect={() => set({ voiceId: voice.id })}
-                      playKey={`voice:${voice.id}`}
-                      playSrc={profileAudioUrl(voice.id, voice.audio_url)}
-                    />
-                  ))}
-                </div>
-              )}
-            </EasySection>
-
-            <EasySection step={3} title={t('easy.step_speed')}>
-              <EasySpeedPicker speed={draft.speed} onChange={(speed) => set({ speed })} />
-            </EasySection>
-
-            <div className="flex flex-col items-stretch gap-2">
-              <Button
-                data-slot="easy-book-start"
-                className="h-16 gap-3 rounded-2xl text-lg font-semibold"
-                disabled={!ready}
-                onClick={start}
-              >
-                <BookOpenTextIcon className="size-6" />
-                {t('easy.book_start')}
-              </Button>
-              {!ready && !needsSetup && (
-                <p className="text-center text-sm text-muted-foreground">
-                  {!hasText
-                    ? t('easy.book_need_text')
-                    : !hasVoice
-                      ? t('easy.need_voice')
-                      : tooMany
-                        ? t('easy.book_too_many', { max: EASY_BOOK_MAX_CHAPTERS })
-                        : ttsBlocker === 'loading'
-                          ? t('easy.getting_ready')
-                          : null}
-                </p>
-              )}
             </div>
-          </>
+          </div>
         )}
       </div>
     </EasyPage>

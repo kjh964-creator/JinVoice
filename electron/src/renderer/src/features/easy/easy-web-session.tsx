@@ -47,11 +47,11 @@ export function EasyWebSession({ root }: { root?: string | null }) {
       </span>
       <a
         href={logoutUrl}
-        className="inline-flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-        title={t('easy.signed_in_as', { name })}
+        className="inline-flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-medium whitespace-nowrap hover:bg-accent hover:text-accent-foreground max-sm:size-10 max-sm:justify-center max-sm:rounded-full max-sm:px-0"
+        title={`${t('easy.signed_in_as', { name })} · ${t('easy.logout')}`}
       >
-        <LogOutIcon className="size-4" />
-        {t('easy.logout')}
+        <LogOutIcon className="size-4 max-sm:size-5" />
+        <span className="max-sm:sr-only">{t('easy.logout')}</span>
       </a>
     </div>
   );

@@ -36,13 +36,13 @@ export function EasyTopBar({
     >
       <Link
         to={EASY_ROUTES.home}
-        className="flex items-center gap-2.5 rounded-lg px-1 py-1 outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+        className="flex min-w-0 shrink-0 items-center gap-2.5 rounded-lg px-1 py-1 outline-none focus-visible:ring-2 focus-visible:ring-ring/40 max-sm:gap-2"
         aria-label={t('easy.go_home')}
       >
-        <img src={brandIcon} alt="" className="size-7" draggable={false} />
+        <img src={brandIcon} alt="" className="size-7 max-sm:size-6.5" draggable={false} />
         <span
           className={cn(
-            'text-[17px] font-semibold tracking-tight',
+            'text-[17px] font-semibold tracking-tight whitespace-nowrap max-sm:text-base',
             backHome && 'max-sm:sr-only',
           )}
         >
@@ -54,7 +54,7 @@ export function EasyTopBar({
           data-slot="easy-back-home"
           variant="outline"
           size="lg"
-          className="gap-2 rounded-xl px-3.5"
+          className="gap-2 rounded-xl px-3.5 max-sm:h-10 max-sm:px-3"
           onClick={() =>
             runRendererTask('Back to easy home', () => navigate({ to: EASY_ROUTES.home }))
           }
@@ -63,30 +63,32 @@ export function EasyTopBar({
           {t('easy.back_home')}
         </Button>
       )}
-      <div className="ms-auto flex items-center gap-1">
+      <div className="ms-auto flex items-center gap-1 max-sm:gap-0.5">
         <EasyWebSession />
         <Button
           data-slot="easy-help-button"
           variant={helpActive ? 'secondary' : 'ghost'}
           size="lg"
-          className="gap-2 px-3"
+          className="gap-2 px-3 max-sm:size-10 max-sm:rounded-full max-sm:px-0"
           aria-current={helpActive ? 'page' : undefined}
+          title={t('easy.help')}
           onClick={() =>
             runRendererTask('Open easy help', () => navigate({ to: EASY_ROUTES.help }))
           }
         >
-          <CircleHelpIcon className="size-4" />
-          {t('easy.help')}
+          <CircleHelpIcon className="size-4 max-sm:size-5" />
+          <span className="max-sm:sr-only">{t('easy.help')}</span>
         </Button>
         <Button
           variant={settingsActive ? 'secondary' : 'ghost'}
           size="lg"
-          className="gap-2 px-3"
+          className="gap-2 px-3 max-sm:size-10 max-sm:rounded-full max-sm:px-0"
           aria-current={settingsActive ? 'page' : undefined}
+          title={t('easy.settings')}
           onClick={() => runRendererTask('Open settings', () => navigate({ to: '/settings' }))}
         >
-          <SettingsIcon className="size-4" />
-          {t('easy.settings')}
+          <SettingsIcon className="size-4 max-sm:size-5" />
+          <span className="max-sm:sr-only">{t('easy.settings')}</span>
         </Button>
       </div>
     </header>
@@ -132,20 +134,25 @@ export function EasyPage({
   return (
     <div className="flex min-h-full flex-col">
       <div className="sticky top-0 z-10 border-b border-border/40 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
-        <div className="mx-auto flex w-full max-w-3xl items-center gap-4 px-6 py-3.5">
+        <div className="mx-auto flex w-full max-w-[1440px] items-center gap-3 px-5 py-2.5 max-sm:gap-2.5 max-sm:px-3 max-sm:py-2">
           <Button
             variant="outline"
-            className="h-11 gap-2 rounded-xl px-4 text-[15px]"
+            className="h-11 gap-2 rounded-xl px-4 text-[15px] max-sm:size-10 max-sm:rounded-full max-sm:px-0"
+            title={backLabel ?? t('easy.home')}
             onClick={() => runRendererTask('Easy back', () => navigate({ to: backTo }))}
           >
             <ArrowLeftIcon className="size-5" />
-            {backLabel ?? t('easy.home')}
+            <span className="max-sm:sr-only">{backLabel ?? t('easy.home')}</span>
           </Button>
-          <h1 className="min-w-0 flex-1 truncate text-2xl font-semibold tracking-tight">{title}</h1>
+          <h1 className="min-w-0 flex-1 truncate text-2xl font-semibold tracking-tight max-sm:text-[21px]">
+            {title}
+          </h1>
           {actions}
         </div>
       </div>
-      <div className="mx-auto w-full max-w-3xl flex-1 px-6 pt-6 pb-12">{children}</div>
+      <div className="mx-auto w-full max-w-[1440px] flex-1 px-5 pt-4 pb-6 max-sm:px-3 max-sm:pt-3 max-sm:pb-5">
+        {children}
+      </div>
     </div>
   );
 }
@@ -165,16 +172,21 @@ export function EasySection({
 }) {
   return (
     <section
-      className={cn('rounded-2xl border border-border/70 bg-card p-5 shadow-xs sm:p-6', className)}
+      className={cn(
+        'min-w-0 rounded-2xl border border-border/70 bg-card p-4 shadow-xs max-sm:p-3',
+        className,
+      )}
     >
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-3 flex flex-wrap items-center gap-2.5 max-sm:mb-2.5 max-sm:gap-2">
         {step !== undefined && (
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/12 text-sm font-semibold text-primary">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/12 text-sm font-semibold text-primary max-sm:size-7 max-sm:text-[13px]">
             {step}
           </span>
         )}
-        <h2 className="text-lg font-semibold">{title}</h2>
-        {hint && <div className="ms-auto text-sm text-muted-foreground">{hint}</div>}
+        <h2 className="text-lg font-semibold max-sm:text-[17px]">{title}</h2>
+        {hint && (
+          <div className="ms-auto text-sm text-muted-foreground max-sm:text-[13px]">{hint}</div>
+        )}
       </div>
       {children}
     </section>
@@ -193,8 +205,8 @@ export function EasyEmpty({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card/60 px-6 py-12 text-center">
-      <div className="flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary [&_svg]:size-8">
+    <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card/60 px-5 py-8 text-center max-sm:gap-2 max-sm:px-4 max-sm:py-6">
+      <div className="flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary max-sm:size-14 [&_svg]:size-8 max-sm:[&_svg]:size-7">
         {icon}
       </div>
       <p className="text-lg font-semibold">{title}</p>
@@ -211,6 +223,8 @@ export function EasyPlayButton({
   size = 'default',
   disabled,
   range,
+  phoneIcon = false,
+  className,
 }: {
   playKey: string;
   src: string | null | undefined;
@@ -218,6 +232,9 @@ export function EasyPlayButton({
   size?: 'default' | 'large' | 'icon';
   disabled?: boolean;
   range?: EasyPlayRange;
+  /** On phones show only the round icon (the label stays for screen readers). */
+  phoneIcon?: boolean;
+  className?: string;
 }) {
   const { t } = useTranslation();
   const playing = useEasyPlaying(playKey);
@@ -227,7 +244,7 @@ export function EasyPlayButton({
     return (
       <Button
         variant="outline"
-        className="size-11 rounded-full"
+        className={cn('size-11 rounded-full max-sm:size-10', className)}
         aria-label={text}
         title={text}
         aria-pressed={playing}
@@ -242,14 +259,18 @@ export function EasyPlayButton({
       variant={size === 'large' ? 'default' : 'outline'}
       className={cn(
         'gap-2 rounded-xl',
-        size === 'large' ? 'h-12 px-5 text-base' : 'h-11 px-4 text-[15px]',
+        size === 'large'
+          ? 'h-12 px-5 text-base max-sm:h-11 max-sm:px-4 max-sm:text-[15px]'
+          : 'h-11 px-4 text-[15px]',
+        phoneIcon && 'max-sm:size-10 max-sm:rounded-full max-sm:px-0',
       )}
+      title={phoneIcon ? text : undefined}
       aria-pressed={playing}
       disabled={disabled || !src}
       onClick={() => src && toggleEasyPlayback(playKey, src, range)}
     >
-      <Icon className="size-5" />
-      {text}
+      <Icon className={cn('size-5', phoneIcon && 'max-sm:size-[18px]')} />
+      {phoneIcon ? <span className="max-sm:sr-only">{text}</span> : text}
     </Button>
   );
 }

@@ -102,7 +102,10 @@ export function EasyVoicesPage() {
       title={t('easy.voices_title')}
       actions={
         voices.length > 0 ? (
-          <Button className="h-11 gap-2 rounded-xl px-4 text-[15px]" onClick={openRegister}>
+          <Button
+            className="h-11 gap-2 rounded-xl px-4 text-[15px] max-sm:h-10 max-sm:gap-1 max-sm:ps-2.5 max-sm:pe-3 max-sm:text-sm"
+            onClick={openRegister}
+          >
             <PlusIcon className="size-5" />
             {t('easy.register_voice')}
           </Button>
@@ -127,57 +130,64 @@ export function EasyVoicesPage() {
           }
         />
       ) : (
-        <ul className="flex flex-col gap-3" aria-label={t('easy.voices_title')}>
+        <ul
+          className="grid grid-cols-1 gap-3 md:grid-cols-2 min-[87.5rem]:grid-cols-3 max-sm:gap-2"
+          aria-label={t('easy.voices_title')}
+        >
           {voices.map((voice) => {
             const created = easyDate(voice.created_at);
             return (
               <li
                 key={voice.id}
-                className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/70 bg-card p-4 shadow-xs"
+                className="flex min-w-0 items-center gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-xs sm:grid sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-y-2 max-sm:flex-nowrap max-sm:gap-2.5 max-sm:py-2.5 max-sm:ps-3 max-sm:pe-2"
               >
                 <ProfileAvatar
                   name={voice.name}
                   imageUrl={voice.image_url}
-                  className="size-12 text-base"
+                  className="size-12 text-base max-sm:size-10 max-sm:text-sm"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-lg font-semibold">{voice.name}</p>
+                  <p className="truncate text-lg font-semibold max-sm:text-base">{voice.name}</p>
                   {created && (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="truncate text-sm text-muted-foreground max-sm:text-[12.5px]">
                       {t('easy.registered_on', { date: dateFormat.format(created) })}
                     </p>
                   )}
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-1 sm:col-span-2 max-sm:shrink-0 max-sm:flex-nowrap max-sm:gap-0.5">
                   <EasyPlayButton
                     playKey={`voice:${voice.id}`}
                     src={profileAudioUrl(voice.id, voice.audio_url)}
+                    phoneIcon
                   />
                   <Button
                     variant="ghost"
-                    className="h-11 gap-2 rounded-xl px-3 text-[15px]"
+                    className="h-11 gap-2 rounded-xl px-3 text-[15px] max-sm:size-10 max-sm:rounded-full max-sm:px-0"
+                    title={t('easy.save_short')}
                     onClick={() =>
                       void saveEasyVoice(profileAudioUrl(voice.id, voice.audio_url), voice.name)
                     }
                   >
-                    <DownloadIcon className="size-4" />
-                    {t('easy.save_short')}
+                    <DownloadIcon className="size-4 max-sm:size-[18px]" />
+                    <span className="max-sm:sr-only">{t('easy.save_short')}</span>
                   </Button>
                   <Button
                     variant="ghost"
-                    className="h-11 gap-2 rounded-xl px-3 text-[15px]"
+                    className="h-11 gap-2 rounded-xl px-3 text-[15px] max-sm:size-10 max-sm:rounded-full max-sm:px-0"
+                    title={t('easy.rename')}
                     onClick={() => setRenaming(voice)}
                   >
-                    <PencilIcon className="size-4" />
-                    {t('easy.rename')}
+                    <PencilIcon className="size-4 max-sm:size-[18px]" />
+                    <span className="max-sm:sr-only">{t('easy.rename')}</span>
                   </Button>
                   <Button
                     variant="ghost"
-                    className="h-11 gap-2 rounded-xl px-3 text-[15px] text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    className="h-11 gap-2 rounded-xl px-3 text-[15px] text-destructive hover:bg-destructive/10 hover:text-destructive max-sm:size-10 max-sm:rounded-full max-sm:px-0"
+                    title={t('easy.delete')}
                     onClick={() => setDeleting(voice)}
                   >
-                    <Trash2Icon className="size-4" />
-                    {t('easy.delete')}
+                    <Trash2Icon className="size-4 max-sm:size-[18px]" />
+                    <span className="max-sm:sr-only">{t('easy.delete')}</span>
                   </Button>
                 </div>
               </li>

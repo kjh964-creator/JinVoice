@@ -40,39 +40,41 @@ function HelpSection({
   return (
     <section
       data-slot="easy-help-section"
-      className="rounded-2xl border border-border/70 bg-card p-5 shadow-xs sm:p-6"
+      className="min-w-0 rounded-2xl border border-border/70 bg-card p-4 shadow-xs"
     >
-      <div className="mb-4 flex items-center gap-4">
+      <div className="mb-3 flex flex-wrap items-center gap-3">
         <span
-          className={`flex size-12 shrink-0 items-center justify-center rounded-2xl ${accent} [&_svg]:size-6`}
+          className={`flex size-12 shrink-0 items-center justify-center rounded-2xl ${accent} max-sm:size-10 max-sm:rounded-xl [&_svg]:size-6 max-sm:[&_svg]:size-5`}
         >
           <Icon />
         </span>
-        <h2 className="min-w-0 flex-1 text-xl font-semibold tracking-tight">{title}</h2>
+        <h2 className="min-w-0 flex-1 text-xl font-semibold tracking-tight max-sm:text-lg max-sm:leading-snug">
+          {title}
+        </h2>
         <Button
           variant="ghost"
-          className="h-10 shrink-0 gap-1 rounded-xl px-3 text-[15px] text-primary hover:text-primary"
+          className="h-10 shrink-0 gap-1 rounded-xl px-3 text-[15px] text-primary hover:text-primary max-sm:-me-2 max-sm:px-2 max-sm:text-sm"
           onClick={onAction}
         >
           {action}
           <ChevronRightIcon className="size-4" />
         </Button>
       </div>
-      <ol className="flex flex-col gap-3">
+      <ol className="flex flex-col gap-2.5">
         {steps.map((step, index) => (
           <li key={index} className="flex items-start gap-3">
             <span className="mt-px flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/12 text-sm font-semibold text-primary tabular-nums">
               {index + 1}
             </span>
             <span className="flex min-w-0 flex-col gap-2 pt-0.5">
-              <span className="text-[15px] leading-relaxed">{step}</span>
+              <span className="text-[15px] leading-relaxed max-sm:leading-normal">{step}</span>
               {stepExtra?.index === index && stepExtra.node}
             </span>
           </li>
         ))}
       </ol>
       {note && (
-        <p className="mt-4 flex items-start gap-2 rounded-xl bg-primary/6 px-4 py-3 text-[15px] leading-relaxed">
+        <p className="mt-3 flex items-start gap-2 rounded-xl bg-primary/6 px-3 py-2.5 text-[15px] leading-relaxed max-sm:text-sm">
           <SparklesIcon className="mt-1 size-4 shrink-0 text-primary" />
           <span>{note}</span>
         </p>
@@ -87,8 +89,10 @@ export function EasyHelpPage() {
   const go = (to: string) => () => runRendererTask('Open from help', () => navigate({ to }));
   return (
     <EasyPage title={t('easy.help_title')}>
-      <div className="flex flex-col gap-5">
-        <p className="text-base text-muted-foreground">{t('easy.help_intro')}</p>
+      <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
+        <p className="text-base text-muted-foreground lg:col-span-2 max-sm:px-1 max-sm:text-sm">
+          {t('easy.help_intro')}
+        </p>
         <HelpSection
           icon={AudioLinesIcon}
           accent="bg-primary text-primary-foreground"

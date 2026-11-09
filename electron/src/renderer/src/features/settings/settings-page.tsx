@@ -67,7 +67,7 @@ import {
 import { PalettePicker } from './palette-picker';
 import { useTheme } from '@/hooks/use-theme';
 import { appearanceScales, useAppearance } from '@/hooks/use-appearance';
-import { isMac } from '@/components/bridge';
+import { getBridge, isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
 import { SettingsContent, SettingsRow, SettingsSection } from './settings-layout';
 import i18n, { APP_LANGUAGE_ITEMS, APP_LANGUAGES, setAppLanguage, type AppLocale } from '@/i18n';
@@ -300,7 +300,13 @@ export function SettingsPage() {
   );
 
   return (
-    <div className="flex h-full min-h-0">
+    <div
+      className={cn(
+        'flex h-full min-h-0 min-w-0',
+        easyMode &&
+          'max-sm:[&>aside]:w-14 max-sm:[&>aside>header]:justify-center max-sm:[&>aside>header]:px-0 max-sm:[&>aside>header>span:last-child]:sr-only max-sm:[&>aside>div]:p-1.5 max-sm:[&_aside_[data-slot=settings-nav-label]]:sr-only max-sm:[&_aside_nav_a]:size-10 max-sm:[&_aside_nav_a]:justify-center max-sm:[&_aside_nav_a]:px-0',
+      )}
+    >
       <aside className="flex w-[clamp(11rem,20vw,17rem)] shrink-0 flex-col border-r border-sidebar-border/50 bg-sidebar text-sidebar-foreground shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)]">
         <header className="workspace-titlebar flex h-12 shrink-0 items-center gap-2.5 border-b border-sidebar-border/45 bg-background/25 px-3.5 backdrop-blur-xl">
           {/* The brand and window controls live in the main sidebar to the
@@ -313,7 +319,12 @@ export function SettingsPage() {
           </span>
         </header>
         <div className="studio-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain p-3 [scrollbar-gutter:stable]">
-          <div className="sticky top-0 z-10 flex h-9 shrink-0 items-center gap-2 rounded-lg border border-sidebar-border/45 bg-sidebar/90 px-2.5 shadow-xs backdrop-blur-xl transition-[border-color,background-color,box-shadow] focus-within:border-primary/30 focus-within:bg-background/55 focus-within:ring-2 focus-within:ring-ring/20">
+          <div
+            className={cn(
+              'sticky top-0 z-10 flex h-9 shrink-0 items-center gap-2 rounded-lg border border-sidebar-border/45 bg-sidebar/90 px-2.5 shadow-xs backdrop-blur-xl transition-[border-color,background-color,box-shadow] focus-within:border-primary/30 focus-within:bg-background/55 focus-within:ring-2 focus-within:ring-ring/20',
+              easyMode && 'max-sm:sr-only max-sm:focus-within:not-sr-only',
+            )}
+          >
             <SearchIcon className="size-4 shrink-0 text-muted-foreground" />
             <Input
               type="search"
@@ -531,11 +542,21 @@ export function SettingsPage() {
           </Link>
         </div>
       </aside>
-      <section className="flex min-w-0 flex-1 flex-col bg-background">
+      <section
+        className={cn(
+          'flex min-w-0 flex-1 flex-col bg-background',
+          easyMode &&
+            '[&>div>div]:gap-4 [&>div>div]:px-4 [&>div>div]:pt-4 [&>div>div]:pb-6 [&_[data-slot=settings-row]]:py-2.5 [&_section>div.glass-panel]:rounded-2xl max-sm:[&>div>div]:px-3',
+        )}
+      >
         <header
           className={cn(
             'workspace-titlebar flex shrink-0 items-center gap-2 px-5 text-sm',
-            isMac() ? 'account-corner-safe' : 'native-controls-right',
+            isMac()
+              ? 'account-corner-safe'
+              : easyMode && !getBridge()
+                ? ''
+                : 'native-controls-right',
           )}
         >
           <span className="text-muted-foreground">{t('nav.settings')}</span>

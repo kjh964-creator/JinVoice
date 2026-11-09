@@ -26,7 +26,7 @@ from pathlib import Path
 # tests/test_app_version.py::test_all_version_files_in_lockstep and bumped by
 # the owner-approved release bump, so it stays equal to
 # pyproject.toml and the root package.json.
-_FALLBACK_VERSION = "0.5.12"
+_FALLBACK_VERSION = "0.5.13"
 
 
 def _fallback_version() -> str:
