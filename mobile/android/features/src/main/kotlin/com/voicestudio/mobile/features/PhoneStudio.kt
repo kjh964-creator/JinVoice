@@ -72,13 +72,13 @@ class PhoneStudio(context: Context, private val scope: CoroutineScope, private v
         if(text.isBlank()) return
         scope.launch {try {transcripts.saveDictation(java.util.UUID.randomUUID().toString(),text.lineSequence().first().take(120),text,modelID)} catch(e:CancellationException) {throw e} catch(e:Exception) {failure(e)}}
     }
-    fun speak(model: PhoneModel, text: String, speaker: Int, voice: PhoneVoice? = null, language: String? = null) {
+    fun speak(model: PhoneModel, text: String, speaker: Int, voice: PhoneVoice? = null, language: String? = null, speed: Float = 1f) {
         if(inference?.isActive==true) return
         inference=scope.launch {
             mutable.update {it.copy(progress=0f)}
             try {
                 val report: (Float)->Unit={value -> mutable.update {it.copy(progress=value)}}
-                val audio=if(voice==null) engine.synthesize(model,text,speaker,language=language,progress=report)
+                val audio=if(voice==null) engine.synthesize(model,text,speaker,speed=speed,language=language,progress=report)
                     else engine.clone(model,text,voices.reference(voice),voice.transcript,progress=report)
                 val file=withContext(Dispatchers.IO) {
                     val id=java.util.UUID.randomUUID().toString()
@@ -90,7 +90,7 @@ class PhoneStudio(context: Context, private val scope: CoroutineScope, private v
                 }
                 val recent=withContext(Dispatchers.IO) {history()}
                 mutable.update {it.copy(audio=file,recent=recent)}
-            } catch(e:CancellationException) {throw e} catch(e:Exception) {retryFailure(e) {speak(model,text,speaker,voice,language)}}
+            } catch(e:CancellationException) {throw e} catch(e:Exception) {retryFailure(e) {speak(model,text,speaker,voice,language,speed)}}
             finally {mutable.update {it.copy(progress=null)}}
         }
     }

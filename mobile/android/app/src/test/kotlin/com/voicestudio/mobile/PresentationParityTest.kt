@@ -70,7 +70,7 @@ class PresentationParityTest {
             override fun read(host:String):Secret?=null
             override fun write(host:String,secret:Secret?)=Unit
         })
-        runBlocking {store.update {Preferences(consent=false)}}
+        runBlocking {store.update {Preferences(showAllFeatures=true,consent=false)}}
         val vm=StudioViewModel(app,store)
         try {
             compose.setContent {Box(Modifier.requiredSize(360.dp,800.dp)) {StudioApp(vm)}}

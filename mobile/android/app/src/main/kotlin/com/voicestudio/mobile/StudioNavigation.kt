@@ -19,12 +19,24 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.voicestudio.mobile.designsystem.*
 import com.voicestudio.mobile.features.*
+import com.voicestudio.mobile.features.easy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 private val tabs=listOf("home","voices","dub","dictate","settings")
 internal fun isWorkspace(route:String)=route in tabs
 
-@Composable internal fun StudioTopBar(route:String,onBack:()->Unit,onProjects:()->Unit) {
-    val title=when {
+internal fun routeTitle(route:String)=when {
+        route==EasyFeatures.HOME -> "app.name"
+        route==EasyFeatures.CREATE -> "easy.create_title"
+        route==EasyFeatures.VOICES -> "easy.voices_title"
+        route==EasyFeatures.HISTORY -> "easy.history_title"
+        route==EasyFeatures.BOOK -> "easy.audiobook_title_short"
+        route==EasyFeatures.HELP -> "easy.help_title"
+        route==EasyFeatures.FEATURES -> "easy.features_title"
         route=="home" -> "nav.home"
         route=="transcriptions" -> "transcriptions.title"
         route=="handoff" -> "mobile.handoff.title"
@@ -45,12 +57,39 @@ internal fun isWorkspace(route:String)=route in tabs
         route=="speak"||route.startsWith("voice/")||route.startsWith("host-voice/") -> "mobile.tabs.speak"
         else -> "mobile.tabs.$route"
     }
+
+@Composable internal fun StudioTopBar(route:String,onBack:()->Unit,onProjects:()->Unit,onEasy:()->Unit={}) {
+    val title=routeTitle(route)
     Row(Modifier.fillMaxWidth().statusBarsPadding().heightIn(min=52.dp).padding(horizontal=VSTheme.inset),
         verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
         if(!isWorkspace(route)) IconButton(onClick=onBack) {Icon(Icons.AutoMirrored.Filled.ArrowBack,tr("common.back"))}
         Text(tr(title),Modifier.weight(1f).semantics {heading()},style=MaterialTheme.typography.titleLarge,maxLines=1,overflow=TextOverflow.Ellipsis)
         if(route=="home") TextButton(onClick=onProjects,shape=CircleShape) {
             Icon(VSIcons.Folder,null,Modifier.size(20.dp));Spacer(Modifier.width(6.dp));Text(tr("projects.title"))
+        }
+        if(route=="home") TextButton(onClick=onEasy,shape=CircleShape,modifier=Modifier.testTag("top.easy")) {Text(tr("easy.back_to_easy"),maxLines=1)}
+    }
+}
+
+/** Easy mode bar: name, Help and Settings on the easy home; back, title and a way home everywhere else. */
+@Composable internal fun EasyTopBar(route:String,onBack:()->Unit,onHome:()->Unit,onHelp:()->Unit,onSettings:()->Unit) {
+    Row(Modifier.fillMaxWidth().statusBarsPadding().heightIn(min=60.dp).padding(horizontal=VSTheme.inset),
+        verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(6.dp)) {
+        if(route==EasyFeatures.HOME) {
+            Box(Modifier.size(36.dp).background(EasyBrand,RoundedCornerShape(11.dp)),contentAlignment=Alignment.Center) {
+                Icon(VSIcons.Wave,null,Modifier.size(20.dp),tint=Color.White)
+            }
+            Spacer(Modifier.width(4.dp))
+            Text(tr("app.name"),Modifier.weight(1f).semantics {heading()},fontSize=22.sp,fontWeight=FontWeight.Bold,maxLines=1,overflow=TextOverflow.Ellipsis)
+            TextButton(onClick=onHelp,shape=CircleShape,modifier=Modifier.heightIn(min=48.dp).testTag("easy.help")) {
+                Icon(EasyIcons.Help,null,Modifier.size(20.dp),tint=easyAccent());Spacer(Modifier.width(6.dp))
+                Text(tr("easy.help"),fontSize=16.sp,color=role("text"))
+            }
+            IconButton(onClick=onSettings,modifier=Modifier.testTag("easy.settings")) {Icon(Icons.Default.Settings,tr("easy.settings"),tint=role("text"))}
+        } else {
+            IconButton(onClick=onBack) {Icon(Icons.AutoMirrored.Filled.ArrowBack,tr("common.back"))}
+            Text(tr(routeTitle(route)),Modifier.weight(1f).semantics {heading()},fontSize=20.sp,fontWeight=FontWeight.SemiBold,maxLines=1,overflow=TextOverflow.Ellipsis)
+            IconButton(onClick=onHome,modifier=Modifier.testTag("easy.home")) {Icon(Icons.Default.Home,tr("easy.back_home"),tint=easyAccent())}
         }
     }
 }

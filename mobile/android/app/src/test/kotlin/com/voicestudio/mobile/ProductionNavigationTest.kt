@@ -24,7 +24,7 @@ class ProductionNavigationTest {
         val app=ApplicationProvider.getApplicationContext<Application>()
         androidx.work.testing.WorkManagerTestInitHelper.initializeTestWorkManager(app)
         val store=SessionStore(app,object:CredentialVault {override fun read(host:String):Secret?=null;override fun write(host:String,secret:Secret?)=Unit})
-        store.update {Preferences(consent=false)}
+        store.update {Preferences(showAllFeatures=true,consent=false)}
         val vm=StudioViewModel(app,store)
         try {
             compose.setContent {StudioApp(vm)}

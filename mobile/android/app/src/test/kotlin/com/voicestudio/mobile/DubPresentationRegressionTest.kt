@@ -124,7 +124,7 @@ class DubPresentationRegressionTest {
             override fun read(host:String)=Secret()
             override fun write(host:String,secret:Secret?) {}
         })
-        runBlocking {store.update {Preferences(consent=false)}}
+        runBlocking {store.update {Preferences(showAllFeatures=true,consent=false)}}
         val server=MockWebServer().apply {
             dispatcher=object:Dispatcher() {
                 override fun dispatch(request:RecordedRequest)=when(request.path) {

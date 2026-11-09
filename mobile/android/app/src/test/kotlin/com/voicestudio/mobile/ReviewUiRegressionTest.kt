@@ -34,7 +34,7 @@ class ReviewUiRegressionTest {
             override fun read(host:String):Secret?=null
             override fun write(host:String,secret:Secret?)=Unit
         })
-        runBlocking {store.update {Preferences(consent=false)}}
+        runBlocking {store.update {Preferences(showAllFeatures=true,consent=false)}}
         return StudioViewModel(app,store)
     }
     private fun await(condition: ()->Boolean) {compose.waitUntil(15000) {shadowOf(Looper.getMainLooper()).idle();condition()}}

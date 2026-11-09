@@ -29,7 +29,7 @@ class PhoneNavigationTest {
             override fun write(host: String,secret: Secret?) = Unit
         }
         val store=SessionStore(app,vault)
-        store.update {Preferences(consent=false)}
+        store.update {Preferences(showAllFeatures=true,consent=false)}
         val vm=StudioViewModel(app,store)
         try {
             compose.setContent {StudioApp(vm)}
@@ -63,7 +63,7 @@ class PhoneNavigationTest {
         assertTrue("Sparse fixture must be structurally installed",runtime.downloads.installed(model))
         runtime.licence.record(model,true)
         val store=SessionStore(app,object:CredentialVault {override fun read(host:String):Secret?=null;override fun write(host:String,secret:Secret?) {}})
-        store.update {Preferences(consent=false,runLocations=mapOf("speak" to "phone"),phoneModels=mapOf("speak" to model.id))}
+        store.update {Preferences(showAllFeatures=true,consent=false,runLocations=mapOf("speak" to "phone"),phoneModels=mapOf("speak" to model.id))}
         val vm=StudioViewModel(app,store)
         try {
             assertFalse(model.fits(vm.phone.ramBytes))

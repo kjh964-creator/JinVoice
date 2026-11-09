@@ -30,7 +30,7 @@ class PhoneVoiceUiTest {
         writePcm(LocalAudio(FloatArray(12000) {.1f},24000),File(directory,"reference.pcm"))
         File(directory,"voice.json").writeText(Json.encodeToString(PhoneVoice.serializer(),PhoneVoice(id,"Offline voice","A reference transcript",1,1)))
         val store=SessionStore(app,object: CredentialVault {override fun read(host: String): Secret?=null;override fun write(host: String,secret: Secret?) {}})
-        store.update {Preferences(consent=false)}
+        store.update {Preferences(showAllFeatures=true,consent=false)}
         val vm=StudioViewModel(app,store)
         fun await(predicate: ()->Boolean) {compose.waitUntil(15000) {shadowOf(Looper.getMainLooper()).idle();predicate()}}
         try {

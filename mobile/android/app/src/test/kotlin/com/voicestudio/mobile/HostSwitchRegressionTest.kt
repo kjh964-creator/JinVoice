@@ -47,7 +47,7 @@ class HostSwitchRegressionTest {
             override fun read(host:String)=secrets[host]
             override fun write(host:String,secret:Secret?) { if(secret==null) secrets.remove(host) else secrets[host]=secret }
         })
-        store.update {Preferences(consent=false)}
+        store.update {Preferences(showAllFeatures=true,consent=false)}
         fun server(id:String)=MockWebServer().apply {
             dispatcher=object:okhttp3.mockwebserver.Dispatcher() {
                 override fun dispatch(request:RecordedRequest):MockResponse = when(request.path) {

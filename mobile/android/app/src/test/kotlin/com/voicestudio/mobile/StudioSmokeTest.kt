@@ -34,7 +34,7 @@ class StudioSmokeTest {
             override fun read(host:String)=secrets[host]
             override fun write(host:String,secret:Secret?) {if(secret==null) secrets.remove(host) else secrets[host]=secret}
         })
-        runBlocking {store.update {Preferences()}}
+        runBlocking {store.update {Preferences(showAllFeatures=true)}}
         val engineRead=java.util.concurrent.CountDownLatch(1)
         val releaseEngines=java.util.concurrent.CountDownLatch(1)
         val server=MockWebServer()

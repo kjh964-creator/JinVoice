@@ -40,6 +40,7 @@ import com.voicestudio.mobile.features.voices.VoicesScreen
 import com.voicestudio.mobile.features.dub.DubScreen
 import com.voicestudio.mobile.features.dictate.DictateScreen
 import com.voicestudio.mobile.features.settings.SettingsScreen
+import com.voicestudio.mobile.features.easy.*
 import com.voicestudio.mobile.network.ContentReportClient
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -91,15 +92,18 @@ fun contentReportClient()=ContentReportClient(BuildConfig.CONTENT_REPORTS_URL,Bu
     CompositionLocalProvider(LocalL10n provides l,LocalLayoutDirection provides direction,LocalContentReportClient provides reportClient) {
         VoiceStudioTheme(ThemePreferences(prefs.mode,prefs.lightPalette,prefs.darkPalette)) {
             CompositionLocalProvider(LocalScreenTitleProvided provides true) {
-            key(state.connectionId) {
-            val initialRoute=remember {if(state.error?.key=="mobile.connect.error_session_expired") "connect" else "home"}
+            // Easy mode (the default) and the full studio share one graph; switching rebuilds it at that mode's home.
+            val easy=EasyFeatures.easyMode(prefs)
+            key(state.connectionId,easy) {
+            val initialRoute=remember {if(state.error?.key=="mobile.connect.error_session_expired") "connect" else if(easy) EasyFeatures.HOME else "home"}
             val nav=rememberNavController()
             var received by remember {mutableStateOf<PhoneIncoming?>(null)}
             LaunchedEffect(incomingIntent,state.loading) {
                 if(!state.loading&&incomingIntent!=null) {
                     try {PhoneIncoming.read(context,incomingIntent)?.let {payload ->
                         received=payload
-                        nav.navigate(if(payload.text==null&&payload.file==null) payload.route ?: "incoming" else "incoming") {launchSingleTop=true}
+                        val target=if(payload.text==null&&payload.file==null) payload.route ?: "incoming" else "incoming"
+                        nav.navigate(if(easy) EasyFeatures.entry(target,prefs) else target) {launchSingleTop=true}
                     }} catch(e:Exception) {vm.fail(e)}
                     onIncomingConsumed()
                 }
@@ -107,11 +111,18 @@ fun contentReportClient()=ContentReportClient(BuildConfig.CONTENT_REPORTS_URL,Bu
             val back by nav.currentBackStackEntryAsState()
             val route=back?.destination?.route ?: "home"
             var activeWorkspace by rememberSaveable {mutableStateOf("home")}
-            LaunchedEffect(route) {if(isWorkspace(route)) activeWorkspace=route}
             val dismissKeyboard=rememberKeyboardDismiss()
+            LaunchedEffect(route) {if(isWorkspace(route)) activeWorkspace=route}
+            // Switched-off features stay out of reach in easy mode, even when turned off while open.
+            LaunchedEffect(route,easy,prefs.enabledFeatures) {
+                if(easy&&back!=null&&!EasyFeatures.allowed(route,prefs)) nav.navigate(EasyFeatures.HOME) {popUpTo(EasyFeatures.HOME);launchSingleTop=true}
+            }
+            fun goEasyHome() {dismissKeyboard();if(!nav.popBackStack(EasyFeatures.HOME,false)) nav.navigate(EasyFeatures.HOME) {launchSingleTop=true}}
             Scaffold(containerColor=role("canvas"),snackbarHost={SnackbarHost(snackbars)},
-                topBar={StudioTopBar(route,onBack={dismissKeyboard();nav.navigateUp()},onProjects={dismissKeyboard();nav.navigate("projects")})},
-                bottomBar={StudioDock(if(isWorkspace(route)) route else activeWorkspace) {tab -> dismissKeyboard();activeWorkspace=tab;nav.navigate(tab) {popUpTo(nav.graph.startDestinationId) {saveState=true};launchSingleTop=true;restoreState=tab!="home"}}}) {padding ->
+                topBar={if(easy) EasyTopBar(route,onBack={dismissKeyboard();if(!nav.navigateUp()) goEasyHome()},onHome=::goEasyHome,
+                        onHelp={dismissKeyboard();nav.navigate(EasyFeatures.HELP) {launchSingleTop=true}},onSettings={dismissKeyboard();nav.navigate("settings") {launchSingleTop=true}})
+                    else StudioTopBar(route,onBack={dismissKeyboard();nav.navigateUp()},onProjects={dismissKeyboard();nav.navigate("projects")},onEasy={vm.preference {EasyFeatures.showAll(it,false)}})},
+                bottomBar={if(!easy) StudioDock(if(isWorkspace(route)) route else activeWorkspace) {tab -> dismissKeyboard();activeWorkspace=tab;nav.navigate(tab) {popUpTo(nav.graph.startDestinationId) {saveState=true};launchSingleTop=true;restoreState=tab!="home"}}}) {padding ->
                 Surface(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding).dismissKeyboardOnTap(),color=role("canvas")) {
                     Column {
                     state.error?.let {error ->
@@ -142,7 +153,14 @@ fun contentReportClient()=ContentReportClient(BuildConfig.CONTENT_REPORTS_URL,Bu
                         enterTransition={androidx.compose.animation.EnterTransition.None}, exitTransition={androidx.compose.animation.ExitTransition.None},
                         popEnterTransition={androidx.compose.animation.EnterTransition.None}, popExitTransition={androidx.compose.animation.ExitTransition.None}) {
                         composable("connect") {ConnectScreen(vm)}
-                        composable("settings") {SettingsScreen(vm,BuildConfig.VERSION_NAME,onConnect={nav.navigate("connect")},onModels={nav.navigate("models")})}
+                        composable("settings") {SettingsScreen(vm,BuildConfig.VERSION_NAME,onConnect={nav.navigate("connect")},onModels={nav.navigate("models")},onFeatures={nav.navigate(EasyFeatures.FEATURES)})}
+                        composable(EasyFeatures.HOME) {EasyHomeScreen(vm) {nav.navigate(it) {launchSingleTop=true}}}
+                        composable(EasyFeatures.CREATE) {EasyCreateScreen(vm,onVoices={nav.navigate(EasyFeatures.VOICES)},onBook={nav.navigate(EasyFeatures.BOOK)})}
+                        composable(EasyFeatures.VOICES) {EasyVoicesScreen(vm)}
+                        composable(EasyFeatures.HISTORY) {EasyHistoryScreen(vm)}
+                        composable(EasyFeatures.BOOK) {EasyBookScreen(vm,onVoices={nav.navigate(EasyFeatures.VOICES)})}
+                        composable(EasyFeatures.HELP) {EasyHelpScreen {nav.navigate(it) {launchSingleTop=true}}}
+                        composable(EasyFeatures.FEATURES) {EasyFeaturesScreen(vm)}
                         composable("models") {com.voicestudio.mobile.features.models.ModelsScreen(vm)}
                         composable("home") {HomeScreen(vm) {nav.navigate(it)}}
                         composable("host-dubs") {com.voicestudio.mobile.features.dub.ComputerDubScreen(vm)}

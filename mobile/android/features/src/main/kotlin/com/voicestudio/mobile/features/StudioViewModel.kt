@@ -135,9 +135,9 @@ class StudioViewModel @JvmOverloads constructor(application: Application, val st
 
     suspend fun refreshVoiceLibrary() { val current=api ?: return; val profiles=current.profiles(); if(api===current) mutable.update {it.copy(profiles=profiles)} }
     fun refresh() = run { reload() }
-    fun generate(text: String, voice: String, engine: String, language: String) = run {
+    fun generate(text: String, voice: String, engine: String, language: String, speed: Float? = null) = run {
         val current = api ?: return@run
-        val result = current.generate(text, voice, engine, language)
+        val result = current.generate(text, voice, engine, language, speed)
         if(api !== current) return@run
         val audio = current.audioPath(result.audioPath)
         computerTakes[audio] = engine to text

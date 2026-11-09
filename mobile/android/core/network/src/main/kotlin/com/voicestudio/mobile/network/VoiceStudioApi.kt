@@ -151,10 +151,11 @@ class VoiceStudioApi(val address: PairingAddress, token: String? = null, private
             .addFormDataPart("kind", "clone").addFormDataPart("ref_audio", audio.name, audio.asRequestBody("application/octet-stream".toMediaType())).build()
         raw("/profiles", "POST", body).use { json.decodeFromString(it.body!!.string()) }
     }
-    suspend fun generate(text: String, profile: String, engine: String, language: String): Generation = withContext(Dispatchers.IO) {
+    suspend fun generate(text: String, profile: String, engine: String, language: String, speed: Float? = null): Generation = withContext(Dispatchers.IO) {
         val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("text", text)
             .apply { if(profile.isNotBlank()) addFormDataPart("profile_id", profile) }
-            .addFormDataPart("engine", engine).addFormDataPart("language", language).build()
+            .addFormDataPart("engine", engine).addFormDataPart("language", language)
+            .apply { if(speed != null && speed != 1f) addFormDataPart("speed", speed.toString()) }.build()
         raw("/generate", "POST", body).use { r ->
             // Backend returns binary WAV and metadata in headers. Playback streams
             // the canonical host file; do not interpret this response as JSON.

@@ -14,8 +14,36 @@ import androidx.compose.foundation.verticalScroll
 import com.voicestudio.mobile.features.*
 import com.voicestudio.mobile.designsystem.*
 import com.voicestudio.mobile.l10n.L10n
+import com.voicestudio.mobile.features.easy.EasyFeatures
+import com.voicestudio.mobile.features.easy.EasyBrandStart
+import com.voicestudio.mobile.data.Preferences
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
-@Composable fun SettingsScreen(vm:StudioViewModel,version:String,onConnect:()->Unit = {},onModels:()->Unit = {}) {
+/** Easy screen switches: "Show all features (advanced)" and the per-feature list. */
+@Composable private fun EasyModeSettings(prefs:Preferences,onFeatures:()->Unit,showAll:(Boolean)->Unit) {
+    Heading("mobile.easy.section_title")
+    Group {
+        val label=tr("easy.show_all_features")
+        Row(Modifier.fillMaxWidth().heightIn(min=VSTheme.touchTarget).padding(VSTheme.inset).testTag("settings.show_all"),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(VSTheme.gap)) {
+            Column(Modifier.weight(1f),verticalArrangement=Arrangement.spacedBy(4.dp)) {
+                Text(label,style=MaterialTheme.typography.bodyLarge)
+                Text(tr("easy.show_all_features_desc"),style=MaterialTheme.typography.bodySmall,color=role("textMuted"))
+            }
+            Switch(checked=prefs.showAllFeatures,onCheckedChange=showAll,colors=com.voicestudio.mobile.features.easy.easySwitchColors(),
+                modifier=Modifier.semantics {contentDescription=label})
+        }
+        HorizontalDivider(color=role("border"))
+        SettingsLink("easy.features_manage","${EasyFeatures.enabled(prefs).size} / ${EasyFeatures.all.size}",onFeatures)
+    }
+}
+
+@Composable fun SettingsScreen(vm:StudioViewModel,version:String,onConnect:()->Unit = {},onModels:()->Unit = {},onFeatures:()->Unit = {}) {
     val prefs by vm.preferences.collectAsState()
     val state by vm.state.collectAsState()
     val context=LocalContext.current
@@ -26,6 +54,7 @@ import com.voicestudio.mobile.l10n.L10n
     val notification=permissionAction(Manifest.permission.POST_NOTIFICATIONS,"mobile.settings.notifications_help",vm::fail) {vm.preference {it.copy(notifications=true)}}
     Screen {
         ScreenTitle("mobile.tabs.settings")
+        EasyModeSettings(prefs,onFeatures) {on -> vm.preference {EasyFeatures.showAll(it,on)}}
         Group {
             SettingsLink("mobile.tabs.connect",onClick=onConnect)
             HorizontalDivider(color=role("border"))
