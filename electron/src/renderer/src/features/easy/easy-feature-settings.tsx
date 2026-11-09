@@ -57,7 +57,7 @@ export function EasyFeatureSettings({ variant = 'settings' }: { variant?: 'setti
         <div
           className={cn(
             'space-y-2 border-b border-border/50 px-4',
-            page ? 'py-3 max-sm:py-2.5' : 'py-2.5',
+            page ? 'py-4 sm:px-5 max-sm:py-3' : 'py-3.5',
           )}
         >
           <div className="flex flex-col items-start gap-2 sm:flex-row-reverse sm:gap-3">
@@ -82,13 +82,7 @@ export function EasyFeatureSettings({ variant = 'settings' }: { variant?: 'setti
             </p>
           )}
         </div>
-        <ul
-          className={cn(
-            'divide-y divide-border/50',
-            (page || easyMode) &&
-              'lg:grid lg:grid-cols-2 lg:divide-y-0 lg:[&>li]:border-b lg:[&>li]:border-border/50',
-          )}
-        >
+        <ul className="divide-y divide-border/50">
           {EASY_FEATURE_CATALOG.map(({ id, icon: Icon, nameKey, descKey }) => {
             const on = enabled.includes(id);
             const nameId = `easy-feature-${id}-name`;
@@ -100,13 +94,13 @@ export function EasyFeatureSettings({ variant = 'settings' }: { variant?: 'setti
                   data-on={on || undefined}
                   className={cn(
                     'flex cursor-pointer items-center gap-3.5 px-4 transition-colors hover:bg-muted/40 sm:gap-4',
-                    page ? 'py-3 max-sm:gap-2.5 max-sm:py-2.5' : 'py-2.5 max-sm:gap-2.5',
+                    page ? 'py-3.5 sm:px-5 max-sm:gap-3 max-sm:py-2.5' : 'py-3',
                   )}
                 >
                   <span
                     aria-hidden="true"
                     className={cn(
-                      'flex size-10 shrink-0 items-center justify-center rounded-xl transition-colors [&_svg]:size-5',
+                      'flex size-11 shrink-0 items-center justify-center rounded-xl transition-colors [&_svg]:size-5',
                       page && 'max-sm:size-10',
                       on ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground',
                     )}
@@ -136,7 +130,7 @@ export function EasyFeatureSettings({ variant = 'settings' }: { variant?: 'setti
                     data-slot="easy-feature-state"
                     aria-hidden="true"
                     className={cn(
-                      'w-12 shrink-0 text-end text-[13px] font-medium max-sm:w-10 max-sm:text-xs',
+                      'w-12 shrink-0 text-end text-[13px] font-medium',
                       on ? 'text-primary' : 'text-muted-foreground',
                     )}
                   >

@@ -134,7 +134,7 @@ export function EasyPage({
   return (
     <div className="flex min-h-full flex-col">
       <div className="sticky top-0 z-10 border-b border-border/40 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
-        <div className="mx-auto flex w-full max-w-[1440px] items-center gap-3 px-5 py-2.5 max-sm:gap-2.5 max-sm:px-3 max-sm:py-2">
+        <div className="mx-auto flex w-full max-w-3xl items-center gap-4 px-6 py-3.5 max-sm:gap-2.5 max-sm:px-3 max-sm:py-2">
           <Button
             variant="outline"
             className="h-11 gap-2 rounded-xl px-4 text-[15px] max-sm:size-10 max-sm:rounded-full max-sm:px-0"
@@ -150,7 +150,7 @@ export function EasyPage({
           {actions}
         </div>
       </div>
-      <div className="mx-auto w-full max-w-[1440px] flex-1 px-5 pt-4 pb-6 max-sm:px-3 max-sm:pt-3 max-sm:pb-5">
+      <div className="mx-auto w-full max-w-3xl flex-1 px-6 pt-6 pb-12 max-sm:px-3 max-sm:pt-3 max-sm:pb-8">
         {children}
       </div>
     </div>
@@ -173,11 +173,11 @@ export function EasySection({
   return (
     <section
       className={cn(
-        'min-w-0 rounded-2xl border border-border/70 bg-card p-4 shadow-xs max-sm:p-3',
+        'rounded-2xl border border-border/70 bg-card p-5 shadow-xs sm:p-6 max-sm:p-3',
         className,
       )}
     >
-      <div className="mb-3 flex flex-wrap items-center gap-2.5 max-sm:mb-2.5 max-sm:gap-2">
+      <div className="mb-4 flex items-center gap-3 max-sm:mb-3 max-sm:gap-2.5">
         {step !== undefined && (
           <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/12 text-sm font-semibold text-primary max-sm:size-7 max-sm:text-[13px]">
             {step}
@@ -205,7 +205,7 @@ export function EasyEmpty({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card/60 px-5 py-8 text-center max-sm:gap-2 max-sm:px-4 max-sm:py-6">
+    <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card/60 px-6 py-12 text-center max-sm:gap-2 max-sm:px-4 max-sm:py-8">
       <div className="flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary max-sm:size-14 [&_svg]:size-8 max-sm:[&_svg]:size-7">
         {icon}
       </div>
@@ -259,9 +259,7 @@ export function EasyPlayButton({
       variant={size === 'large' ? 'default' : 'outline'}
       className={cn(
         'gap-2 rounded-xl',
-        size === 'large'
-          ? 'h-12 px-5 text-base max-sm:h-11 max-sm:px-4 max-sm:text-[15px]'
-          : 'h-11 px-4 text-[15px]',
+        size === 'large' ? 'h-12 px-5 text-base max-sm:h-11 max-sm:px-4 max-sm:text-[15px]' : 'h-11 px-4 text-[15px]',
         phoneIcon && 'max-sm:size-10 max-sm:rounded-full max-sm:px-0',
       )}
       title={phoneIcon ? text : undefined}

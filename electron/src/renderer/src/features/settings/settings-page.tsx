@@ -67,7 +67,7 @@ import {
 import { PalettePicker } from './palette-picker';
 import { useTheme } from '@/hooks/use-theme';
 import { appearanceScales, useAppearance } from '@/hooks/use-appearance';
-import { getBridge, isMac } from '@/components/bridge';
+import { isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
 import { SettingsContent, SettingsRow, SettingsSection } from './settings-layout';
 import i18n, { APP_LANGUAGE_ITEMS, APP_LANGUAGES, setAppLanguage, type AppLocale } from '@/i18n';
@@ -300,15 +300,7 @@ export function SettingsPage() {
   );
 
   return (
-    <div
-      className={cn(
-        'flex h-full min-h-0 min-w-0',
-        easyMode &&
-          // Phone: the menu becomes one row of labelled tabs above the page, so
-          // every section keeps its name (an icon-only rail was hard to read).
-          'max-sm:flex-col max-sm:[&>aside]:w-full max-sm:[&>aside]:border-r-0 max-sm:[&>aside]:border-b max-sm:[&>aside>header]:hidden max-sm:[&>aside>div:last-of-type]:hidden max-sm:[&>aside>div:first-of-type]:flex-row max-sm:[&>aside>div:first-of-type]:items-center max-sm:[&>aside>div:first-of-type]:overflow-x-auto max-sm:[&>aside>div:first-of-type]:overflow-y-hidden max-sm:[&>aside>div:first-of-type]:px-2 max-sm:[&>aside>div:first-of-type]:py-2 max-sm:[&_aside_nav]:flex-row max-sm:[&_aside_nav]:gap-1 max-sm:[&_aside_nav_a]:h-9 max-sm:[&_aside_nav_a]:w-auto max-sm:[&_aside_nav_a]:shrink-0 max-sm:[&_aside_nav_a]:rounded-full max-sm:[&_aside_nav_a]:px-3 max-sm:[&_aside_[data-slot=settings-nav-label]]:flex-none max-sm:[&_aside_[data-slot=settings-nav-label]]:overflow-visible',
-      )}
-    >
+    <div className="flex h-full min-h-0">
       <aside className="flex w-[clamp(11rem,20vw,17rem)] shrink-0 flex-col border-r border-sidebar-border/50 bg-sidebar text-sidebar-foreground shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)]">
         <header className="workspace-titlebar flex h-12 shrink-0 items-center gap-2.5 border-b border-sidebar-border/45 bg-background/25 px-3.5 backdrop-blur-xl">
           {/* The brand and window controls live in the main sidebar to the
@@ -321,12 +313,7 @@ export function SettingsPage() {
           </span>
         </header>
         <div className="studio-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain p-3 [scrollbar-gutter:stable]">
-          <div
-            className={cn(
-              'sticky top-0 z-10 flex h-9 shrink-0 items-center gap-2 rounded-lg border border-sidebar-border/45 bg-sidebar/90 px-2.5 shadow-xs backdrop-blur-xl transition-[border-color,background-color,box-shadow] focus-within:border-primary/30 focus-within:bg-background/55 focus-within:ring-2 focus-within:ring-ring/20',
-              easyMode && 'max-sm:sr-only max-sm:focus-within:not-sr-only',
-            )}
-          >
+          <div className="sticky top-0 z-10 flex h-9 shrink-0 items-center gap-2 rounded-lg border border-sidebar-border/45 bg-sidebar/90 px-2.5 shadow-xs backdrop-blur-xl transition-[border-color,background-color,box-shadow] focus-within:border-primary/30 focus-within:bg-background/55 focus-within:ring-2 focus-within:ring-ring/20">
             <SearchIcon className="size-4 shrink-0 text-muted-foreground" />
             <Input
               type="search"
@@ -544,21 +531,11 @@ export function SettingsPage() {
           </Link>
         </div>
       </aside>
-      <section
-        className={cn(
-          'flex min-w-0 flex-1 flex-col bg-background',
-          easyMode &&
-            '[&>div>div]:gap-4 [&>div>div]:px-4 [&>div>div]:pt-4 [&>div>div]:pb-6 [&_[data-slot=settings-row]]:py-2.5 [&_section>div.glass-panel]:rounded-2xl max-sm:[&>div>div]:px-3',
-        )}
-      >
+      <section className="flex min-w-0 flex-1 flex-col bg-background">
         <header
           className={cn(
             'workspace-titlebar flex shrink-0 items-center gap-2 px-5 text-sm',
-            isMac()
-              ? 'account-corner-safe'
-              : easyMode && !getBridge()
-                ? ''
-                : 'native-controls-right',
+            isMac() ? 'account-corner-safe' : 'native-controls-right',
           )}
         >
           <span className="text-muted-foreground">{t('nav.settings')}</span>

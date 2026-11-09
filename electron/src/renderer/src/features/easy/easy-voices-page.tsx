@@ -130,16 +130,13 @@ export function EasyVoicesPage() {
           }
         />
       ) : (
-        <ul
-          className="grid grid-cols-1 gap-3 md:grid-cols-2 min-[87.5rem]:grid-cols-3 max-sm:gap-2"
-          aria-label={t('easy.voices_title')}
-        >
+        <ul className="flex flex-col gap-3 max-sm:gap-2" aria-label={t('easy.voices_title')}>
           {voices.map((voice) => {
             const created = easyDate(voice.created_at);
             return (
               <li
                 key={voice.id}
-                className="flex min-w-0 items-center gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-xs sm:grid sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-y-2 max-sm:flex-nowrap max-sm:gap-2.5 max-sm:py-2.5 max-sm:ps-3 max-sm:pe-2"
+                className="flex flex-wrap items-center gap-4 rounded-2xl border border-border/70 bg-card p-4 shadow-xs max-sm:flex-nowrap max-sm:gap-2.5 max-sm:py-2.5 max-sm:ps-3 max-sm:pe-2"
               >
                 <ProfileAvatar
                   name={voice.name}
@@ -154,7 +151,7 @@ export function EasyVoicesPage() {
                     </p>
                   )}
                 </div>
-                <div className="flex flex-wrap items-center gap-1 sm:col-span-2 max-sm:shrink-0 max-sm:flex-nowrap max-sm:gap-0.5">
+                <div className="flex flex-wrap items-center gap-2 max-sm:shrink-0 max-sm:flex-nowrap max-sm:gap-0.5">
                   <EasyPlayButton
                     playKey={`voice:${voice.id}`}
                     src={profileAudioUrl(voice.id, voice.audio_url)}

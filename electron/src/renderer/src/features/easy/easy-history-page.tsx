@@ -62,7 +62,7 @@ export function EasyHistoryPage() {
           }
         />
       ) : (
-        <ul className="flex flex-col gap-2" aria-label={t('easy.history_title')}>
+        <ul className="flex flex-col gap-3 max-sm:gap-2" aria-label={t('easy.history_title')}>
           {items.map((item) => {
             const created = easyDate(item.created_at);
             const voice =
@@ -70,16 +70,16 @@ export function EasyHistoryPage() {
             return (
               <li
                 key={item.id}
-                className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 rounded-2xl border border-border/70 bg-card px-4 py-3 shadow-xs max-sm:gap-x-2 max-sm:gap-y-0.5 max-sm:py-2.5 max-sm:ps-3.5 max-sm:pe-2"
+                className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-xs sm:p-5 max-sm:grid max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:items-center max-sm:gap-x-2 max-sm:gap-y-0.5 max-sm:py-2.5 max-sm:ps-3.5 max-sm:pe-2"
               >
                 <p
-                  className="col-start-1 row-start-1 line-clamp-2 text-base leading-relaxed max-sm:text-[15px] max-sm:leading-snug"
+                  className="line-clamp-3 text-base leading-relaxed max-sm:col-start-1 max-sm:row-start-1 max-sm:line-clamp-2 max-sm:text-[15px] max-sm:leading-snug"
                   dir="auto"
                 >
                   {item.text}
                 </p>
-                <div className="contents">
-                  <p className="col-start-1 row-start-2 min-w-0 text-sm text-muted-foreground max-sm:truncate max-sm:text-[12.5px]">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 max-sm:contents">
+                  <p className="min-w-0 flex-1 text-sm text-muted-foreground max-sm:col-start-1 max-sm:row-start-2 max-sm:truncate max-sm:text-[12.5px]">
                     <span className="font-medium text-foreground/80">{voice}</span>
                     {created && <span> · {format.format(created)}</span>}
                     {item.duration_seconds ? (
@@ -91,7 +91,7 @@ export function EasyHistoryPage() {
                       </span>
                     ) : null}
                   </p>
-                  <div className="col-start-2 row-span-2 row-start-1 flex flex-wrap items-center gap-1 max-sm:flex-nowrap max-sm:gap-0.5">
+                  <div className="flex flex-wrap items-center gap-2 max-sm:col-start-2 max-sm:row-span-2 max-sm:row-start-1 max-sm:flex-nowrap max-sm:gap-0.5">
                     <EasyPlayButton
                       playKey={`take:${item.id}`}
                       src={audioUrl(item.audio_path)}

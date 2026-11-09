@@ -48,14 +48,14 @@ function HomeCard({
       type="button"
       data-slot="easy-home-card"
       onClick={() => runRendererTask('Open easy screen', () => navigate({ to }))}
-      className="group flex min-w-0 flex-row items-start gap-4 rounded-2xl border border-border/70 bg-card p-5 text-start shadow-xs transition-[border-color,box-shadow,transform] outline-none hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0 xl:flex-col xl:gap-3 max-sm:flex-col max-sm:gap-2 max-sm:p-3"
+      className="group flex min-h-44 flex-row items-start gap-5 rounded-3xl border border-border/70 bg-card p-6 text-start shadow-xs transition-[border-color,box-shadow,transform] outline-none hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0 max-sm:min-h-0 max-sm:flex-col max-sm:gap-2.5 max-sm:rounded-2xl max-sm:p-3.5"
     >
       <span
-        className={`flex size-12 shrink-0 items-center justify-center rounded-2xl ${accent} max-sm:size-10 max-sm:rounded-xl [&_svg]:size-6 max-sm:[&_svg]:size-5`}
+        className={`flex size-16 shrink-0 items-center justify-center rounded-2xl ${accent} max-sm:size-11 max-sm:rounded-xl [&_svg]:size-8 max-sm:[&_svg]:size-6`}
       >
         <Icon />
       </span>
-      <span className="flex min-h-0 min-w-0 flex-1 flex-col gap-1.5 self-stretch max-sm:gap-1">
+      <span className="flex min-h-full min-w-0 flex-1 flex-col gap-1.5 self-stretch max-sm:min-h-0 max-sm:gap-1">
         <span className="text-xl font-semibold tracking-tight max-sm:text-[17px] max-sm:leading-snug">
           {shortTitle ? (
             <>
@@ -71,8 +71,8 @@ function HomeCard({
         </span>
         <span
           className={cn(
-            'mt-auto flex w-full items-center justify-between pt-2 text-sm font-medium max-sm:pt-1',
-            !meta && 'hidden',
+            'mt-auto flex w-full items-center justify-between pt-3 text-sm font-medium max-sm:pt-1.5',
+            !meta && 'max-sm:hidden',
           )}
         >
           <span className="text-muted-foreground max-sm:text-[13px] max-sm:font-semibold max-sm:text-primary">
@@ -117,7 +117,7 @@ function EasyExtraFeatures() {
     <section
       data-slot="easy-extra-features"
       aria-labelledby="easy-extra-title"
-      className="flex flex-col gap-3 max-sm:gap-2.5"
+      className="flex flex-col gap-4 max-sm:gap-2.5"
     >
       <div className="flex flex-wrap items-end justify-between gap-2 max-sm:gap-1">
         <div className="flex flex-col gap-1 max-sm:gap-0.5">
@@ -132,7 +132,7 @@ function EasyExtraFeatures() {
       </div>
       <div
         data-slot="easy-extra-grid"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 max-sm:grid-cols-2 max-sm:gap-2.5 max-sm:[&>:last-child:nth-child(odd)]:col-span-2"
+        className="grid gap-4 sm:grid-cols-2 max-sm:grid-cols-2 max-sm:gap-2.5"
       >
         {features.map((id) => {
           const { path, icon: Icon, nameKey, descKey } = easyFeatureInfo(id);
@@ -172,7 +172,7 @@ export function EasyHomePage() {
   const voiceCount = profiles.data ? easyVoices(profiles.data).length : null;
   const takeCount = history.data ? history.data.length : null;
   return (
-    <div className="mx-auto flex min-h-full w-full max-w-[1440px] flex-col justify-start gap-5 px-5 pt-6 pb-6 max-sm:gap-3.5 max-sm:px-3 max-sm:pt-3 max-sm:pb-5">
+    <div className="mx-auto flex min-h-full w-full max-w-5xl flex-col justify-center gap-8 px-8 pt-10 pb-16 max-sm:justify-start max-sm:gap-4 max-sm:px-3 max-sm:pt-4 max-sm:pb-8">
       <div className="flex flex-col gap-2 max-sm:gap-0.5 max-sm:px-1">
         <h1 className="text-3xl font-semibold tracking-tight max-sm:text-[23px]">
           {t('easy.home_title')}
@@ -182,7 +182,7 @@ export function EasyHomePage() {
       </div>
       <div
         data-slot="easy-home-grid"
-        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 max-sm:grid-cols-2 max-sm:gap-2.5"
+        className="grid gap-5 sm:grid-cols-2 max-sm:grid-cols-2 max-sm:gap-2.5"
       >
         <HomeCard
           to={EASY_ROUTES.create}
