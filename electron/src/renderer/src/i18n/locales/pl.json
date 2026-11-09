@@ -4625,5 +4625,15 @@
     "feature_tools_desc": "Narzędzia do konwersji i dopracowania plików audio.",
     "feature_integrations": "Połącz inne aplikacje",
     "feature_integrations_desc": "Połącz inne programy, aby mogły korzystać z JinVoice."
+  },
+  "backgroundRun": {
+    "tray_open": "Otwórz {{app}}",
+    "tray_quit": "Zakończ",
+    "notice_title": "{{app}} nadal działa",
+    "notice_body": "{{app}} działa dalej z ikony w obszarze powiadomień. Aby całkowicie zamknąć, kliknij ikonę prawym przyciskiem → Zakończ.",
+    "close_to_tray": "Ukrywaj w ikonie obszaru powiadomień po kliknięciu Zamknij (X)",
+    "close_to_tray_desc": "Po zamknięciu okna {{app}} działa dalej, więc skrót dyktowania nadal działa. Kliknij ikonę, aby otworzyć je ponownie.",
+    "open_at_login": "Uruchamiaj {{app}} po włączeniu komputera (jako ikonę w obszarze powiadomień)",
+    "open_at_login_desc": "Uruchamia się po cichu jako ikona, bez otwierania okna."
   }
 }

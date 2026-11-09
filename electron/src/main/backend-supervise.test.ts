@@ -224,6 +224,29 @@ it('still reports an attached backend that refuses connections as crashed', asyn
   }
 });
 
+it('re-attaches by itself when an attached backend comes back after a restart', async () => {
+  const health: Health = { mode: 'up' };
+  const supervisor = await attachedSupervisor(health);
+  try {
+    // A shared headless backend restarts: the listener is gone for a while.
+    health.mode = 'down';
+    await vi.advanceTimersByTimeAsync(30_000);
+    expect(supervisor.status.stage).toBe('crashed');
+
+    health.mode = 'up';
+    await vi.advanceTimersByTimeAsync(5_000);
+    expect(supervisor.status.stage).toBe('ready');
+    expect(mocks.spawn).not.toHaveBeenCalled();
+
+    // Supervision resumed: a later outage is reported again.
+    health.mode = 'down';
+    await vi.advanceTimersByTimeAsync(7_000);
+    expect(supervisor.status.stage).toBe('crashed');
+  } finally {
+    await supervisor.shutdown();
+  }
+});
+
 it('waits out an attached backend that accepts connections but is busy (#2601)', async () => {
   const health: Health = { mode: 'up' };
   const supervisor = await attachedSupervisor(health);

@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "Ses dosyalarını dönüştürmek ve iyileştirmek için araçlar.",
     "feature_integrations": "Diğer uygulamaları bağla",
     "feature_integrations_desc": "Diğer programları JinVoice’u kullanabilecek şekilde bağlayın."
+  },
+  "backgroundRun": {
+    "tray_open": "{{app}} uygulamasını aç",
+    "tray_quit": "Çık",
+    "notice_title": "{{app}} çalışmaya devam ediyor",
+    "notice_body": "{{app}}, bildirim alanındaki simgeden çalışmaya devam ediyor. Tamamen kapatmak için simgeye sağ tıklayın → Çık.",
+    "close_to_tray": "Kapat (X) düğmesine basınca bildirim alanı simgesine gizle",
+    "close_to_tray_desc": "Pencere kapansa da {{app}} çalışmaya devam eder, böylece dikte kısayolu kullanılabilir. Yeniden açmak için simgeye tıklayın.",
+    "open_at_login": "Bilgisayar açılınca {{app}} otomatik başlasın (bildirim alanı simgesi olarak)",
+    "open_at_login_desc": "Pencereyi açmadan, sessizce simge olarak başlar."
   }
 }

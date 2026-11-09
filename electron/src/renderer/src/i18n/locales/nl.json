@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "Hulpmiddelen om audiobestanden om te zetten en op te poetsen.",
     "feature_integrations": "Andere apps koppelen",
     "feature_integrations_desc": "Koppel andere programma’s zodat ze JinVoice kunnen gebruiken."
+  },
+  "backgroundRun": {
+    "tray_open": "{{app}} openen",
+    "tray_quit": "Afsluiten",
+    "notice_title": "{{app}} is nog actief",
+    "notice_body": "{{app}} blijft actief via het pictogram in het systeemvak. Om het helemaal af te sluiten: klik met rechts op het pictogram → Afsluiten.",
+    "close_to_tray": "Verbergen in het systeemvakpictogram als ik op Sluiten (X) klik",
+    "close_to_tray_desc": "Na het sluiten van het venster blijft {{app}} actief, zodat de dicteersneltoets blijft werken. Klik op het pictogram om het weer te openen.",
+    "open_at_login": "{{app}} automatisch starten als de computer opstart (als pictogram in het systeemvak)",
+    "open_at_login_desc": "Start stil als pictogram, zonder het venster te openen."
   }
 }

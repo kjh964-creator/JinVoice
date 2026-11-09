@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "Công cụ chuyển đổi và tinh chỉnh tệp âm thanh.",
     "feature_integrations": "Kết nối ứng dụng khác",
     "feature_integrations_desc": "Kết nối chương trình khác để chúng dùng được JinVoice."
+  },
+  "backgroundRun": {
+    "tray_open": "Mở {{app}}",
+    "tray_quit": "Thoát",
+    "notice_title": "{{app}} vẫn đang chạy",
+    "notice_body": "{{app}} vẫn chạy từ biểu tượng trong khu vực thông báo. Để tắt hẳn, nhấp chuột phải vào biểu tượng → Thoát.",
+    "close_to_tray": "Ẩn xuống biểu tượng khu vực thông báo khi nhấn Đóng (X)",
+    "close_to_tray_desc": "Khi đóng cửa sổ, {{app}} vẫn chạy nên phím tắt đọc chính tả vẫn dùng được. Nhấp vào biểu tượng để mở lại.",
+    "open_at_login": "Tự khởi động {{app}} khi bật máy tính (dưới dạng biểu tượng trong khu vực thông báo)",
+    "open_at_login_desc": "Khởi động lặng lẽ dưới dạng biểu tượng, không mở cửa sổ."
   }
 }

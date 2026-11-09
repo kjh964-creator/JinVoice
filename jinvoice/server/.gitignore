@@ -5,3 +5,5 @@ minipc_run.py
 pack_data.py
 before.txt
 *.log
+merge_minipc.py
+WEB-ON-THIS-PC.md

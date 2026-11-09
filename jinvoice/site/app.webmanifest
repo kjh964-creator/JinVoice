@@ -1,0 +1,18 @@
+{
+  "name": "JinVoice",
+  "short_name": "JinVoice",
+  "description": "글을 내 목소리로 읽어 주는 JinVoice (웹)",
+  "id": "/jinvoice/app/",
+  "start_url": "/jinvoice/app/",
+  "scope": "/jinvoice/app/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F6FB",
+  "theme_color": "#5B6CFF",
+  "lang": "ko",
+  "icons": [
+    { "src": "/jinvoice/assets/app-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/jinvoice/assets/app-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/jinvoice/assets/app-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

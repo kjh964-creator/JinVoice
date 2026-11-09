@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "转换和润色音频文件的工具。",
     "feature_integrations": "连接其他应用",
     "feature_integrations_desc": "连接其他程序，让它们也能使用 JinVoice。"
+  },
+  "backgroundRun": {
+    "tray_open": "打开 {{app}}",
+    "tray_quit": "退出",
+    "notice_title": "{{app}} 仍在运行",
+    "notice_body": "{{app}} 会在通知区域的图标中继续运行。要完全关闭，请右键单击图标 → 退出",
+    "close_to_tray": "点击关闭 (X) 时隐藏到通知区域图标",
+    "close_to_tray_desc": "关闭窗口后 {{app}} 仍会运行，听写快捷键照常可用。点击图标即可重新打开。",
+    "open_at_login": "开机时自动启动 {{app}}（在通知区域图标中）",
+    "open_at_login_desc": "不会打开窗口，只以图标形式安静启动。"
   }
 }

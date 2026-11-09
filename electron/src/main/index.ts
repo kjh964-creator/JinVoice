@@ -6,7 +6,17 @@ import { isTrustedRenderer } from './trusted-renderer';
 import { dirname, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { app, BrowserWindow, ipcMain, Menu, nativeImage, session, shell, Tray } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  nativeImage,
+  powerMonitor,
+  session,
+  shell,
+  Tray,
+} from 'electron';
 import { electronApp, is, optimizer } from '@electron-toolkit/utils';
 import { BackendSupervisor, backendRoot } from './backend';
 import { registerIpc, wireWindowMaximizeEvents } from './ipc';
@@ -26,6 +36,8 @@ import { activateLiveWindow, isLiveWindow } from './window-safety';
 import { startAccount } from './account';
 import { installAppIdentity, installMacApplicationMenu } from './app-identity';
 import { APP_ID, PRODUCT_NAME } from '../../../config/app-config.mjs';
+import { decideCloseAction, isHiddenLaunch } from './close-to-tray';
+import { installBackgroundRun, type BackgroundRun } from './background-run';
 
 // Packaged GUI launches can inherit a short-lived terminal pipe. When that
 // launcher exits, diagnostic console writes emit EPIPE asynchronously and can
@@ -62,6 +74,11 @@ let closeUpdates: (() => void) | null = null;
 let closeRepairAgents: (() => void) | null = null;
 let closeAccount: (() => void) | null = null;
 let quitPreparation: Promise<void> | null = null;
+let background: BackgroundRun | null = null;
+/** Windows is logging off / shutting down: a close must really quit. */
+let sessionEnding = false;
+/** Started by the login item: stay in the tray until the user opens the window. */
+let launchHidden = isHiddenLaunch(process.argv);
 
 const PERSISTENCE_FLUSH_REQUEST = 'app:flush-persistence';
 const PERSISTENCE_FLUSHED = 'app:persistence-flushed';
@@ -103,6 +120,8 @@ async function tearDownNativeResources(): Promise<void> {
   closeRepairAgents = null;
   closeAccount?.();
   closeAccount = null;
+  background?.dispose();
+  background = null;
   tray?.destroy();
   tray = null;
   const proxyTeardown = closeDevProxy?.() ?? Promise.resolve();
@@ -162,11 +181,34 @@ function createWindow(): BrowserWindow {
 
   win.on('enter-full-screen', () => win.webContents.send('app:fullscreen', true));
   win.on('leave-full-screen', () => win.webContents.send('app:fullscreen', false));
-  win.on('ready-to-show', () => activateLiveWindow(win));
+  win.on('ready-to-show', () => {
+    if (launchHidden) return;
+    activateLiveWindow(win);
+  });
+  // Logoff/shutdown must end the app even when X only hides the window.
+  win.on('query-session-end', () => {
+    sessionEnding = true;
+  });
+  win.on('session-end', () => {
+    sessionEnding = true;
+    observeMainProcessTask(beginOrderlyQuit(), mainErrors, 'Session-end quit');
+  });
   win.on('close', (event) => {
-    if (quitting) return;
+    const action = decideCloseAction({
+      platform: process.platform,
+      quitting,
+      sessionEnding,
+      closeToTray: background?.closeToTray() ?? false,
+      trayAvailable: !!tray && !tray.isDestroyed(),
+    });
+    if (action === 'allow') return;
     event.preventDefault();
-    if (process.platform === 'darwin') {
+    if (action === 'hide') {
+      win.hide();
+      background?.hidden();
+      return;
+    }
+    if (action === 'flush-destroy') {
       observeMainProcessTask(
         flushRendererPersistence().finally(() => {
           if (!win.isDestroyed()) win.destroy();
@@ -241,6 +283,7 @@ if (process.env.VOICESTUDIO_ALLOW_MULTIPLE_INSTANCES !== '1' && !app.requestSing
   app.quit();
 } else {
   app.on('second-instance', () => {
+    launchHidden = false;
     activateLiveWindow(mainWindow);
   });
 
@@ -337,10 +380,24 @@ if (process.env.VOICESTUDIO_ALLOW_MULTIPLE_INSTANCES !== '1' && !app.requestSing
       tray = new Tray(createTrayIcon(brandIconPath('32x32.png')));
       tray.setToolTip(PRODUCT_NAME);
       closeCapture = installNativeCapture(PRELOAD_PATH, tray, () => mainWindow);
-      tray.on('click', () => {
+      background = installBackgroundRun(
+        () => mainWindow,
+        () => tray,
+      );
+      const openFromTray = () => {
+        launchHidden = false;
         if (!isLiveWindow(mainWindow)) mainWindow = createWindow();
         activateLiveWindow(mainWindow);
-      });
+      };
+      tray.on('click', openFromTray);
+      tray.on('double-click', openFromTray);
+      // Linux shutdown signal; Windows uses the window's session-end and
+      // macOS keeps its existing quit path.
+      if (process.platform === 'linux')
+        powerMonitor.on('shutdown', () => {
+          sessionEnding = true;
+          observeMainProcessTask(beginOrderlyQuit(), mainErrors, 'Shutdown quit');
+        });
       observeMainProcessTask(backend.start(), mainErrors, 'Backend startup');
 
       app.on('activate', () => {

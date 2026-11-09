@@ -18,6 +18,13 @@ export type BackendStage =
   | 'port_in_use' // backend exited 78 (EX_CONFIG): another process holds the port
   | 'failed'; // could not start within the budget / spawn error
 
+export interface BackgroundRunState {
+  closeToTray: boolean;
+  openAtLogin: boolean;
+  closeToTraySupported: boolean;
+  openAtLoginSupported: boolean;
+}
+
 export interface NativeCrashRecord {
   timestamp: number;
   version: string;
@@ -414,6 +421,13 @@ export interface VoiceStudioBridge {
     isFullScreen(): Promise<boolean>;
     onFullScreen(callback: (fullscreen: boolean) => void): () => void;
     onPersistenceFlush(callback: () => void | Promise<void>): () => void;
+    /** Keep running in the notification area (Windows/Linux) and start at login (Windows). */
+    background?: {
+      get(): Promise<BackgroundRunState>;
+      set(patch: { closeToTray?: boolean; openAtLogin?: boolean }): Promise<BackgroundRunState>;
+      /** Localized text for the one-time "still running in the tray" notice. */
+      labels(labels: { title: string; body: string }): Promise<void>;
+    };
   };
   backend: {
     getStatus(): Promise<BackendStatus>;

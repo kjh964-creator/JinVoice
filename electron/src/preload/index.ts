@@ -9,6 +9,7 @@ import type {
   VoiceStudioBridge,
   RepairAgentEvent,
   AccountPublicState,
+  BackgroundRunState,
 } from './index.d';
 
 function subscribe<T>(channel: string, cb: (payload: T) => void): () => void {
@@ -82,6 +83,11 @@ const bridge: VoiceStudioBridge = {
       };
       ipcRenderer.on('app:flush-persistence', listener);
       return () => ipcRenderer.removeListener('app:flush-persistence', listener);
+    },
+    background: {
+      get: () => ipcRenderer.invoke('app:background:get') as Promise<BackgroundRunState>,
+      set: (patch) => ipcRenderer.invoke('app:background:set', patch) as Promise<BackgroundRunState>,
+      labels: (labels) => ipcRenderer.invoke('app:background:labels', labels) as Promise<void>,
     },
   },
   account: {

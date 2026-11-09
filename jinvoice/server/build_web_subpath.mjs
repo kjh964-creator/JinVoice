@@ -37,6 +37,17 @@ if (run.status !== 0) process.exit(run.status ?? 1);
   const p = join(distDir, 'index.html');
   const pfx = `/${base.replace(/^\/+|\/+$/g, '')}/`;
   writeFileSync(join(distDir, 'jv-user.js'), readFileSync(join(here, 'jv-user.js')));
+  // Installable on phones ("홈 화면에 추가"): the manifest and icons live on the
+  // public homepage (/jinvoice/), so they load without the login cookie.
+  writeFileSync(
+    p,
+    readFileSync(p, 'utf8').replace(
+      '</head>',
+      '  <link rel="manifest" href="/jinvoice/app.webmanifest">\n' +
+        '  <meta name="theme-color" content="#5B6CFF">\n' +
+        '  <link rel="apple-touch-icon" href="/jinvoice/assets/app-192.png">\n  </head>',
+    ),
+  );
   writeFileSync(p, readFileSync(p, 'utf8').replace('</body>', `  <script src="${pfx}jv-user.js" defer></script>\n  </body>`));
 }
 

@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "音声ファイルを変換したり整えたりするツールです。",
     "feature_integrations": "ほかのアプリとの連携",
     "feature_integrations_desc": "ほかのソフトから JinVoice を使えるようにつなぎます。"
+  },
+  "backgroundRun": {
+    "tray_open": "{{app}} を開く",
+    "tray_quit": "終了",
+    "notice_title": "{{app}} は実行中です",
+    "notice_body": "{{app}} は通知領域のアイコンで実行を続けています。完全に終了するには、アイコンを右クリック → 終了",
+    "close_to_tray": "閉じる (X) を押したら通知領域のアイコンに隠す",
+    "close_to_tray_desc": "ウィンドウを閉じても {{app}} は動き続けるので、音声入力のショートカットをそのまま使えます。アイコンをクリックすると再び開きます。",
+    "open_at_login": "パソコンの起動時に {{app}} を自動で起動する (通知領域のアイコンで)",
+    "open_at_login_desc": "ウィンドウは開かず、アイコンとして静かに起動します。"
   }
 }

@@ -82,11 +82,17 @@ export function App() {
   useEffect(() => {
     void window.voicestudio?.capture
       ?.labels({
-        show: `${t('common.open')} ${t('app.name')}`,
+        show: t('backgroundRun.tray_open', { app: t('app.name') }),
         start: t('transcriptions.capture'),
         stop: t('clone.stop_recording'),
         settings: t('nav.settings'),
-        exit: t('crash.field_exit'),
+        exit: t('backgroundRun.tray_quit'),
+      })
+      .catch(() => {});
+    void window.voicestudio?.app.background
+      ?.labels({
+        title: t('backgroundRun.notice_title', { app: t('app.name') }),
+        body: t('backgroundRun.notice_body', { app: t('app.name') }),
       })
       .catch(() => {});
   }, [t]);

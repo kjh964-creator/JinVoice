@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "소리 파일을 바꾸고 다듬는 도구 모음이에요.",
     "feature_integrations": "다른 앱 연결",
     "feature_integrations_desc": "다른 프로그램에서 JinVoice를 쓸 수 있게 연결해요."
+  },
+  "backgroundRun": {
+    "tray_open": "{{app}} 열기",
+    "tray_quit": "종료",
+    "notice_title": "{{app}}가 계속 실행 중이에요",
+    "notice_body": "{{app}}는 아래 아이콘에서 계속 실행 중이에요. 완전히 끄려면 아이콘을 오른쪽 클릭 → 종료",
+    "close_to_tray": "닫기(X)를 누르면 아래 아이콘으로 숨기기",
+    "close_to_tray_desc": "창을 닫아도 {{app}}가 계속 켜져 있어서 받아쓰기 단축키를 그대로 쓸 수 있어요. 아이콘을 누르면 다시 열려요.",
+    "open_at_login": "컴퓨터를 켜면 {{app}} 자동 실행 (아래 아이콘으로)",
+    "open_at_login_desc": "창은 열지 않고 아래 아이콘으로만 조용히 시작해요."
   }
 }

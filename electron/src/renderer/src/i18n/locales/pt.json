@@ -4619,5 +4619,15 @@
     "feature_tools_desc": "Ferramentas para converter e refinar arquivos de áudio.",
     "feature_integrations": "Conectar outros apps",
     "feature_integrations_desc": "Conecte outros programas para que usem o JinVoice."
+  },
+  "backgroundRun": {
+    "tray_open": "Abrir {{app}}",
+    "tray_quit": "Sair",
+    "notice_title": "O {{app}} continua em execução",
+    "notice_body": "O {{app}} continua funcionando pelo ícone na área de notificação. Para fechar por completo, clique com o botão direito no ícone → Sair.",
+    "close_to_tray": "Ocultar no ícone da área de notificação ao clicar em Fechar (X)",
+    "close_to_tray_desc": "Fechar a janela mantém o {{app}} funcionando, então o atalho de ditado continua disponível. Clique no ícone para abrir de novo.",
+    "open_at_login": "Iniciar o {{app}} ao ligar o computador (no ícone da área de notificação)",
+    "open_at_login_desc": "Ele inicia discretamente como ícone, sem abrir a janela."
   }
 }

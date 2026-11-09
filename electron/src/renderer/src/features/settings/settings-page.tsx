@@ -77,6 +77,7 @@ import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
 import { isEasyModePath, useEasyMode } from '@/lib/easy-mode';
 import { useEasyModeSwitch } from '@/lib/use-easy-mode-switch';
 import { EasyFeatureSettings } from '@/features/easy/easy-feature-settings';
+import { BackgroundRunSettings } from './background-run-settings';
 
 const sections = ['general', 'appearance'] as const;
 const fields = {
@@ -743,6 +744,7 @@ export function SettingsPage() {
                       onCheckedChange={(showAll) => switchEasyMode(!showAll)}
                     />
                   </SettingsRow>
+                  <BackgroundRunSettings />
                 </>
               )}
             </SettingsSection>

@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "Alat untuk mengonversi dan merapikan file audio.",
     "feature_integrations": "Hubungkan aplikasi lain",
     "feature_integrations_desc": "Hubungkan program lain agar bisa memakai JinVoice."
+  },
+  "backgroundRun": {
+    "tray_open": "Buka {{app}}",
+    "tray_quit": "Keluar",
+    "notice_title": "{{app}} masih berjalan",
+    "notice_body": "{{app}} tetap berjalan dari ikon di area notifikasi. Untuk menutup sepenuhnya, klik kanan ikon → Keluar.",
+    "close_to_tray": "Sembunyikan ke ikon area notifikasi saat saya mengklik Tutup (X)",
+    "close_to_tray_desc": "Saat jendela ditutup, {{app}} tetap berjalan sehingga pintasan dikte tetap bisa dipakai. Klik ikon untuk membukanya lagi.",
+    "open_at_login": "Jalankan {{app}} saat komputer dinyalakan (sebagai ikon di area notifikasi)",
+    "open_at_login_desc": "Mulai diam-diam sebagai ikon, tanpa membuka jendela."
   }
 }

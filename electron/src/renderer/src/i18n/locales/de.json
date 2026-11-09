@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "Werkzeuge zum Umwandeln und Aufbereiten von Audiodateien.",
     "feature_integrations": "Andere Apps verbinden",
     "feature_integrations_desc": "Andere Programme so verbinden, dass sie JinVoice nutzen."
+  },
+  "backgroundRun": {
+    "tray_open": "{{app}} öffnen",
+    "tray_quit": "Beenden",
+    "notice_title": "{{app}} läuft weiter",
+    "notice_body": "{{app}} läuft über das Symbol im Infobereich weiter. Zum vollständigen Beenden mit der rechten Maustaste auf das Symbol klicken → Beenden.",
+    "close_to_tray": "Beim Klick auf Schließen (X) im Infobereich-Symbol ausblenden",
+    "close_to_tray_desc": "Nach dem Schließen des Fensters läuft {{app}} weiter, sodass das Diktier-Tastenkürzel funktioniert. Ein Klick auf das Symbol öffnet es wieder.",
+    "open_at_login": "{{app}} beim Start des Computers automatisch starten (als Symbol im Infobereich)",
+    "open_at_login_desc": "Startet unauffällig als Symbol, ohne das Fenster zu öffnen."
   }
 }

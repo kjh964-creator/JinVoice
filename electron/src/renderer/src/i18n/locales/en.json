@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "Tools to convert and polish audio files.",
     "feature_integrations": "Connect other apps",
     "feature_integrations_desc": "Link other programs so they can use JinVoice."
+  },
+  "backgroundRun": {
+    "tray_open": "Open {{app}}",
+    "tray_quit": "Quit",
+    "notice_title": "{{app}} is still running",
+    "notice_body": "{{app}} keeps running from the icon in the notification area. To quit completely, right-click the icon → Quit.",
+    "close_to_tray": "Hide to the notification-area icon when I click Close (X)",
+    "close_to_tray_desc": "Closing the window keeps {{app}} running, so the dictation shortcut still works. Click the icon to open it again.",
+    "open_at_login": "Start {{app}} when the computer starts (in the notification-area icon)",
+    "open_at_login_desc": "It starts quietly as an icon, without opening the window."
   }
 }

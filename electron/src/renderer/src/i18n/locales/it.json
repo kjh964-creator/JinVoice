@@ -4619,5 +4619,15 @@
     "feature_tools_desc": "Strumenti per convertire e rifinire i file audio.",
     "feature_integrations": "Collega altre app",
     "feature_integrations_desc": "Collega altri programmi perché possano usare JinVoice."
+  },
+  "backgroundRun": {
+    "tray_open": "Apri {{app}}",
+    "tray_quit": "Esci",
+    "notice_title": "{{app}} è ancora in esecuzione",
+    "notice_body": "{{app}} continua a funzionare dall’icona nell’area di notifica. Per chiuderlo del tutto, fai clic destro sull’icona → Esci.",
+    "close_to_tray": "Nascondi nell’icona dell’area di notifica quando premo Chiudi (X)",
+    "close_to_tray_desc": "Chiudendo la finestra {{app}} resta attivo, quindi la scorciatoia di dettatura continua a funzionare. Fai clic sull’icona per riaprirla.",
+    "open_at_login": "Avvia {{app}} all’accensione del computer (nell’icona dell’area di notifica)",
+    "open_at_login_desc": "Si avvia in silenzio come icona, senza aprire la finestra."
   }
 }

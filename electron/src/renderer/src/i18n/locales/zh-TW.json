@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "轉換和潤飾音訊檔案的工具。",
     "feature_integrations": "連接其他 App",
     "feature_integrations_desc": "連接其他程式，讓它們也能使用 JinVoice。"
+  },
+  "backgroundRun": {
+    "tray_open": "開啟 {{app}}",
+    "tray_quit": "結束",
+    "notice_title": "{{app}} 仍在執行",
+    "notice_body": "{{app}} 會在通知區域的圖示中繼續執行。若要完全關閉，請在圖示上按右鍵 → 結束",
+    "close_to_tray": "按下關閉 (X) 時隱藏到通知區域圖示",
+    "close_to_tray_desc": "關閉視窗後 {{app}} 仍會執行，聽寫快速鍵照常可用。點選圖示即可重新開啟。",
+    "open_at_login": "開機時自動啟動 {{app}}（在通知區域圖示中）",
+    "open_at_login_desc": "不會開啟視窗，只以圖示形式安靜啟動。"
   }
 }

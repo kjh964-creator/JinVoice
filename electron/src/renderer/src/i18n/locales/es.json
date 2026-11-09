@@ -4619,5 +4619,15 @@
     "feature_tools_desc": "Herramientas para convertir y pulir archivos de audio.",
     "feature_integrations": "Conectar otras apps",
     "feature_integrations_desc": "Conecta otros programas para que usen JinVoice."
+  },
+  "backgroundRun": {
+    "tray_open": "Abrir {{app}}",
+    "tray_quit": "Salir",
+    "notice_title": "{{app}} sigue en ejecución",
+    "notice_body": "{{app}} sigue funcionando desde el icono del área de notificación. Para cerrarlo por completo, haz clic derecho en el icono → Salir.",
+    "close_to_tray": "Ocultar en el icono del área de notificación al pulsar Cerrar (X)",
+    "close_to_tray_desc": "Al cerrar la ventana, {{app}} sigue funcionando y el atajo de dictado sigue disponible. Haz clic en el icono para volver a abrirla.",
+    "open_at_login": "Iniciar {{app}} al encender el ordenador (en el icono del área de notificación)",
+    "open_at_login_desc": "Se inicia en silencio como icono, sin abrir la ventana."
   }
 }

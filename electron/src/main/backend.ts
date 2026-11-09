@@ -1801,6 +1801,20 @@ export class BackendSupervisor extends EventEmitter<{
     }
   }
 
+  /** Keep probing an attached local backend that went away; re-attach when it answers again. */
+  private async recoverWhenAttachedReturns(gen: number): Promise<void> {
+    while (gen === this.generation && this.stage === 'crashed' && !this.shuttingDown) {
+      await delay(SUPERVISE_POLL_MS);
+      if (gen !== this.generation || this.stage !== 'crashed' || this.shuttingDown) return;
+      if (await this.probe()) {
+        if (gen !== this.generation || this.stage !== 'crashed') return;
+        this.pushLog('out', 'Re-attached to the restarted external backend.');
+        await this.markReady(gen, { managed: false, message: undefined }, true);
+        return;
+      }
+    }
+  }
+
   /**
    * Whether a remote accepts this client's credentials. /health needs no admin
    * session, so it can answer while every authenticated call fails (the session
@@ -2034,6 +2048,9 @@ export class BackendSupervisor extends EventEmitter<{
             ? `Backend stopped answering /health on port ${this.port}.`
             : `The external backend at ${this.baseUrl} stopped answering.`,
         });
+        // A shared local backend (e.g. a headless server the desktop attached
+        // to) that restarts must not leave the window on the error gate.
+        if (!wasManaged && !this.remoteUrl) void this.recoverWhenAttachedReturns(this.generation);
         return;
       }
       if (gen === this.generation) void tick();

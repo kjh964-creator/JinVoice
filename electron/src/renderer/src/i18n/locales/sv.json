@@ -4617,5 +4617,15 @@
     "feature_tools_desc": "Verktyg för att konvertera och putsa ljudfiler.",
     "feature_integrations": "Koppla andra appar",
     "feature_integrations_desc": "Koppla andra program så att de kan använda JinVoice."
+  },
+  "backgroundRun": {
+    "tray_open": "Öppna {{app}}",
+    "tray_quit": "Avsluta",
+    "notice_title": "{{app}} körs fortfarande",
+    "notice_body": "{{app}} fortsätter köras från ikonen i meddelandefältet. Avsluta helt genom att högerklicka på ikonen → Avsluta.",
+    "close_to_tray": "Göm i ikonen i meddelandefältet när jag klickar på Stäng (X)",
+    "close_to_tray_desc": "När fönstret stängs fortsätter {{app}} köras, så kortkommandot för diktering fungerar. Klicka på ikonen för att öppna det igen.",
+    "open_at_login": "Starta {{app}} när datorn startar (som ikon i meddelandefältet)",
+    "open_at_login_desc": "Startar tyst som en ikon, utan att öppna fönstret."
   }
 }
