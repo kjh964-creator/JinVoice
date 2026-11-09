@@ -136,7 +136,7 @@ export function EasyFeatureSettings({ variant = 'settings' }: { variant?: 'setti
                     data-slot="easy-feature-state"
                     aria-hidden="true"
                     className={cn(
-                      'w-12 shrink-0 text-end text-[13px] font-medium max-sm:sr-only',
+                      'w-12 shrink-0 text-end text-[13px] font-medium max-sm:w-10 max-sm:text-xs',
                       on ? 'text-primary' : 'text-muted-foreground',
                     )}
                   >

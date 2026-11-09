@@ -304,7 +304,9 @@ export function SettingsPage() {
       className={cn(
         'flex h-full min-h-0 min-w-0',
         easyMode &&
-          'max-sm:[&>aside]:w-14 max-sm:[&>aside>header]:justify-center max-sm:[&>aside>header]:px-0 max-sm:[&>aside>header>span:last-child]:sr-only max-sm:[&>aside>div]:p-1.5 max-sm:[&_aside_[data-slot=settings-nav-label]]:sr-only max-sm:[&_aside_nav_a]:size-10 max-sm:[&_aside_nav_a]:justify-center max-sm:[&_aside_nav_a]:px-0',
+          // Phone: the menu becomes one row of labelled tabs above the page, so
+          // every section keeps its name (an icon-only rail was hard to read).
+          'max-sm:flex-col max-sm:[&>aside]:w-full max-sm:[&>aside]:border-r-0 max-sm:[&>aside]:border-b max-sm:[&>aside>header]:hidden max-sm:[&>aside>div:last-of-type]:hidden max-sm:[&>aside>div:first-of-type]:flex-row max-sm:[&>aside>div:first-of-type]:items-center max-sm:[&>aside>div:first-of-type]:overflow-x-auto max-sm:[&>aside>div:first-of-type]:overflow-y-hidden max-sm:[&>aside>div:first-of-type]:px-2 max-sm:[&>aside>div:first-of-type]:py-2 max-sm:[&_aside_nav]:flex-row max-sm:[&_aside_nav]:gap-1 max-sm:[&_aside_nav_a]:h-9 max-sm:[&_aside_nav_a]:w-auto max-sm:[&_aside_nav_a]:shrink-0 max-sm:[&_aside_nav_a]:rounded-full max-sm:[&_aside_nav_a]:px-3 max-sm:[&_aside_[data-slot=settings-nav-label]]:flex-none max-sm:[&_aside_[data-slot=settings-nav-label]]:overflow-visible',
       )}
     >
       <aside className="flex w-[clamp(11rem,20vw,17rem)] shrink-0 flex-col border-r border-sidebar-border/50 bg-sidebar text-sidebar-foreground shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)]">
