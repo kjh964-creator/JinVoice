@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import {
+  easyFeatureForPath,
   getEnabledEasyFeatures,
   isEnabledEasyFeaturePath,
   type EasyFeatureId,
@@ -83,6 +84,7 @@ export const EASY_ROUTES = {
   newVoice: '/easy/voices/new',
   history: '/easy/history',
   audiobook: '/easy/audiobook',
+  cover: '/easy/cover',
   help: '/easy/help',
   features: '/easy/features',
 } as const;
@@ -120,6 +122,10 @@ export function easyModeRedirect(
   easy = isEasyModeEnabled(),
   features: readonly EasyFeatureId[] = getEnabledEasyFeatures(),
 ): string | null {
-  if (!easy || isEasyModePath(pathname)) return null;
-  return isEnabledEasyFeaturePath(pathname, features) ? null : '/';
+  if (!easy) return null;
+  // A switchable easy screen (e.g. song cover) lives under /easy/ but is only
+  // reachable while its switch is on, like the original workspaces.
+  if (easyFeatureForPath(pathname))
+    return isEnabledEasyFeaturePath(pathname, features) ? null : '/';
+  return isEasyModePath(pathname) ? null : '/';
 }

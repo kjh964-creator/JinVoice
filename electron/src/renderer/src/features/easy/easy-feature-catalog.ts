@@ -8,6 +8,7 @@ import {
   LayersIcon,
   LibraryIcon,
   MessagesSquareIcon,
+  Music2Icon,
   UsersRoundIcon,
   WandSparklesIcon,
   WorkflowIcon,
@@ -41,6 +42,7 @@ const ICONS: Record<EasyFeatureId, LucideIcon> = {
   projects: FolderIcon,
   tools: WrenchIcon,
   integrations: BlocksIcon,
+  cover: Music2Icon,
 };
 
 export const EASY_FEATURE_CATALOG: readonly EasyFeatureInfo[] = EASY_FEATURE_IDS.map((id) => ({

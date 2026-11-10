@@ -23,7 +23,10 @@ function EasyAppShell({ pathname }: { pathname: string }) {
   const settings = pathname.startsWith('/settings');
   // An original workspace the user switched on (Settings → General → feature
   // switches) opens as it is, under the easy bar with a big "back home" button.
-  const feature = isEnabledEasyFeaturePath(pathname, useEasyFeatures());
+  // JinVoice's own switchable easy screens (under /easy/, e.g. song cover)
+  // keep the plain easy frame instead.
+  const feature =
+    isEnabledEasyFeaturePath(pathname, useEasyFeatures()) && !pathname.startsWith('/easy/');
   return (
     <div className="app-surface relative flex h-full flex-col bg-background text-foreground">
       <div className="flex min-h-0 flex-1">

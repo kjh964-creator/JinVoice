@@ -3,8 +3,10 @@
 DELETE /api/auth/session
 DELETE /api/mcp/bindings/{client_id}
 DELETE /api/settings/hf-token
+DELETE /audiobook/jobs/{job_id}
 DELETE /batch/jobs/{job_id}
 DELETE /calls/{call_id}
+DELETE /cover/jobs/{job_id}
 DELETE /dub/history
 DELETE /dub/history/{history_id}
 DELETE /engines/sidecar/{engine_id}/install
@@ -62,7 +64,6 @@ GET /audio/{audio_id}.ogg
 GET /audio/{audio_id}.opus
 GET /audio/{audio_id}/quality
 GET /audiobook/jobs
-DELETE /audiobook/jobs/{job_id}
 GET /batch/download/{job_id}/{lang}
 GET /batch/jobs
 GET /batch/jobs/{job_id}
@@ -78,6 +79,10 @@ GET /community/items/{item_id}/preview
 GET /community/manifest
 GET /community/sources
 GET /community/submit-url
+GET /cover/jobs
+GET /cover/jobs/{job_id}
+GET /cover/jobs/{job_id}/instrumental
+GET /cover/setup
 GET /dictation/models
 GET /dictation/prefs
 GET /dictation/readiness
@@ -225,6 +230,10 @@ POST /calls/{call_id}/takeover
 POST /clean-audio
 POST /community/items/{item_id}/use
 POST /convert
+POST /cover/jobs
+POST /cover/jobs/{job_id}/cancel
+POST /cover/setup
+POST /cover/setup/cancel
 POST /design/describe
 POST /dictation/prefs
 POST /dub/abort/{job_id}

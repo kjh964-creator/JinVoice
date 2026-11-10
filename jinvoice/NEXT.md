@@ -20,3 +20,7 @@
    preference: ⚙ 설정 → bottom '모든 기능 보기 (고급)' switch (default off = easy). On → full upstream navigation; a
    '쉬운 화면으로' button in the full UI's top-left switches back. Persist the choice (localStorage/prefs), apply without restart.
 2. **Loudness** — quiet reference recordings must still give loud output: normalize every saved generation (speech RMS ≈ -17 dBFS, smooth limiter ≤ -0.4 dBFS). Reference: `E:/app_make4/JinhoVoice/engine_worker.py` `master_loudness`.
+
+## Queued (2026-11-09, user-approved)
+- [in progress] Song cover: song file + registered voice -> same song sung in that voice (separation + zero-shot SVC, feature id `cover`, default off).
+- [next, after cover is reviewed] Story song: user story + registered voice -> lyrics by a LOCAL LLM on this PC (free, offline; lyrics editable before generating) -> song generation (e.g. ACE-Step, style choice) -> convert vocals to the chosen voice with the cover pipeline. Separate feature id, default off.

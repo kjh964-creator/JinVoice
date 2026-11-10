@@ -115,6 +115,12 @@ export const easyAudiobookRoute = createRoute({
   ),
 });
 
+export const easyCoverRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/easy/cover',
+  component: lazyRouteComponent(() => import('@/features/easy/easy-cover-page'), 'EasyCoverPage'),
+});
+
 export const easyFeaturesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/easy/features',
@@ -367,6 +373,7 @@ export const routeTree = rootRoute.addChildren([
   easyNewVoiceRoute,
   easyHistoryRoute,
   easyAudiobookRoute,
+  easyCoverRoute,
   easyHelpRoute,
   easyFeaturesRoute,
   cloneRoute,

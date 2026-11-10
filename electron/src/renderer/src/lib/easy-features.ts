@@ -9,7 +9,8 @@ import { useSyncExternalStore } from 'react';
  * user picks something. "Show all features (advanced)" in Settings still
  * turns the whole easy mode off and shows everything at once.
  *
- * The list follows the full UI's navigation (components/app-shell/workspace-menu.tsx).
+ * The list follows the full UI's navigation (components/app-shell/workspace-menu.tsx),
+ * plus JinVoice's own easy screens that are off until switched on (song cover).
  */
 export const EASY_FEATURES_STORAGE_KEY = 'jinvoice.easy-features.v1';
 
@@ -27,6 +28,7 @@ export const EASY_FEATURE_IDS = [
   'projects',
   'tools',
   'integrations',
+  'cover',
 ] as const;
 
 export type EasyFeatureId = (typeof EASY_FEATURE_IDS)[number];
@@ -44,7 +46,8 @@ export type EasyFeaturePath =
   | '/calls'
   | '/projects'
   | '/tools'
-  | '/integrations';
+  | '/integrations'
+  | '/easy/cover';
 
 /** The route each feature opens; sub-routes (e.g. `/integrations/<slug>`) belong to it too. */
 export const EASY_FEATURE_PATHS: Record<EasyFeatureId, EasyFeaturePath> = {
@@ -61,6 +64,7 @@ export const EASY_FEATURE_PATHS: Record<EasyFeatureId, EasyFeaturePath> = {
   projects: '/projects',
   tools: '/tools',
   integrations: '/integrations',
+  cover: '/easy/cover',
 };
 
 const isFeatureId = (value: unknown): value is EasyFeatureId =>

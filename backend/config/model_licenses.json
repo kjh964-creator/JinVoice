@@ -3436,6 +3436,17 @@
       "evidence_url": "https://github.com/debpalash/VoiceStudio/blob/main/docs/engine-acceptance.md",
       "configured_at": "backend/services/tts_backend.py; backend/services/rvc.py; backend/services/asr_backend.py",
       "notes": "Cannot enumerate every user asset from repository; represent unknown/unreviewed state explicitly, with user provenance inputs."
+    },
+    {
+      "id": "Song cover: Seed-VC singing model and its encoders/vocoder",
+      "license": "GPL-3.0 (Plachtaa/seed-vc code and Plachta/Seed-VC weights); Apache-2.0 (openai/whisper-small, funasr/campplus); MIT (nvidia/bigvgan_v2_44khz_128band_512x, lj1995/VoiceConversionWebUI rmvpe.pt)",
+      "commercial_use": false,
+      "review_status": "unreviewed",
+      "credit": "Seed-VC by Plachtaa; Whisper by OpenAI; CAM++ by 3D-Speaker/FunASR; BigVGAN by NVIDIA; RMVPE via RVC-Project (lj1995).",
+      "source_url": "https://github.com/Plachtaa/seed-vc",
+      "evidence_url": "https://huggingface.co/Plachta/Seed-VC",
+      "configured_at": "backend/services/song_cover_assets.py",
+      "notes": "Downloaded on first use of the easy song-cover screen, pinned to reviewed revisions (source 51383efd, Seed-VC weights 257283f9). Voice conversion of songs: users must hold rights to the song and the voice."
     }
   ],
   "registry_version": "2026-10-09.draft1",
