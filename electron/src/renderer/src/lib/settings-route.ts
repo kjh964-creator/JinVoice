@@ -25,6 +25,15 @@ function validSettingsRoute(value: string | null): value is string {
   return Boolean(value && (settingsRoutes.has(value) || modelFamilyRoute.test(value)));
 }
 
+/** Phone-width window (Tailwind's `max-sm`): Settings opens on its section list there. */
+export function isPhoneViewport(): boolean {
+  try {
+    return globalThis.matchMedia?.('(max-width: 639.98px)').matches === true;
+  } catch {
+    return false;
+  }
+}
+
 export function readLastSettingsRoute(): string {
   try {
     const value = localStorage.getItem(SETTINGS_ROUTE_STORAGE_KEY);

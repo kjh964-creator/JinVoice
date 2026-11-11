@@ -382,9 +382,10 @@ export function LongformPage({ mode }: { mode: Mode }) {
             ))}
         </SecondarySidebar>
         <section className="flex min-w-0 flex-1 flex-col overflow-y-auto">
-          <div className="mx-auto flex w-full max-w-6xl min-h-0 flex-1 flex-col gap-4 px-6 py-5">
-            <div className="flex items-center justify-between gap-3">
-              <div>
+          <div className="mx-auto flex w-full max-w-6xl min-h-0 flex-1 flex-col gap-4 px-6 py-5 max-sm:px-4">
+            {/* Phones: the title and hint take the full width, the actions wrap below. */}
+            <div className="flex items-center justify-between gap-3 max-sm:flex-wrap max-sm:justify-start max-sm:gap-2">
+              <div className="max-sm:w-full">
                 <h2 className="flex items-center gap-2 text-sm font-medium">
                   <BookOpenTextIcon className="size-4 text-muted-foreground" />
                   {t('clone.script')}

@@ -320,15 +320,19 @@ def _child_env() -> dict:
     return env
 
 
-def _run_blocking(job: CoverJob, cmd: list[str], on_line: Callable[[str], None]) -> tuple[int, str]:
+def _run_blocking(job: CoverJob, cmd: list[str], on_line: Callable[[str], None], *,
+                  merge_stdout: bool = False) -> tuple[int, str]:
     """Run ``cmd`` to completion on the calling (GPU pool) thread, streaming
-    stderr lines to ``on_line``. Returns (returncode, last stderr lines)."""
+    stderr lines (and stdout too with ``merge_stdout``) to ``on_line``.
+    Returns (returncode, last output lines)."""
     from core.contained_subprocess import spawn_owned
 
     if job.cancel_event.is_set():
         return -1, ""
     proc = spawn_owned(
-        cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
+        cmd, stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE if merge_stdout else subprocess.DEVNULL,
+        stderr=subprocess.STDOUT if merge_stdout else subprocess.PIPE,
         cwd=str(job.dir), env=_child_env(),
     )
     job.proc = proc
@@ -336,7 +340,7 @@ def _run_blocking(job: CoverJob, cmd: list[str], on_line: Callable[[str], None])
         job.request_cancel()
     tail: deque[str] = deque(maxlen=40)
     pending = b""
-    stream: Any = proc.stderr
+    stream: Any = proc.stdout if merge_stdout else proc.stderr
     try:
         while True:
             chunk = stream.read1(4096) if hasattr(stream, "read1") else stream.read(4096)
@@ -365,12 +369,13 @@ def _run_blocking(job: CoverJob, cmd: list[str], on_line: Callable[[str], None])
 
 
 async def _gpu_step(job: CoverJob, cmd: list[str], on_line: Callable[[str], None], *,
-                    what: str, timeout_s: float) -> str:
+                    what: str, timeout_s: float, merge_stdout: bool = False) -> str:
     from services.model_manager import GpuJobTimeoutError, GpuPoolBusyError, run_on_gpu_pool_guarded
 
     try:
         rc, tail = await run_on_gpu_pool_guarded(
-            lambda: _run_blocking(job, cmd, on_line), what=what, timeout=timeout_s,
+            lambda: _run_blocking(job, cmd, on_line, merge_stdout=merge_stdout),
+            what=what, timeout=timeout_s,
         )
     except GpuPoolBusyError as exc:
         raise CoverError("gpu_busy", str(exc)) from exc
@@ -430,28 +435,163 @@ _TQDM_PCT = re.compile(r"(\d{1,3}(?:\.\d+)?)%\|")
 _JV_PCT = re.compile(r"^JV_PROGRESS (\d{1,3}(?:\.\d+)?)")
 
 
-async def _separate(job: CoverJob, song: Path) -> tuple[Path, Path]:
+async def separate_many(job: CoverJob, songs: list[Path]) -> list[tuple[Path, Path]]:
+    """(vocals, instrumental) stems of each song, one Demucs run for all of
+    them (the model loads once)."""
     from services.model_manager import get_best_device
 
     out_root = job.dir / "sep"
     cmd = [sys.executable, "-m", "demucs.separate", "--two-stems", "vocals", "-n", "htdemucs",
-           "-d", get_best_device(), str(song), "-o", str(out_root)]
+           "-d", get_best_device(), *[str(song) for song in songs], "-o", str(out_root)]
+    seen = {"done": 0, "last": 0.0}
 
     def on_line(line: str) -> None:
         pct = _percent_from(line, _TQDM_PCT)
-        if pct is not None:
-            job.set_step_percent(pct)
+        if pct is None:
+            return
+        if pct < seen["last"] - 50:  # the bar restarted: next song
+            seen["done"] += 1
+        seen["last"] = pct
+        job.set_step_percent((100.0 * seen["done"] + pct) / len(songs))
 
     await _gpu_step(job, cmd, on_line, what="Vocal separation",
-                    timeout_s=900.0 + 4.0 * float(job.song_seconds or 0))
-    stem_dir = out_root / "htdemucs" / song.stem
-    vocals, rest = stem_dir / "vocals.wav", stem_dir / "no_vocals.wav"
-    if not vocals.is_file() or not rest.is_file():
-        raise CoverError("failed", "Vocal separation produced no stems.")
-    return vocals, rest
+                    timeout_s=900.0 + 4.0 * float(job.song_seconds or 0) * len(songs))
+    stems = []
+    for song in songs:
+        stem_dir = out_root / "htdemucs" / song.stem
+        vocals, rest = stem_dir / "vocals.wav", stem_dir / "no_vocals.wav"
+        if not vocals.is_file() or not rest.is_file():
+            raise CoverError("failed", "Vocal separation produced no stems.")
+        stems.append((vocals, rest))
+    return stems
 
 
-async def _convert(job: CoverJob, vocals: Path, ref_audio_path: str) -> tuple[Path, dict]:
+async def _separate(job: CoverJob, song: Path) -> tuple[Path, Path]:
+    return (await separate_many(job, [song]))[0]
+
+
+#: Seed-VC settings. An A/B on a male voice with a ~7 s speaking reference
+#: (speaker similarity with two embedding models, Whisper lyric match, click
+#: count, time) found 50 diffusion steps, a 25 s prompt, cfg 1.0 and padding
+#: the reference with earlier TTS takes of the voice no better (the takes made
+#: it measurably LESS like the real recording), so steps/cfg/prompt stay at the
+#: upstream defaults. What helped:
+#:
+#: * ``smart_split`` + ``overlap_frames`` - windows end in the quietest spot
+#:   near their nominal end and crossfade over ~0.37 s, so seams fall into
+#:   breaths instead of the middle of a word (fewer clicks);
+#: * ``gate_silence`` - the converted track is muted where the separated vocal
+#:   is silent (the renderer otherwise draws hiss/warble there);
+#: * the worker's auto pitch now aims at the voice's singing range (about half
+#:   an octave above its speaking pitch), which no longer drops a male singer
+#:   an octave for a male voice.
+CONVERT_SETTINGS: dict = {
+    "diffusion_steps": 30,
+    "cfg_rate": 0.7,
+    "prompt_max_s": 12.0,
+    "overlap_frames": 32,
+    "smart_split": True,
+    "gate_silence": True,
+    # Calm the pitch contour: keep the melody, drop most of the wobble
+    # (the user heard the converted voice shake).
+    "f0_steady": 0.05,
+    "f0_steady_win": 31,
+}
+
+#: Story songs (our own song, sung to move someone): the source pitch line
+#: is reshaped the way a trained ballad singer sings (worker ``sing_f0``):
+#: tracker jitter removed, the fast wobble on notes cut to half (the user
+#: heard the full one as shaking, 5 % as flat), held notes moved 60 % of the
+#: way to the nearest note of the song's tuning, a calm vibrato (80 % of the
+#: source's, at most 40 cents) fading in on notes held longer than 0.4 s,
+#: short glides between notes. Measured on an ACE-Step ballad take: held
+#: notes 5.8 -> 2.9 cents off the grid, wobble 12 -> 5 cents RMS, long-note
+#: vibrato 23 -> 11 cents RMS. Same renderer settings as covers.
+STORY_CONVERT_SETTINGS: dict = {
+    **{k: v for k, v in CONVERT_SETTINGS.items() if k not in ("f0_steady", "f0_steady_win")},
+    "f0_sing": {"tune": 0.6, "keep": 0.5, "vibrato": 0.8, "vibrato_max_cents": 40.0, "hold_s": 0.4},
+}
+
+#: Story songs: the polished vocal is produced like a ballad lead - gentle
+#: compression (an even, close voice), then a soft stereo reverb so it sits
+#: in the song instead of on top of it. The send stays low: on the same
+#: conversion, speaker similarity of the re-separated vocal (ECAPA) went
+#: 0.58 dry -> 0.57 compressed -> 0.56 with an 8 % send -> 0.53 with 14 %.
+STORY_PRODUCE: dict = {
+    "comp_threshold_db": -20.0,
+    "comp_ratio": 2.5,
+    "comp_attack_ms": 8.0,
+    "comp_release_ms": 160.0,
+    "reverb_room": 0.45,
+    "reverb_damping": 0.55,
+    "reverb_wet": 0.08,
+    "reverb_width": 0.9,
+}
+
+
+#: Tone shaping of the converted vocal before mixing (chosen by ear with the
+#: user): less boom and mud, more presence/air, plus a little of the original
+#: vocal's consonant band (above 4.5 kHz) so words read clearer.
+VOICE_POLISH: dict = {
+    "highpass_hz": 110.0,
+    "mud_db": -4.0,
+    "box_db": -2.0,
+    "clarity_db": 3.0,
+    "presence_db": 3.5,
+    "air_db": 2.0,
+    "consonant_blend": 0.3,
+}
+
+
+def polish_vocal(voc, orig, sr: int, settings: dict | None = None):
+    """Shape a mono converted vocal ``voc`` (N,) with ``VOICE_POLISH``;
+    ``orig`` is the separated source vocal (N, C) at the same rate."""
+    import numpy as np
+    import pedalboard as pb
+
+    p = {**VOICE_POLISH, **(settings or {})}
+    chain = pb.Pedalboard([
+        pb.HighpassFilter(cutoff_frequency_hz=p["highpass_hz"]),
+        pb.PeakFilter(cutoff_frequency_hz=220, gain_db=p["mud_db"], q=0.9),
+        pb.PeakFilter(cutoff_frequency_hz=450, gain_db=p["box_db"], q=1.0),
+        pb.PeakFilter(cutoff_frequency_hz=2800, gain_db=p["clarity_db"], q=0.8),
+        pb.HighShelfFilter(cutoff_frequency_hz=3500, gain_db=p["presence_db"], q=0.7),
+        pb.HighShelfFilter(cutoff_frequency_hz=10000, gain_db=p["air_db"], q=0.7),
+    ])
+    out = chain(np.ascontiguousarray(voc[None, :], dtype=np.float32), sr)[0]
+    blend = float(p["consonant_blend"])
+    if blend and orig is not None and len(orig):
+        src = np.ascontiguousarray(orig.mean(axis=1)[None, :], dtype=np.float32)
+        hiss = pb.Pedalboard([pb.HighpassFilter(cutoff_frequency_hz=4500),
+                              pb.HighpassFilter(cutoff_frequency_hz=4500)])(src, sr)[0]
+        n = min(len(out), len(hiss))
+        out[:n] += blend * hiss[:n]
+    return out.astype(np.float32)
+
+
+def produce_vocal(voc, sr: int, settings: dict | None = None):
+    """Mono vocal (N,) -> stereo (2, N): compression + reverb (``STORY_PRODUCE``)."""
+    import numpy as np
+    import pedalboard as pb
+
+    p = {**STORY_PRODUCE, **(settings or {})}
+    dry = pb.Pedalboard([
+        pb.Compressor(threshold_db=p["comp_threshold_db"], ratio=p["comp_ratio"],
+                      attack_ms=p["comp_attack_ms"], release_ms=p["comp_release_ms"]),
+    ])(np.ascontiguousarray(voc[None, :], dtype=np.float32), sr)[0]
+    # Make-up gain back to the input's level (the mix matches levels later
+    # anyway; this keeps the reverb send proportional).
+    have, want = _active_rms(dry, sr), _active_rms(voc, sr)
+    if have > 1e-6 and want > 1e-6:
+        dry = dry * float(np.clip(want / have, 0.5, 4.0))
+    stereo = np.ascontiguousarray(np.stack([dry, dry]), dtype=np.float32)
+    wet = pb.Reverb(room_size=p["reverb_room"], damping=p["reverb_damping"], wet_level=1.0,
+                    dry_level=0.0, width=p["reverb_width"])(stereo, sr)
+    return (stereo + float(p["reverb_wet"]) * wet[:, : stereo.shape[1]]).astype(np.float32)
+
+
+async def _convert(job: CoverJob, vocals: Path, ref_audio_path: str,
+                   settings: dict | None = None) -> tuple[Path, dict]:
     from services import song_cover_assets as assets
 
     output = job.dir / "converted.wav"
@@ -463,8 +603,9 @@ async def _convert(job: CoverJob, vocals: Path, ref_audio_path: str) -> tuple[Pa
         "output": str(output),
         "result": str(result),
         "semitones": job.semitones,
-        "diffusion_steps": 30,
-        "cfg_rate": 0.7,
+        **(CONVERT_SETTINGS if settings is None else settings),
+        # Same job, same take (a re-run of a story song renders identically).
+        "seed": int(getattr(job, "seed", 0) or int(job.created_at)) % (2**31),
     }
     spec_path = job.dir / "convert_spec.json"
     spec_path.write_text(json.dumps(spec), encoding="utf-8")
@@ -487,6 +628,23 @@ async def _convert(job: CoverJob, vocals: Path, ref_audio_path: str) -> tuple[Pa
     return output, info
 
 
+def transpose_file(source: Path, semitones: int, target: Path) -> Path:
+    """Write ``source`` moved by ``semitones`` (Rubber Band via pedalboard,
+    length and tempo kept) to ``target``; used to move an instrumental into
+    the key the converted vocal was fitted to."""
+    import numpy as np
+    import pedalboard
+    import soundfile as sf
+
+    data, sr = sf.read(str(source), dtype="float32", always_2d=True)
+    shifted = pedalboard.PitchShift(semitones=float(semitones))(np.ascontiguousarray(data.T), sr)
+    shifted = shifted[:, : data.shape[0]]
+    if shifted.shape[1] < data.shape[0]:
+        shifted = np.pad(shifted, ((0, 0), (0, data.shape[0] - shifted.shape[1])))
+    sf.write(str(target), np.ascontiguousarray(shifted.T), sr, subtype="FLOAT")
+    return target
+
+
 def _active_rms(x, sr: int) -> float:
     """RMS over the louder frames only, so silent gaps don't skew level matching."""
     import numpy as np
@@ -503,8 +661,10 @@ def _active_rms(x, sr: int) -> float:
     return float(np.sqrt(np.mean(np.square(loud)))) if loud.size else 0.0
 
 
-def mix_cover(song: Path, original_vocals: Path, converted: Path, instrumental: Path):
-    """Return (stereo float32 array (2, N), sample_rate)."""
+def mix_cover(song: Path, original_vocals: Path, converted: Path, instrumental: Path,
+              produce: dict | None = None):
+    """Return (stereo float32 array (2, N), sample_rate). With ``produce``
+    (story songs) the vocal also gets ``produce_vocal`` before mixing."""
     import numpy as np
     import soundfile as sf
 
@@ -520,6 +680,10 @@ def mix_cover(song: Path, original_vocals: Path, converted: Path, instrumental: 
     voc = voc.mean(axis=1)
     n = inst.shape[0]
     voc = np.pad(voc, (0, max(0, n - len(voc))))[:n]
+    try:
+        voc = polish_vocal(voc, orig[:n] if len(orig) >= n else np.pad(orig, ((0, n - len(orig)), (0, 0))), sr)
+    except Exception:  # noqa: BLE001 - tone shaping is optional polish
+        logger.warning("Vocal polish failed; mixing the plain conversion", exc_info=True)
     if inst.shape[1] == 1:
         inst = np.repeat(inst, 2, axis=1)
     inst = inst[:, :2]
@@ -528,7 +692,13 @@ def mix_cover(song: Path, original_vocals: Path, converted: Path, instrumental: 
     gain = 1.0
     if have_rms > 1e-6 and target_rms > 1e-6:
         gain = float(np.clip(target_rms / have_rms, 0.25, 4.0))
-    mix = inst + (voc * gain)[:, None]
+    vocal = (voc * gain)[:, None]
+    if produce is not None:
+        try:
+            vocal = produce_vocal(voc * gain, sr, produce).T
+        except Exception:  # noqa: BLE001 - production is optional polish
+            logger.warning("Vocal production failed; mixing the dry vocal", exc_info=True)
+    mix = inst + vocal
     # Back to the song's own level, with a peak ceiling (no clipping).
     song_rms = _active_rms(full.mean(axis=1), sr)
     mix_rms = _active_rms(mix.mean(axis=1), sr)
@@ -541,14 +711,28 @@ def mix_cover(song: Path, original_vocals: Path, converted: Path, instrumental: 
     return np.ascontiguousarray(mix.T.astype(np.float32)), sr
 
 
+async def mark_channels_async(tensor, sr: int, *, context: str):
+    """Provenance-mark a (channels, N) take one channel at a time: the AudioSeal
+    generator takes mono input, so a stereo tensor in one call failed and was
+    passed through unmarked."""
+    import torch
+
+    from services.watermark import mark_synthetic_async
+
+    if tensor.dim() != 2 or tensor.shape[0] <= 1:
+        return await mark_synthetic_async(tensor, sr, context=context)
+    marked = [await mark_synthetic_async(tensor[c:c + 1].contiguous(), sr, context=context)
+              for c in range(tensor.shape[0])]
+    return torch.cat([m.reshape(1, -1)[:, :tensor.shape[1]] for m in marked], dim=0)
+
+
 async def _save(job: CoverJob, audio, sr: int, ref_audio_path: str) -> dict:
     import torch
 
     from api.routers.generation import _finalize_generation
-    from services.watermark import mark_synthetic_async
 
     tensor = torch.from_numpy(audio)
-    tensor = await mark_synthetic_async(tensor, sr, context="cover.finalize")
+    tensor = await mark_channels_async(tensor, sr, context="cover.finalize")
     _, meta = await _finalize_generation(
         tensor, sr, text=f"\u266a {job.song_name}"[:200], history_mode="cover",
         ref_audio_path=ref_audio_path, language="Auto", instruct="",

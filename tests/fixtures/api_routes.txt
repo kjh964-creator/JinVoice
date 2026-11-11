@@ -26,6 +26,7 @@ DELETE /profiles/{profile_id}/attestation
 DELETE /profiles/{profile_id}/consent
 DELETE /projects/{project_id}
 DELETE /pronunciation/{entry_id}
+DELETE /story-song/jobs/{job_id}
 GET /.well-known/voicestudio-speech
 GET /api/cloud-sync/devices
 GET /api/cloud-sync/local
@@ -168,6 +169,10 @@ GET /setup/recommendations
 GET /setup/status
 GET /startup/progress
 GET /stats/usage
+GET /story-song/jobs
+GET /story-song/jobs/{job_id}
+GET /story-song/lyrics/{task_id}
+GET /story-song/setup
 GET /sysinfo
 GET /system/asr-backends
 GET /system/diagnose
@@ -311,6 +316,12 @@ POST /pronunciation/import
 POST /pronunciation/test
 POST /setup/warmup
 POST /stories/encode
+POST /story-song/jobs
+POST /story-song/jobs/{job_id}/cancel
+POST /story-song/lyrics
+POST /story-song/lyrics/{task_id}/cancel
+POST /story-song/setup
+POST /story-song/setup/cancel
 POST /system/crash/ack
 POST /system/diagnostic-bundle
 POST /system/flush-memory

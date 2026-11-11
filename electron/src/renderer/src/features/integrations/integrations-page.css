@@ -597,6 +597,15 @@
     overflow-x: auto;
     flex-wrap: nowrap;
   }
+  /* Scroll the chips sideways instead of squeezing each label onto several lines. */
+  .integrations-filters button {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .integrations-search,
+  .integrations-search input {
+    min-width: 0;
+  }
   .integration-detail-hero {
     align-items: flex-start;
     padding: 18px;

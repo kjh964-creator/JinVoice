@@ -14,6 +14,7 @@ vi.mock('./workspace-sidebar', () => ({
   WorkspaceSidebar: () => <aside data-testid="main-sidebar" />,
 }));
 vi.mock('./context-sidebar', () => ({ ContextSidebar: () => null }));
+vi.mock('./mobile-nav', () => ({ MobileTopBar: () => <header data-testid="mobile-top-bar" /> }));
 vi.mock('./repair-agent-dock', () => ({ RepairAgentDock: () => null }));
 vi.mock('./system-notifications', () => ({ SystemNotifications: () => null }));
 vi.mock('./account-corner', () => ({ AccountCorner: () => <div data-testid="account-corner" /> }));
@@ -44,6 +45,12 @@ it('renders the main sidebar on workspace routes as before', () => {
   expect(screen.getByTestId('main-sidebar')).toBeInTheDocument();
 });
 
+it('adds the phone top bar (menu drawer) to the full workspace', () => {
+  route.pathname = '/clone';
+  render(<AppShell />);
+  expect(screen.getByTestId('mobile-top-bar')).toBeInTheDocument();
+});
+
 it.each(['/clone', '/settings/account'])('shows the signed-in corner badge on %s', (pathname) => {
   route.pathname = pathname;
   render(<AppShell />);
@@ -64,6 +71,7 @@ describe('easy mode', () => {
     expect(screen.getByTestId('easy-shell')).toBeInTheDocument();
     expect(screen.queryByTestId('main-sidebar')).not.toBeInTheDocument();
     expect(screen.queryByTestId('account-corner')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-top-bar')).not.toBeInTheDocument();
   });
 
   it('keeps Settings reachable under the easy bar without the workspace sidebar', () => {

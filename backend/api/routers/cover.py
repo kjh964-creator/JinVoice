@@ -153,6 +153,13 @@ async def cover_job_create(
         raise HTTPException(status_code=415, detail="Use an mp3, wav, m4a or flac file.")
     name = os.path.splitext(os.path.basename(audio.filename or ""))[0].strip() or "song"
 
+    from services import story_song
+
+    if story_song.active_job() is not None:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "busy", "message": "Another song is being made right now."},
+        )
     try:
         job = song_cover.create_job(
             profile_id=profile_id, profile_name=str(row["name"] or ""),

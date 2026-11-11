@@ -52,11 +52,12 @@ export function WorkspaceHeader({ children }: { children: ReactNode }) {
       data-slot="workspace-header"
       data-title={paneTitled ? 'pane' : 'shell'}
       className={cn(
-        'workspace-titlebar flex shrink-0 items-center gap-3 border-b border-border/50 px-5',
+        'workspace-titlebar flex shrink-0 items-center gap-3 border-b border-border/50 px-5 max-sm:gap-2 max-sm:px-3',
         !isMac() && 'native-controls-right',
       )}
     >
-      {!isMac() && <SidebarToggle />}
+      {/* Phones open navigation from the top bar's menu button instead. */}
+      {!isMac() && <SidebarToggle className="max-sm:hidden" />}
       {/* The page's own items fill the bar, so one pushed right with ms-auto sits beside
           search instead of splitting the free space with it. */}
       <div
@@ -71,8 +72,11 @@ export function WorkspaceHeader({ children }: { children: ReactNode }) {
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
         {/* JinVoice: one click back to the easy screens. */}
-        {!easyMode && <EasyModeReturnButton className="h-7 px-2 text-xs font-medium" />}
-        {!easyMode && <SupportShortcut />}
+        {/* On phones both live in the menu drawer / settings, so the bar keeps its room. */}
+        {!easyMode && (
+          <EasyModeReturnButton className="h-7 px-2 text-xs font-medium max-sm:hidden" />
+        )}
+        {!easyMode && <SupportShortcut className="max-sm:hidden" />}
         <Button
           variant="ghost"
           size="sm"

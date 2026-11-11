@@ -12,16 +12,20 @@ export function ContextSidebar() {
   const { libraryOpen, libraryTab } = useWorkspace();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   if (!LIBRARY_ROUTES.has(pathname.replace(/\/+$/, '') || '/')) return null;
+  // Phones have no room beside the page; the clone page lists saved voices itself.
+  // `contents` keeps the desktop layout untouched.
   return (
-    <SecondarySidebar
-      title={t('nav.voice')}
-      icon={LibraryIcon}
-      variant="library"
-      className="flex flex-col overflow-hidden p-0"
-      collapsed={!libraryOpen}
-      onCollapsedChange={(collapsed) => setWorkspace({ libraryOpen: !collapsed })}
-    >
-      <VoicesSidebar initialTab={libraryTab} />
-    </SecondarySidebar>
+    <div data-slot="context-sidebar" className="contents max-sm:hidden">
+      <SecondarySidebar
+        title={t('nav.voice')}
+        icon={LibraryIcon}
+        variant="library"
+        className="flex flex-col overflow-hidden p-0"
+        collapsed={!libraryOpen}
+        onCollapsedChange={(collapsed) => setWorkspace({ libraryOpen: !collapsed })}
+      >
+        <VoicesSidebar initialTab={libraryTab} />
+      </SecondarySidebar>
+    </div>
   );
 }

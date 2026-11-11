@@ -144,7 +144,7 @@ export function ClonePage() {
         <section className="flex min-w-0 flex-1 flex-col">
           <header
             className={cn(
-              'workspace-titlebar flex shrink-0 items-center justify-between gap-3 px-5',
+              'workspace-titlebar flex shrink-0 items-center justify-between gap-3 px-5 max-sm:gap-2 max-sm:px-3',
               !editingProfile &&
                 !selectedTake &&
                 (!panel || choosingVoice) &&
@@ -153,11 +153,11 @@ export function ClonePage() {
             )}
           >
             <div className="flex min-w-0 items-center gap-2">
-              <SidebarToggle />
+              <SidebarToggle className="max-sm:hidden" />
               <h1 className="truncate text-sm font-medium">{t('clone.title')}</h1>
             </div>
             <div className="flex shrink-0 items-center gap-1">
-              <SupportShortcut />
+              <SupportShortcut className="max-sm:hidden" />
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -167,9 +167,11 @@ export function ClonePage() {
               >
                 <SearchIcon />
               </Button>
+              {/* The library pane it opens is not shown on phones. */}
               <Button
                 variant="ghost"
                 size="sm"
+                className="max-sm:hidden"
                 onClick={() => {
                   setLibraryTab('takes');
                   setWorkspace({ libraryOpen: true });
@@ -180,7 +182,7 @@ export function ClonePage() {
               </Button>
             </div>
           </header>
-          <div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col gap-5 overflow-y-auto px-6 pt-6 pb-4">
+          <div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col gap-5 overflow-y-auto px-6 pt-6 pb-4 max-sm:px-4 max-sm:pt-4">
             {/* With the composer on screen, its primary action is the setup instead. */}
             {(choosingVoice || savingUpload || demo) && !isGenerating && (
               <EngineSetupNotice setup={setup} />

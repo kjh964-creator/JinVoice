@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import './support-shortcut.css';
 import { GithubStar } from './github-star';
+import { cn } from '@/lib/utils';
 
-export function SupportShortcut() {
+export function SupportShortcut({ className }: { className?: string } = {}) {
   const { t } = useTranslation();
   return (
-    <div className="flex shrink-0 items-center gap-0.5">
+    <div className={cn('flex shrink-0 items-center gap-0.5', className)}>
       <Tooltip>
         <TooltipTrigger
           render={

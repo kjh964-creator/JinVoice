@@ -261,6 +261,10 @@ export function SettingsPage() {
   const isLogs = pathname.endsWith('/logs');
   const modelFamily = modelFamilies.find((family) => pathname.endsWith('/models/' + family));
   const section = pathname.endsWith('/general') ? 'general' : 'appearance';
+  // Phones show Settings as master-detail: bare /settings is the section list
+  // (the route only redirects from 640px up), a section opens full width.
+  const listView = (pathname.replace(/\/+$/, '') || '/') === '/settings';
+  const generalActive = !listView && !extra && !isModels && !isLogs && !isMedia;
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
   const [target, setTarget] = useState<string | null>(null);
@@ -301,7 +305,13 @@ export function SettingsPage() {
 
   return (
     <div className="flex h-full min-h-0">
-      <aside className="flex w-[clamp(11rem,20vw,17rem)] shrink-0 flex-col border-r border-sidebar-border/50 bg-sidebar text-sidebar-foreground shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)]">
+      <aside
+        className={cn(
+          'flex w-[clamp(11rem,20vw,17rem)] shrink-0 flex-col border-r border-sidebar-border/50 bg-sidebar text-sidebar-foreground shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)]',
+          'max-sm:w-full max-sm:border-r-0',
+          !listView && 'max-sm:hidden',
+        )}
+      >
         <header className="workspace-titlebar flex h-12 shrink-0 items-center gap-2.5 border-b border-sidebar-border/45 bg-background/25 px-3.5 backdrop-blur-xl">
           {/* The brand and window controls live in the main sidebar to the
               left; this column is the Settings section list. */}
@@ -337,18 +347,9 @@ export function SettingsPage() {
                   buttonVariants({ variant: 'ghost' }),
                   settingsNavItemClass,
                   'justify-start gap-2 px-2 text-sm',
-                  !extra &&
-                    !isModels &&
-                    !isLogs &&
-                    !isMedia &&
-                    section === item &&
-                    'bg-[var(--sidebar-row-active)] font-medium',
+                  generalActive && section === item && 'bg-[var(--sidebar-row-active)] font-medium',
                 )}
-                aria-current={
-                  !extra && !isModels && !isLogs && !isMedia && section === item
-                    ? 'page'
-                    : undefined
-                }
+                aria-current={generalActive && section === item ? 'page' : undefined}
               >
                 {item === 'appearance' ? (
                   <PaletteIcon className={settingsNavIconClass} />
@@ -409,7 +410,7 @@ export function SettingsPage() {
                 {t('modelSettings.models')}
               </span>
             </Link>
-            {isModels &&
+            {(isModels || listView) &&
               modelFamilies.map((family) => {
                 const FamilyIcon = familyIcons[family];
                 return (
@@ -531,16 +532,33 @@ export function SettingsPage() {
           </Link>
         </div>
       </aside>
-      <section className="flex min-w-0 flex-1 flex-col bg-background">
+      <section
+        className={cn('flex min-w-0 flex-1 flex-col bg-background', listView && 'max-sm:hidden')}
+      >
         <header
           className={cn(
-            'workspace-titlebar flex shrink-0 items-center gap-2 px-5 text-sm',
+            'workspace-titlebar flex shrink-0 items-center gap-2 px-5 text-sm max-sm:h-12 max-sm:gap-1 max-sm:pl-1.5',
             isMac() ? 'account-corner-safe' : 'native-controls-right',
           )}
         >
-          <span className="text-muted-foreground">{t('nav.settings')}</span>
-          <ChevronRightIcon aria-hidden="true" className="size-3.5 text-muted-foreground/60" />
-          <h1 className="font-medium">
+          {/* Phones: back to the section list instead of the breadcrumb. */}
+          <Link
+            to="/settings"
+            data-slot="settings-back"
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'sm' }),
+              'shrink-0 gap-1 px-2 text-muted-foreground sm:hidden',
+            )}
+          >
+            <ArrowLeftIcon aria-hidden="true" />
+            {t('nav.settings')}
+          </Link>
+          <span className="text-muted-foreground max-sm:hidden">{t('nav.settings')}</span>
+          <ChevronRightIcon
+            aria-hidden="true"
+            className="size-3.5 text-muted-foreground/60 max-sm:hidden"
+          />
+          <h1 className="font-medium max-sm:min-w-0 max-sm:truncate">
             {extra
               ? t(extra.label)
               : isMedia

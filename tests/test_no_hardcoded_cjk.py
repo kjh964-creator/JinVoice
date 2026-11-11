@@ -72,6 +72,7 @@ _ALLOWED_FILES = {
     "backend/core/personalities.py",              # Chinese-dialect showcase preset
     "backend/core/archetypes.py",                 # Chinese-dialect + JA/KO multilingual preview sample text
     "backend/core/describe_voice.py",             # pinyin → Chinese-dialect token mapping (model vocabulary, #317)
+    "backend/config/story_song_lyrics_ko.txt",    # Korean craft notes + format example fed to the local lyric LLM (model input, not UI)
     "electron/src/shared/utils/constants.js",            # Chinese-dialect picker names
     "omnivoice/models/omnivoice.py",              # instruct-mode vocabulary
     "omnivoice/utils/duration.py",

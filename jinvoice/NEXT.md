@@ -23,4 +23,5 @@
 
 ## Queued (2026-11-09, user-approved)
 - [in progress] Song cover: song file + registered voice -> same song sung in that voice (separation + zero-shot SVC, feature id `cover`, default off).
-- [next, after cover is reviewed] Story song: user story + registered voice -> lyrics by a LOCAL LLM on this PC (free, offline; lyrics editable before generating) -> song generation (e.g. ACE-Step, style choice) -> convert vocals to the chosen voice with the cover pipeline. Separate feature id, default off.
+- [built, uncommitted, for the next build] Story song (`story_song`, `/easy/story-song`, default off): user story + registered voice -> lyrics by a LOCAL LLM (Qwen3-4B-Instruct-2507 Q4_K_M via llama.cpp b12244 Vulkan, editable before generating) -> song (ACE-Step 1.5 turbo q8_0 via audio.cpp v0.9.4 Vulkan, genre + 1/2/3 min) -> vocals re-sung in the chosen voice with the cover pipeline; both takes saved to made speech. First use downloads ~8.8 GB (+ cover files if missing).
+- [done, uncommitted] Voice conversion defaults tuned by ear with the user (2026-11-11): steadier pitch (f0_steady 0.05/win 31), brighter/clearer vocal (VOICE_POLISH in song_cover.py), story-song key fit ~4 semitones above speaking+6 (KEY_FIT_ABOVE_SPEECH 10). Always applied; ship with 0.5.16 together with the advanced-mode phone layout.

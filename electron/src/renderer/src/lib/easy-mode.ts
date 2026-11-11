@@ -85,6 +85,7 @@ export const EASY_ROUTES = {
   history: '/easy/history',
   audiobook: '/easy/audiobook',
   cover: '/easy/cover',
+  storySong: '/easy/story-song',
   help: '/easy/help',
   features: '/easy/features',
 } as const;

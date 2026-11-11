@@ -48,6 +48,8 @@ export function AccountCorner({ notificationsEnabled }: { notificationsEnabled: 
         // Spans the 52px title bar so the corner centres on the same line as every header control.
         'app-no-drag fixed top-0 z-50 flex h-[52px] items-center gap-1',
         isMac() ? 'right-3.5' : 'right-[148px]',
+        // Phones: in the slim top bar (mobile-nav.tsx); there are no window buttons.
+        'max-sm:right-2 max-sm:h-12',
       )}
     >
       <AccountMenu />

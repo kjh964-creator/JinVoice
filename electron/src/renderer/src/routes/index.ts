@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import { createRootRoute, createRoute, lazyRouteComponent, redirect } from '@tanstack/react-router';
 import { AppShell } from '@/components/app-shell/app-shell';
-import { readLastSettingsRoute } from '@/lib/settings-route';
+import { isPhoneViewport, readLastSettingsRoute } from '@/lib/settings-route';
 import { easyModeRedirect, isEasyModeEnabled, isEasyModePath, useEasyMode } from '@/lib/easy-mode';
 
 const HomePage = lazyRouteComponent(() => import('@/features/home/home-page'), 'HomePage');
@@ -121,6 +121,15 @@ export const easyCoverRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/easy/easy-cover-page'), 'EasyCoverPage'),
 });
 
+export const easyStorySongRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/easy/story-song',
+  component: lazyRouteComponent(
+    () => import('@/features/easy/easy-story-song-page'),
+    'EasyStorySongPage',
+  ),
+});
+
 export const easyFeaturesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/easy/features',
@@ -154,7 +163,10 @@ export const cloneRoute = createRoute({
 export const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/settings',
+  // Phones show bare /settings as the section list (master-detail).
+  component: SettingsPage,
   beforeLoad: () => {
+    if (isPhoneViewport()) return;
     const last = readLastSettingsRoute();
     // A remembered page easy mode hides (support, account) opens General instead.
     throw redirect({
@@ -374,6 +386,7 @@ export const routeTree = rootRoute.addChildren([
   easyHistoryRoute,
   easyAudiobookRoute,
   easyCoverRoute,
+  easyStorySongRoute,
   easyHelpRoute,
   easyFeaturesRoute,
   cloneRoute,

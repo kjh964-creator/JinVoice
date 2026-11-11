@@ -3447,6 +3447,28 @@
       "evidence_url": "https://huggingface.co/Plachta/Seed-VC",
       "configured_at": "backend/services/song_cover_assets.py",
       "notes": "Downloaded on first use of the easy song-cover screen, pinned to reviewed revisions (source 51383efd, Seed-VC weights 257283f9). Voice conversion of songs: users must hold rights to the song and the voice."
+    },
+    {
+      "id": "Song from a story: lyric writer (Qwen3-4B-Instruct-2507 Q4_K_M GGUF via llama.cpp)",
+      "license": "Apache-2.0 (Qwen/Qwen3-4B-Instruct-2507 weights, unsloth GGUF conversion); MIT (ggml-org/llama.cpp b12244 Vulkan binaries)",
+      "commercial_use": false,
+      "review_status": "unreviewed",
+      "credit": "Qwen3 by the Qwen team (Alibaba Cloud); GGUF quantisation by Unsloth; llama.cpp by ggml-org.",
+      "source_url": "https://huggingface.co/unsloth/Qwen3-4B-Instruct-2507-GGUF",
+      "evidence_url": "https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507",
+      "configured_at": "backend/services/story_song_assets.py",
+      "notes": "Downloaded on first use of the easy song-from-a-story screen (2.5 GB model, 38 MB runtime, SHA-256 checked). Pinned to revision a06e946b. Runs locally and offline in a short-lived llama-server subprocess that is stopped after each request. Apache-2.0 allows commercial use; marked false until reviewed."
+    },
+    {
+      "id": "Song from a story: song model (ACE-Step 1.5 turbo q8_0 GGUF via audio.cpp)",
+      "license": "MIT (ACE-Step/Ace-Step1.5 weights and ace-step/ACE-Step-1.5 code; audio-cpp/audio.cpp-gguf conversion); MIT (0xShug0/audio.cpp v0.9.4 Vulkan binaries)",
+      "commercial_use": false,
+      "review_status": "unreviewed",
+      "credit": "ACE-Step 1.5 by ACE Studio and StepFun; GGUF packaging and audio.cpp runtime by 0xShug0 (audio.cpp).",
+      "source_url": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
+      "evidence_url": "https://huggingface.co/ACE-Step/Ace-Step1.5",
+      "configured_at": "backend/services/story_song_assets.py",
+      "notes": "Downloaded on first use of the easy song-from-a-story screen (6.2 GB model, 84 MB runtime, SHA-256 checked). The finished song is re-sung in the user's voice with the song-cover models (Seed-VC, GPL-3.0, non-commercial row above), so the voice version inherits that row's limits. Pinned to revision 73ce4162; MIT allows commercial use, marked false until reviewed."
     }
   ],
   "registry_version": "2026-10-09.draft1",

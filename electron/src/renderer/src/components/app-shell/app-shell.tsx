@@ -13,6 +13,7 @@ import { NowPlayingDock } from '@/components/now-playing-dock';
 import { useEasyMode } from '@/lib/easy-mode';
 import { isEnabledEasyFeaturePath, useEasyFeatures } from '@/lib/easy-features';
 import { EasyShell, EasyTopBar } from '@/features/easy/easy-layout';
+import { MobileTopBar } from './mobile-nav';
 
 /**
  * Easy mode frame: only the JinVoice bar (logo, name, Settings) and the page.
@@ -88,6 +89,8 @@ export function AppShell() {
         macWorkspace && 'macos-notification-safe-area',
       )}
     >
+      {/* Phones only (hidden from 640px up): menu button + brand instead of the rail. */}
+      <MobileTopBar />
       <div className="flex min-h-0 flex-1">
         {shellOnly ? (
           <>

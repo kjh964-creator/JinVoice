@@ -18,7 +18,7 @@
         '#jv-who a:hover{filter:brightness(.96)}' +
         '@media (prefers-color-scheme:dark){#jv-who{color:#DADBEA;background:rgba(21,22,36,.9);border-color:rgba(255,255,255,.12)}' +
         '#jv-who a{color:#C9C6FF;background:rgba(124,108,255,.2)}}' +
-        '@media (max-width:640px){#jv-who{top:auto;bottom:12px;left:auto;right:12px;transform:none}#jv-who span{display:none}}' +
+        '@media (max-width:640px){#jv-who{top:9px;padding:0;gap:0;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}#jv-who span,#jv-who i{display:none}#jv-who a{padding:6px 10px;font-size:12px}}' +
         '@media print{#jv-who{display:none}}';
       var box = document.createElement('div');
       box.id = 'jv-who';

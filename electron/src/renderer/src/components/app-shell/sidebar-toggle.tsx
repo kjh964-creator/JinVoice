@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { isMac } from '@/components/bridge';
 import { useWorkspaceSidebarState } from './use-workspace-sidebar';
+import { cn } from '@/lib/utils';
 
-export function SidebarToggle() {
+export function SidebarToggle({ className }: { className?: string } = {}) {
   const { t } = useTranslation();
   const { compact, setOpen } = useWorkspaceSidebarState();
   if (isMac()) return null;
@@ -12,7 +13,7 @@ export function SidebarToggle() {
     <Button
       variant="ghost"
       size="icon-sm"
-      className="shrink-0 text-foreground/70 hover:text-foreground"
+      className={cn('shrink-0 text-foreground/70 hover:text-foreground', className)}
       aria-label={t('clone.toggle_sidebar')}
       title={t('clone.toggle_sidebar')}
       aria-expanded={!compact}

@@ -218,6 +218,12 @@
   /* + the top-right corner (account and notifications, account-corner.tsx). */
   padding-right: calc(148px + var(--corner-space, 0px));
 }
+/* Phones: no window buttons, and the corner sits in the slim top bar (mobile-nav.tsx). */
+@media (max-width: 639.98px) {
+  .native-controls-right {
+    padding-right: 0.75rem;
+  }
+}
 .macos-notification-safe-area main .workspace-titlebar,
 .account-corner-safe {
   padding-right: calc(0.875rem + var(--corner-space, 0px));

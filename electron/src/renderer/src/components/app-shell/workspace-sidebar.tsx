@@ -48,7 +48,8 @@ export function WorkspaceSidebar() {
           data-slot="compact-main-sidebar"
           onDoubleClick={() => setOpen(true)}
           className={cn(
-            'brand-sidebar relative isolate grid h-dvh min-h-0 shrink-0 grid-rows-[auto_minmax(0,1fr)_auto_auto] overflow-hidden bg-sidebar',
+            // Phones get the menu drawer (mobile-nav.tsx) instead of this rail.
+            'brand-sidebar relative isolate grid h-dvh min-h-0 shrink-0 grid-rows-[auto_minmax(0,1fr)_auto_auto] overflow-hidden bg-sidebar max-sm:hidden',
             mac ? 'w-16' : 'w-12 border-r border-border/50',
           )}
         >
@@ -121,7 +122,7 @@ export function WorkspaceSidebar() {
           ref={sidebarResize.host}
           style={{ width: sidebarResize.width }}
           aria-label={t('app.name')}
-          className="brand-sidebar relative isolate grid h-full min-h-0 min-w-0 shrink-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden border-r border-border/50 bg-sidebar"
+          className="brand-sidebar relative isolate grid h-full min-h-0 min-w-0 shrink-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden border-r border-border/50 bg-sidebar max-sm:hidden"
         >
           <img
             src={brandArtwork}
